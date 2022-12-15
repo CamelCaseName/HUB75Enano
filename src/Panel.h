@@ -3,6 +3,39 @@
 #ifndef HUB75E_NANO
 #define HUB75E_NANO
 
+/*
+Pin mapping on arduino:
+A A0,
+B A1,
+C A2,
+D A3,
+LAT A4,
+R1 2,
+G1 3,
+B1 4,
+R2 5,
+G2 6,
+B2 7,
+CLK 8,
+OE 9,
+GND GND
+*/
+
+// actual pin numbers
+#define RA 14  // register selector a
+#define RB 15  // register selector b
+#define RC 16  // register selector c
+#define RD 17  // register selector d
+#define RF 2   // red first pin
+#define GF 3   // green first pin
+#define BF 4   // blue first pin
+#define RS 5   // red second pin
+#define GS 6   // green second pin
+#define BS 7   // blue second pin
+#define LAT 18 // data latch
+#define CLK 8  // clock signal
+#define OE 9   // output enable
+
 // ref https://roboticsbackend.com/arduino-fast-digitalwrite/#Using_direct_port_manipulation_instead_of_digitalWrite
 
 // helper definitions
@@ -27,21 +60,6 @@
 #define PORTB_clear_pin(number) clear_pin(PORTB, number)
 #define PORTC_clear_pin(number) clear_pin(PORTC, number)
 #define PORTD_clear_pin(number) clear_pin(PORTD, number)
-
-// actual pin numbers
-#define RA 14  // register selector a
-#define RB 15  // register selector b
-#define RC 16  // register selector c
-#define RD 17  // register selector d
-#define RF 2   // red first byte
-#define RS 5   // red second byte
-#define BF 4   // blue first byte
-#define BS 7   // blue second byte
-#define GF 3   // green first byte
-#define GS 6   // green second byte
-#define LAT 18 // data latch
-#define CLK 8  // clock signal
-#define OE 9   // output enable
 
 // pin access defines, rows
 #define HIGH_RA high_pin(PORTC, 0)
@@ -94,6 +112,7 @@
 #define HIGH_OE high_pin(PORTB, 1)
 #define CLEAR_OE clear_pin(PORTB, 1)
 #define SET_OE(value) set_pin(PORTB, 1, value)
+// probably not gonna be usefule as the whole thing is now u
 #define SET_ROW_PINS(row) PORTC = (row + (row > 7) * 8) + (row > 15)
 #define LATCH \
     HIGH_LAT; \
