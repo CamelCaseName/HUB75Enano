@@ -1,6 +1,6 @@
 // #define PANEL_BIG
 #define PANEL_NO_BUFFER
-#include "Panel.h"
+#include "Panel_HUB75E.h"
 
 // create an instance of the panel
 Panel panel = {};

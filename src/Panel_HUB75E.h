@@ -40,8 +40,8 @@ GND GND
 
 #include <Arduino.h>
 
-#ifndef Panel_h
-#define Panel_h
+#ifndef Panel_hub75e_h
+#define Panel_hub75e_h
 #ifndef PANEL_NO_BUFFER
 /////////////////////
 // #define PANEL_BIG  // use 2 bit rgb image buffer
@@ -106,7 +106,6 @@ GND GND
 #define HIGH_RC high_pin(PORTC, 2)
 #define CLEAR_RC clear_pin(PORTC, 2)
 #define SET_RC(value) set_pin(PORTC, 2, value)
-
 
 // pin access defines, color
 #define HIGH_RF high_pin(PORTD, 2)
@@ -186,6 +185,7 @@ class Panel
 {
 public:
     Panel();
+    void setupHUB75E() {}
     void selectLine(uint8_t lineIndex);
     void fillScreenShift(uint8_t s, uint8_t f, uint8_t o);
     void fillScreenColor(uint16_t color);

@@ -1,4 +1,4 @@
-#include "Panel.h"
+#include "Panel_HUB75E.h"
 
 Panel::Panel()
 {
