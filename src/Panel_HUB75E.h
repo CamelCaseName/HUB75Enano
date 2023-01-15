@@ -1,4 +1,5 @@
 /*
+//todo fix
   Panel.h can be used to display stuff on a hub75 panel with up to 32 x 64 pixels
   designed for ARDUINO NANO.
 
@@ -70,15 +71,12 @@ GND GND
     high_pin(port, number);     \
     clear_pin(port, number)
 #define set_pin(port, number, value) (port = (value << number) | (port & ~(1UL << number)))
-#define PORTA_high_pin(number) high_pin(PORTA, number)
 #define PORTB_high_pin(number) high_pin(PORTB, number)
 #define PORTC_high_pin(number) high_pin(PORTC, number)
 #define PORTD_high_pin(number) high_pin(PORTD, number)
-#define PORTA_toggle_pin(number) toggle_pin(PORTA, number)
 #define PORTB_toggle_pin(number) toggle_pin(PORTB, number)
 #define PORTC_toggle_pin(number) toggle_pin(PORTC, number)
 #define PORTD_toggle_pin(number) toggle_pin(PORTD, number)
-#define PORTA_clear_pin(number) clear_pin(PORTA, number)
 #define PORTB_clear_pin(number) clear_pin(PORTB, number)
 #define PORTC_clear_pin(number) clear_pin(PORTC, number)
 #define PORTD_clear_pin(number) clear_pin(PORTD, number)
@@ -108,9 +106,7 @@ GND GND
 #define HIGH_RC high_pin(PORTC, 2)
 #define CLEAR_RC clear_pin(PORTC, 2)
 #define SET_RC(value) set_pin(PORTC, 2, value)
-#define HIGH_RD high_pin(PORTC, 3)
-#define CLEAR_RD clear_pin(PORTC, 3)
-#define SET_RD(value) set_pin(PORTC, 3, value)
+
 
 // pin access defines, color
 #define HIGH_RF high_pin(PORTD, 2)
