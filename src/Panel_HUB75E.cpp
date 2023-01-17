@@ -21,6 +21,56 @@ Panel::Panel()
 
 void Panel::setupHUB75E()
 {
+    clearPins();
+    for (uint8_t i = 0; i < CHIP_REGISTER_COUNT; i++)
+    {
+        sendPrefix();
+        sendClockSpacer16();
+    }
+}
+
+// clocks 16 times
+void sendClockSpacer16()
+{
+    CLOCK;
+    CLOCK;
+    CLOCK;
+    CLOCK;
+
+    CLOCK;
+    CLOCK;
+    CLOCK;
+    CLOCK;
+
+    CLOCK;
+    CLOCK;
+    CLOCK;
+    CLOCK;
+
+    CLOCK;
+    CLOCK;
+    CLOCK;
+    CLOCK;
+}
+
+void clearPins()
+{
+    SET_COLOR(0);
+    CLEAR_LAT;
+    CLEAR_CLK;
+    HIGH_OE;
+}
+
+void sendPrefix()
+{
+    // start latch
+    HIGH_LAT;
+    // prefix command, 14 clocks
+    for (uint8_t i = 0; i < PREFIX_CLOCK_COUNT; i++)
+    {
+        CLOCK;
+    }
+    CLEAR_LAT;
 }
 
 #ifndef PANEL_NO_BUFFER

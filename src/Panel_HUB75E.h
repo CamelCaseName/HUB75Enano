@@ -38,6 +38,8 @@ OE 9,
 GND GND
 */
 
+// todo replace all here constant definitions with named constants from a namespace
+
 #include <Arduino.h>
 
 #ifndef Panel_hub75e_h
@@ -126,6 +128,11 @@ GND GND
 #define HIGH_BS high_pin(PORTD, 7)
 #define CLEAR_BS clear_pin(PORTD, 7)
 #define SET_BS(value) set_pin(PORTD, 7, value)
+
+// icn/fm chip specifics, hub75e with 3 row lines only
+#define PREFIX_CLOCK_COUNT 14
+#define CHIP_REGISTER_COUNT 5
+// end specifics
 
 // bulk pin access color, only good if pins are in right order
 #if RF == 2 and GF == 3 and BF == 4 and RS == 5 and GS == 6 and BS == 7
