@@ -185,7 +185,7 @@ class Panel
 {
 public:
     Panel();
-    void setupHUB75E() {}
+    void setupHUB75E();
     void selectLine(uint8_t lineIndex);
     void fillScreenShift(uint8_t s, uint8_t f, uint8_t o);
     void fillScreenColor(uint16_t color);

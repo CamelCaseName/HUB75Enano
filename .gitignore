@@ -54,4 +54,5 @@ dkms.conf
 #custom
 \.vscode
 \.dev
+\dev
 *.ps

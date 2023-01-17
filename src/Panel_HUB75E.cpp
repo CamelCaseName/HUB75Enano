@@ -19,6 +19,10 @@ Panel::Panel()
     pinMode(OE, OUTPUT);
 }
 
+void Panel::setupHUB75E()
+{
+}
+
 #ifndef PANEL_NO_BUFFER
 void Panel::swapBuffer(const LED *newBuffer, uint8_t bufferLength)
 {
