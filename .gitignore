@@ -56,3 +56,6 @@ dkms.conf
 \.dev
 \dev
 *.ps
+*.wfm
+*.ult
+*.bmp

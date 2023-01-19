@@ -19,16 +19,6 @@ Panel::Panel()
     pinMode(OE, OUTPUT);
 }
 
-void Panel::setupHUB75E()
-{
-    clearPins();
-    for (uint8_t i = 0; i < CHIP_REGISTER_COUNT; i++)
-    {
-        sendPrefix();
-        sendClockSpacer16();
-    }
-}
-
 // clocks 16 times
 void sendClockSpacer16()
 {
@@ -71,6 +61,85 @@ void sendPrefix()
         CLOCK;
     }
     CLEAR_LAT;
+}
+void sendLatch(uint8_t clocks)
+{
+    // start latch
+    HIGH_LAT;
+    // prefix command, 14 clocks
+    for (uint8_t i = 0; i < clocks; i++)
+    {
+        CLOCK;
+    }
+    CLEAR_LAT;
+}
+
+void sendRegisterConfig(uint8_t register_index, uint16_t register_data)
+{
+    //128 pixels -> 16 led per chip -> 8 chips
+    uint8_t i = 0;
+    for ( i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for ( i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for ( i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for ( i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for ( i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for ( i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for ( i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for ( i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+        if (register_index == 16 - i)
+            HIGH_LAT;
+    }
+    CLEAR_LAT;
+}
+
+void Panel::setupHUB75E()
+{
+    clearPins();
+
+    sendPrefix();
+    sendLatch(12); // output enable
+    sendLatch(3); // vsync
+    sendPrefix(); // prefix
+    sendRegisterConfig(4976, 4); // config register 1
+    sendPrefix(); // prefix
+    sendRegisterConfig(24027, 6); // config register 2
+    sendPrefix(); // prefix
+    sendRegisterConfig(8, 16455); // cfg register 3
+    sendPrefix(); // prefix
+    sendRegisterConfig(10, 3648); // config register 4
+    sendPrefix(); // prefix
+    sendRegisterConfig(2, 0x0000); // debug registers
 }
 
 #ifndef PANEL_NO_BUFFER

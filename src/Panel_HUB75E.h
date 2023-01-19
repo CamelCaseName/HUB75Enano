@@ -20,6 +20,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+// many thanks to LAutour/ElectronicsInFocus for his ESP32-HUB75-MatrixPanel-DMA library, was a great help in getting the initialization to work
+
 /*
 Pin mapping:
 A A0,
@@ -129,9 +131,121 @@ GND GND
 #define CLEAR_BS clear_pin(PORTD, 7)
 #define SET_BS(value) set_pin(PORTD, 7, value)
 
-// icn/fm chip specifics, hub75e with 3 row lines only
+#pragma region icn2053 // icn / fm chip specifics, hub75e with 3 row lines only
 #define PREFIX_CLOCK_COUNT 14
 #define CHIP_REGISTER_COUNT 5
+
+// DBGU register bits for ICN2053, taken from LEDVISON
+enum
+{
+    ICN2053_DBG_x = 0x08, //????
+};
+
+// CFG1 register bits for ICN2053, taken from LEDVISON
+enum
+{
+    ICN2053_CFG1_WOBPS_MASK = 0x4000, // bad point detection current adjusment (0..1)
+    ICN2053_CFG1_WOBPS_OFFSET = 14,
+    ICN2053_CFG1_WOBPS = 0, // 0: - sync
+
+    // the number of active driver lines - DO NOT CHANGE!!! - set during initialization via OR
+    ICN2053_CFG1_LC_MASK = 0x1F00, // line count (0..31): 1..32 - sync
+    ICN2053_CFG1_LC_OFFSET = 8,
+    ICN2053_CFG1_LC = 19, // 15:
+
+    ICN2053_CFG1_LGS_MASK = 0x00C0, // low gray spot (0..3) - sync
+    ICN2053_CFG1_LGS_OFFSET = 6,
+    ICN2053_CFG1_LGS = 1, // 1
+
+    ICN2053_CFG1_RRM_MASK = 0x0030, // refresh rate multiplayer (0..3): 1x, 2x, 4x, 8x - sync
+    ICN2053_CFG1_RRM_OFFSET = 4,
+    ICN2053_CFG1_RRM = 3, // 3
+
+    ICN2053_CFG1_PWMR_MASK = 0x0008, // PWM reverse (0..1) - sync
+    ICN2053_CFG1_PWMR_OFFSET = 3,
+    ICN2053_CFG1_PWMR = 0, // 0
+
+    ICN2053_CFG1_R = (ICN2053_CFG1_WOBPS << ICN2053_CFG1_WOBPS_OFFSET) + (ICN2053_CFG1_LC << ICN2053_CFG1_LC_OFFSET) + (ICN2053_CFG1_LGS << 6) + (ICN2053_CFG1_RRM << ICN2053_CFG1_RRM_OFFSET) + (ICN2053_CFG1_PWMR << ICN2053_CFG1_PWMR_OFFSET),
+    ICN2053_CFG1_G = ICN2053_CFG1_R,
+    ICN2053_CFG1_B = ICN2053_CFG1_R,
+};
+
+// CFG2 register bits for ICN2053, taken from LEDVISON
+enum
+{
+    // black level threshold
+    ICN2053_CFG2_BL_MASK = 0x7C00, // blanking level (0..31)
+    ICN2053_CFG2_BL_OFFSET = 10,
+    ICN2053_CFG2_BL_R = 31, // 31, //31
+    ICN2053_CFG2_BL_G = 28, // 28, //28
+    ICN2053_CFG2_BL_B = 23, // 23, //23
+
+    ICN2053_CFG2_CURRENT_MASK = 0x003E, // blanking enhancement (4..31): 13%..199%, 16 = 100%
+    ICN2053_CFG2_CURRENT_OFFSET = 1,
+    ICN2053_CFG2_CURRENT_R = 13, // 13
+    ICN2053_CFG2_CURRENT_G = 13, // 13
+    ICN2053_CFG2_CURRENT_B = 13, // 13
+
+    ICN2053_CFG2_BE_MASK = 0x0001, // blanking enhancement (0..1): 1,0
+    ICN2053_CFG2_BE_OFFSET = 0,
+    ICN2053_CFG2_BE_R = 1,             // 1
+    ICN2053_CFG2_BE_G = 1,             // 1
+    ICN2053_CFG2_BE_B = 1,             // 1
+                                       // brightness levels - obtained experimentally
+    ICN2053_CFG2_BRIGHT_MASK = 0x03E0, //(0..15): 1..16
+    ICN2053_CFG2_BRIGHT_OFFSET = 5,
+    ICN2053_CFG2_BRIGHT = 14, // 0x0380,
+
+    ICN2053_CFG2_R = (ICN2053_CFG2_BL_R << 10) + (ICN2053_CFG2_CURRENT_R << 1) + (ICN2053_CFG2_BE_R << 0) + (ICN2053_CFG2_BRIGHT << 5),
+    ICN2053_CFG2_G = (ICN2053_CFG2_BL_G << 10) + (ICN2053_CFG2_CURRENT_G << 1) + (ICN2053_CFG2_BE_G << 0) + (ICN2053_CFG2_BRIGHT << 5),
+    ICN2053_CFG2_B = (ICN2053_CFG2_BL_B << 10) + (ICN2053_CFG2_CURRENT_B << 1) + (ICN2053_CFG2_BE_B << 0) + (ICN2053_CFG2_BRIGHT << 5),
+};
+
+// CFG 3 register bits for ICN2053, taken from LED VISION
+enum
+{
+    ICN2053_CFG3_LGWB_MASK = 0x00f0, // low gray white balance (0..15): 15..0
+    ICN2053_CFG3_LGWB_OFFSET = 4,
+    ICN2053_CFG3_LGWB_R = 4, // 4
+    ICN2053_CFG3_LGWB_G = 4, // 4
+    ICN2053_CFG3_LGWB_B = 4, // 4
+
+    ICN2053_CFG3_BLE_MASK = 0x0004, // blanking level enable (0..1): 0,1
+    ICN2053_CFG3_BLE_OFFSET = 2,
+    ICN2053_CFG3_BLE_R = 1, // 1
+    ICN2053_CFG3_BLE_G = 1, // 1
+    ICN2053_CFG3_BLE_B = 1, // 1
+
+    ICN2053_CFG3_BASE = 0x04003, // taken from LED VISION
+
+    ICN2053_CFG3_R = (ICN2053_CFG3_LGWB_R << 4) + (ICN2053_CFG3_BLE_R << 2) + ICN2053_CFG3_BASE,
+    ICN2053_CFG3_G = (ICN2053_CFG3_LGWB_G << 4) + (ICN2053_CFG3_BLE_G << 2) + ICN2053_CFG3_BASE,
+    ICN2053_CFG3_B = (ICN2053_CFG3_LGWB_B << 4) + (ICN2053_CFG3_BLE_B << 2) + ICN2053_CFG3_BASE,
+};
+
+// CFG 4 register bits for ICN2053, taken from LED VISION
+enum
+{
+    ICN2053_CFG4_LGWBE_MASK = 0x4000, // low gray white balance enable(0..1): 0,1
+    ICN2053_CFG4_LGWBE_OFFSET = 14,
+    ICN2053_CFG4_LGWBE_R = 0, // 0
+    ICN2053_CFG4_LGWBE_G = 0, // 0
+    ICN2053_CFG4_LGWBE_B = 0, // 0
+
+    ICN2053_CFG4_FLO_MASK = 0x0070, // first line optimization (0..4): 0,4,5,6,7
+    ICN2053_CFG4_FLO_OFFSET = 4,
+    ICN2053_CFG4_FLO_R = 4, // 4
+    ICN2053_CFG4_FLO_G = 4, // 4
+    ICN2053_CFG4_FLO_B = 4, // 4
+
+    ICN2053_CFG4_BASE = 0x0e00, // taken from LED VISION
+
+    ICN2053_CFG4_R = (ICN2053_CFG4_LGWBE_R << 14) + (ICN2053_CFG4_FLO_R << 4) + ICN2053_CFG4_BASE,
+    ICN2053_CFG4_G = (ICN2053_CFG4_LGWBE_G << 14) + (ICN2053_CFG4_FLO_G << 4) + ICN2053_CFG4_BASE,
+    ICN2053_CFG4_B = (ICN2053_CFG4_LGWBE_B << 14) + (ICN2053_CFG4_FLO_B << 4) + ICN2053_CFG4_BASE,
+};
+
+#pragma endregion
 // end specifics
 
 // bulk pin access color, only good if pins are in right order
@@ -198,6 +312,21 @@ public:
     void fillScreenColor(uint16_t color);
     void sendTwoPixels(uint8_t redUpper, uint8_t greenUpper, uint8_t blueUpper, uint8_t redLower, uint8_t greenLower, uint8_t blueLower);
     void sendWholeRow(uint8_t redUpper, uint8_t greenUpper, uint8_t blueUpper, uint8_t redLower, uint8_t greenLower, uint8_t blueLower);
+    const uint8_t ICN_INIT_COMMAND_ID[5] = {
+        4 /*write config 1*/,
+        6 /*write config 2*/,
+        8 /*write config 3*/,
+        10 /*write config 4*/,
+        2 /*write debug config*/,
+    };
+
+    const uint16_t ICN_INIT_COMMAND_DATA[5] = {
+        4976 /*write config 1*/,
+        24027 /*write config 2*/,
+        16455 /*write config 3*/,
+        3648 /*write config 4*/,
+        8 /*write debug config*/,
+    };
 
 #ifndef PANEL_NO_BUFFER
     struct LED;
