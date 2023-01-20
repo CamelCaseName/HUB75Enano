@@ -64,6 +64,7 @@ GND GND
 
 #define MAX_COLORDEPTH 2
 #define MAX_COLOR (MAX_COLORDEPTH * MAX_COLORDEPTH - 1)
+#define MAX_ITER ((MAX_COLOR + 1) * (MAX_COLOR + 1) * (MAX_COLOR + 1))
 #define COLOR_CLAMP (255.0 / (MAX_COLOR))
 
 // ref https://roboticsbackend.com/arduino-fast-digitalwrite/#Using_direct_port_manipulation_instead_of_digitalWrite
@@ -133,6 +134,7 @@ GND GND
 
 #pragma region icn2053 // icn / fm chip specifics, hub75e with 3 row lines only
 #define PREFIX_CLOCK_COUNT 14
+#define VSYNC_CLOCK_COUNT 3
 #define CHIP_REGISTER_COUNT 5
 
 // DBGU register bits for ICN2053, taken from LEDVISON

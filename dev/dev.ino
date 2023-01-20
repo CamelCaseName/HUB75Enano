@@ -1,5 +1,6 @@
 // #define PANEL_BIG
 // #define PANEL_NO_BUFFER
+#define PANEL_ICN_LIKE_CONTROL
 #include "Panel_HUB75E.h"
 
 // create an instance of the panel
@@ -21,7 +22,7 @@ void setup()
 
 void loop()
 {
-    // panel.displayBuffer(); // makes the buffer visible and the leds all blinky blinky
+    panel.displayBuffer(); // makes the buffer visible and the leds all blinky blinky
     //    panel.fillScreenColor(1 << 11 | 0 << 5 | 0);
     //   panel.fillScreenColor(panel.BLUE);
 }

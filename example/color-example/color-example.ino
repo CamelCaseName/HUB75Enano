@@ -7,7 +7,6 @@
 Panel panel = {};
 uint8_t r = MAX_COLOR, g = MAX_COLOR, b = MAX_COLOR;
 #define SLOWDOWN 50
-#define MAX_ITER ((MAX_COLOR + 1) * (MAX_COLOR + 1) * (MAX_COLOR + 1))
 #define OFFSET_R 0
 #define OFFSET_G 10
 #define OFFSET_B 21
@@ -53,7 +52,7 @@ void loop()
 
         for (size_t j = 0; j < SLOWDOWN; j++)
         {
-            panel.fillScreenColor(FULL_TO_HIGH_COLOR(r, g, b));
+            panel.fillScreenColor(r, g, b);
         }
     }
 
