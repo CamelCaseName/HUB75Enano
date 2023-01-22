@@ -19,141 +19,25 @@ Panel::Panel()
     pinMode(OE, OUTPUT);
 }
 
-// clocks 16 times
-void sendClockSpacer16()
-{
-    CLOCK;
-    CLOCK;
-    CLOCK;
-    CLOCK;
-
-    CLOCK;
-    CLOCK;
-    CLOCK;
-    CLOCK;
-
-    CLOCK;
-    CLOCK;
-    CLOCK;
-    CLOCK;
-
-    CLOCK;
-    CLOCK;
-    CLOCK;
-    CLOCK;
-}
-
-void clearPins()
-{
-    SET_COLOR(0);
-    CLEAR_LAT;
-    CLEAR_CLK;
-    HIGH_OE;
-}
-
-void sendPrefix()
-{
-    // start latch
-    HIGH_LAT;
-    // prefix command, 14 clocks
-    for (uint8_t i = 0; i < PREFIX_CLOCK_COUNT; i++)
-    {
-        CLOCK;
-    }
-    CLEAR_LAT;
-}
-void sendVsync()
-{
-    // start latch
-    HIGH_LAT;
-    // prefix command, 14 clocks
-    for (uint8_t i = 0; i < VSYNC_CLOCK_COUNT; i++)
-    {
-        CLOCK;
-    }
-    CLEAR_LAT;
-}
-
-void sendLatch(uint8_t clocks)
-{
-    // start latch
-    HIGH_LAT;
-    // prefix command, 14 clocks
-    for (uint8_t i = 0; i < clocks; i++)
-    {
-        CLOCK;
-    }
-    CLEAR_LAT;
-}
-
-void sendRegisterConfig(uint8_t register_index, uint16_t register_data)
-{
-    //128 pixels -> 16 led per chip -> 8 chips
-    uint8_t i = 0;
-    for ( i = 0; i < 16; i++)
-    {
-        SET_COLOR(63 * ((register_data >> i) & 1));
-        CLOCK;
-    }
-    for ( i = 0; i < 16; i++)
-    {
-        SET_COLOR(63 * ((register_data >> i) & 1));
-        CLOCK;
-    }
-    for ( i = 0; i < 16; i++)
-    {
-        SET_COLOR(63 * ((register_data >> i) & 1));
-        CLOCK;
-    }
-    for ( i = 0; i < 16; i++)
-    {
-        SET_COLOR(63 * ((register_data >> i) & 1));
-        CLOCK;
-    }
-    for ( i = 0; i < 16; i++)
-    {
-        SET_COLOR(63 * ((register_data >> i) & 1));
-        CLOCK;
-    }
-    for ( i = 0; i < 16; i++)
-    {
-        SET_COLOR(63 * ((register_data >> i) & 1));
-        CLOCK;
-    }
-    for ( i = 0; i < 16; i++)
-    {
-        SET_COLOR(63 * ((register_data >> i) & 1));
-        CLOCK;
-    }
-    for ( i = 0; i < 16; i++)
-    {
-        SET_COLOR(63 * ((register_data >> i) & 1));
-        CLOCK;
-        if (register_index == 16 - i)
-            HIGH_LAT;
-    }
-    CLEAR_LAT;
-}
-
-//greatly inspired by https://github.com/SebiTimeWaster/ICN2053_ESP32_LedWall/blob/master/ICN2053_ESP32_LedWall.ino
+// greatly inspired by https://github.com/SebiTimeWaster/ICN2053_ESP32_LedWall/blob/master/ICN2053_ESP32_LedWall.ino
 void Panel::setupHUB75E()
 {
-    //todo 
+    // todo
     clearPins();
 
     sendPrefix();
-    sendLatch(12); // output enable
-    sendLatch(3); // vsync
-    sendPrefix(); // prefix
-    sendRegisterConfig(4, 4976); // config register 1
-    sendPrefix(); // prefix
+    sendLatch(12);                // output enable
+    sendLatch(3);                 // vsync
+    sendPrefix();                 // prefix
+    sendRegisterConfig(4, 4976);  // config register 1
+    sendPrefix();                 // prefix
     sendRegisterConfig(6, 24027); // config register 2
-    sendPrefix(); // prefix
+    sendPrefix();                 // prefix
     sendRegisterConfig(8, 16455); // cfg register 3
-    sendPrefix(); // prefix
+    sendPrefix();                 // prefix
     sendRegisterConfig(10, 3648); // config register 4
-    sendPrefix(); // prefix
-    sendRegisterConfig(2, 0); // debug registers
+    sendPrefix();                 // prefix
+    sendRegisterConfig(2, 0);     // debug registers
 }
 
 #ifndef PANEL_NO_BUFFER
@@ -209,7 +93,8 @@ void Panel::fillScreenColor(uint16_t c)
     }
 }
 
-void Panel::fillScreenColor(uint8_t r, uint8_t g, uint8_t b){
+void Panel::fillScreenColor(uint8_t r, uint8_t g, uint8_t b)
+{
     for (uint8_t i = 0; i < MAX_COLORDEPTH * MAX_COLORDEPTH; i++)
     {
         for (uint8_t row = 0; row < rows / 2; row++)
@@ -417,38 +302,38 @@ void Panel::setBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t 
 void Panel::displayBuffer()
 { // puts the  buffer contents onto the panel
 #ifndef PANEL_BIG
-    #ifdef PANEL_ICN_LIKE_CONTROL
+#ifdef PANEL_ICN_LIKE_CONTROL
 
-    #else
-        for (uint16_t index = 0; index < PANEL_BUFFERSIZE; index++)
+#else
+    for (uint16_t index = 0; index < PANEL_BUFFERSIZE; index++)
+    {
+        // one led struct contains bits in 3 bytes:
+        // |23  22  21  20  19  18  17  16 |15  14  13  12  11  10  9   8  |7   6   5   4   3   2   1   0  |
+        // |bl4:gl4:rl4:bu4:gu4:ru4:bl3:gl3|rl3:bu3:gu3:ru3:bl2:gl2:rl2:bu2|gu2:ru2:bl1:gl1:rl1:bu1:gu1:ru1|
+
+        // first pixels
+        SET_COLOR(*(uint8_t *)(&buffer[index]));
+        CLOCK;
+
+        // second pixels
+        SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[index])) >> 6)));
+        CLOCK;
+
+        // 3rd pixels
+        SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[index]) + sizeof(uint8_t))))) >> 4));
+        CLOCK;
+
+        // 4th pixels
+        SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 2))) >> 2));
+        CLOCK;
+
+        if ((index + 1) % PANEL_CHUNKSIZE == 0) /*16 = 64 / 4 for 4 pixels per loop iteration*/
         {
-            // one led struct contains bits in 3 bytes:
-            // |23  22  21  20  19  18  17  16 |15  14  13  12  11  10  9   8  |7   6   5   4   3   2   1   0  |
-            // |bl4:gl4:rl4:bu4:gu4:ru4:bl3:gl3|rl3:bu3:gu3:ru3:bl2:gl2:rl2:bu2|gu2:ru2:bl1:gl1:rl1:bu1:gu1:ru1|
-
-            // first pixels
-            SET_COLOR(*(uint8_t *)(&buffer[index]));
-            CLOCK;
-
-            // second pixels
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[index])) >> 6)));
-            CLOCK;
-
-            // 3rd pixels
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-
-            // 4th pixels
-            SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-
-            if ((index + 1) % PANEL_CHUNKSIZE == 0) /*16 = 64 / 4 for 4 pixels per loop iteration*/
-            {
-                SET_ROW_PINS(index / PANEL_CHUNKSIZE);
-                LATCH_DATA;
-            }
+            SET_ROW_PINS(index / PANEL_CHUNKSIZE);
+            LATCH_DATA;
         }
-    #endif
+    }
+#endif
 #else
 
     // one led struct contains bits in 6 bytes:
@@ -461,112 +346,112 @@ void Panel::displayBuffer()
     // |23    22    21    20    19    18    17    16   |15    14    13    12    11    10    9     8    |7     6     5     4     3     2     1     0    |
     // |bl4b2:gl4b2:rl4b2:bu4b2:gu4b2:ru4b2:bl4b1:gl4b1|rl4b1:bu4b1:gu4b1:ru4b1:bl3b2:gl3b2:rl3b2:bu3b2|gu3b2:ru3b2:bl3b1:gl3b1:rl3b1:bu3b1:gu3b1:ru3b1|
 
-    #ifdef PANEL_ICN_LIKE_CONTROL
-    #else
-        // msb pass 1
-        for (uint16_t index = 0; index < PANEL_BUFFERSIZE; index++)
+#ifdef PANEL_ICN_LIKE_CONTROL
+#else
+  // msb pass 1
+    for (uint16_t index = 0; index < PANEL_BUFFERSIZE; index++)
+    {
+        // first pixels
+        SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[index])) >> 6)));
+        CLOCK;
+
+        // second pixels
+        SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 2))) >> 2));
+        CLOCK;
+
+        // 3rd pixels
+        SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 3)))) >> 6));
+        CLOCK;
+
+        // 4th pixels
+        SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 5))) >> 2));
+        CLOCK;
+
+        if ((index + 1) % PANEL_CHUNKSIZE == 0)
         {
-            // first pixels
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[index])) >> 6)));
-            CLOCK;
-
-            // second pixels
-            SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-
-            // 3rd pixels
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 3)))) >> 6));
-            CLOCK;
-
-            // 4th pixels
-            SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 5))) >> 2));
-            CLOCK;
-
-            if ((index + 1) % PANEL_CHUNKSIZE == 0)
-            {
-                SET_ROW_PINS(index / PANEL_CHUNKSIZE);
-                LATCH_DATA;
-            }
+            SET_ROW_PINS(index / PANEL_CHUNKSIZE);
+            LATCH_DATA;
         }
+    }
 
-        // lsb
-        for (uint16_t index = 0; index < PANEL_BUFFERSIZE; index++)
+    // lsb
+    for (uint16_t index = 0; index < PANEL_BUFFERSIZE; index++)
+    {
+        // first pixels
+        SET_COLOR(*((uint8_t *)(&buffer[index])));
+        CLOCK;
+
+        // second pixels
+        SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[index])) + sizeof(uint8_t)))) >> 4));
+        CLOCK;
+
+        // 3rd pixels
+        SET_COLOR(*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 3)));
+        CLOCK;
+
+        // 4th pixels
+        SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 4)))) >> 4));
+        CLOCK;
+
+        if ((index + 1) % PANEL_CHUNKSIZE == 0)
         {
-            // first pixels
-            SET_COLOR(*((uint8_t *)(&buffer[index])));
-            CLOCK;
-
-            // second pixels
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[index])) + sizeof(uint8_t)))) >> 4));
-            CLOCK;
-
-            // 3rd pixels
-            SET_COLOR(*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 3)));
-            CLOCK;
-
-            // 4th pixels
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 4)))) >> 4));
-            CLOCK;
-
-            if ((index + 1) % PANEL_CHUNKSIZE == 0)
-            {
-                SET_ROW_PINS(index / PANEL_CHUNKSIZE);
-                LATCH_DATA;
-            }
+            SET_ROW_PINS(index / PANEL_CHUNKSIZE);
+            LATCH_DATA;
         }
+    }
 
-        // msb pass 2
-        for (uint16_t index = 0; index < PANEL_BUFFERSIZE; index++)
+    // msb pass 2
+    for (uint16_t index = 0; index < PANEL_BUFFERSIZE; index++)
+    {
+        // first pixels
+        SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[index])) >> 6)));
+        CLOCK;
+
+        // second pixels
+        SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 2))) >> 2));
+        CLOCK;
+
+        // 3rd pixels
+        SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 3)))) >> 6));
+        CLOCK;
+
+        // 4th pixels
+        SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 5))) >> 2));
+        CLOCK;
+
+        if ((index + 1) % PANEL_CHUNKSIZE == 0)
         {
-            // first pixels
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[index])) >> 6)));
-            CLOCK;
-
-            // second pixels
-            SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-
-            // 3rd pixels
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 3)))) >> 6));
-            CLOCK;
-
-            // 4th pixels
-            SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 5))) >> 2));
-            CLOCK;
-
-            if ((index + 1) % PANEL_CHUNKSIZE == 0)
-            {
-                SET_ROW_PINS(index / PANEL_CHUNKSIZE);
-                LATCH_DATA;
-            }
+            SET_ROW_PINS(index / PANEL_CHUNKSIZE);
+            LATCH_DATA;
         }
+    }
 
-        // msb pass 3
-        for (uint16_t index = 0; index < PANEL_BUFFERSIZE; index++)
+    // msb pass 3
+    for (uint16_t index = 0; index < PANEL_BUFFERSIZE; index++)
+    {
+        // first pixels
+        SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[index])) >> 6)));
+        CLOCK;
+
+        // second pixels
+        SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 2))) >> 2));
+        CLOCK;
+
+        // 3rd pixels
+        SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 3)))) >> 6));
+        CLOCK;
+
+        // 4th pixels
+        SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 5))) >> 2));
+        CLOCK;
+
+        if ((index + 1) % PANEL_CHUNKSIZE == 0)
         {
-            // first pixels
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[index])) >> 6)));
-            CLOCK;
-
-            // second pixels
-            SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-
-            // 3rd pixels
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 3)))) >> 6));
-            CLOCK;
-
-            // 4th pixels
-            SET_COLOR(((*(((uint8_t *)(&buffer[index])) + (sizeof(uint8_t) * 5))) >> 2));
-            CLOCK;
-
-            if ((index + 1) % PANEL_CHUNKSIZE == 0)
-            {
-                SET_ROW_PINS(index / PANEL_CHUNKSIZE);
-                LATCH_DATA;
-            }
+            SET_ROW_PINS(index / PANEL_CHUNKSIZE);
+            LATCH_DATA;
         }
-    #endif
+    }
+#endif
 #endif
 }
 

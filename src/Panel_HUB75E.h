@@ -50,6 +50,7 @@ GND GND
 /////////////////////
 // #define PANEL_BIG  // use 2 bit rgb image buffer
 // #define PANEL_CLUT // use 6 bit CLUT image buffer
+#define PANEL_ICN_LIKE_CONTROL
 /////////////////////
 #endif
 #ifndef PANEL_X
@@ -91,15 +92,16 @@ GND GND
 #define RB 15  // register selector b
 #define RC 16  // register selector c
 #define RD 17  // register selector d
+#define RE 18  // register selector d
 #define RF 2   // red first byte
-#define RS 5   // red second byte
-#define BF 4   // blue first byte
-#define BS 7   // blue second byte
 #define GF 3   // green first byte
+#define BF 4   // blue first byte
+#define RS 5   // red second byte
 #define GS 6   // green second byte
-#define LAT 18 // data latch
-#define CLK 8  // clock signal
-#define OE 19  // output enable
+#define BS 7   // blue second byte
+#define LAT 9  // data latch
+#define CLK 10 // clock signal
+#define OE 11  // output enable
 
 // pin access defines, rows
 #define HIGH_RA high_pin(PORTC, 0)
@@ -111,6 +113,12 @@ GND GND
 #define HIGH_RC high_pin(PORTC, 2)
 #define CLEAR_RC clear_pin(PORTC, 2)
 #define SET_RC(value) set_pin(PORTC, 2, value)
+#define HIGH_RD high_pin(PORTC, 3)
+#define CLEAR_RD clear_pin(PORTC, 3)
+#define SET_RD(value) set_pin(PORTC, 3, value)
+#define HIGH_RE high_pin(PORTC, 4)
+#define CLEAR_RE clear_pin(PORTC, 4)
+#define SET_RE(value) set_pin(PORTC, 4, value)
 
 // pin access defines, color
 #define HIGH_RF high_pin(PORTD, 2)
@@ -132,124 +140,6 @@ GND GND
 #define CLEAR_BS clear_pin(PORTD, 7)
 #define SET_BS(value) set_pin(PORTD, 7, value)
 
-#pragma region icn2053 // icn / fm chip specifics, hub75e with 3 row lines only
-#define PREFIX_CLOCK_COUNT 14
-#define VSYNC_CLOCK_COUNT 3
-#define CHIP_REGISTER_COUNT 5
-
-// DBGU register bits for ICN2053, taken from LEDVISON
-enum
-{
-    ICN2053_DBG_x = 0x08, //????
-};
-
-// CFG1 register bits for ICN2053, taken from LEDVISON
-enum
-{
-    ICN2053_CFG1_WOBPS_MASK = 0x4000, // bad point detection current adjusment (0..1)
-    ICN2053_CFG1_WOBPS_OFFSET = 14,
-    ICN2053_CFG1_WOBPS = 0, // 0: - sync
-
-    // the number of active driver lines - DO NOT CHANGE!!! - set during initialization via OR
-    ICN2053_CFG1_LC_MASK = 0x1F00, // line count (0..31): 1..32 - sync
-    ICN2053_CFG1_LC_OFFSET = 8,
-    ICN2053_CFG1_LC = 19, // 15:
-
-    ICN2053_CFG1_LGS_MASK = 0x00C0, // low gray spot (0..3) - sync
-    ICN2053_CFG1_LGS_OFFSET = 6,
-    ICN2053_CFG1_LGS = 1, // 1
-
-    ICN2053_CFG1_RRM_MASK = 0x0030, // refresh rate multiplayer (0..3): 1x, 2x, 4x, 8x - sync
-    ICN2053_CFG1_RRM_OFFSET = 4,
-    ICN2053_CFG1_RRM = 3, // 3
-
-    ICN2053_CFG1_PWMR_MASK = 0x0008, // PWM reverse (0..1) - sync
-    ICN2053_CFG1_PWMR_OFFSET = 3,
-    ICN2053_CFG1_PWMR = 0, // 0
-
-    ICN2053_CFG1_R = (ICN2053_CFG1_WOBPS << ICN2053_CFG1_WOBPS_OFFSET) + (ICN2053_CFG1_LC << ICN2053_CFG1_LC_OFFSET) + (ICN2053_CFG1_LGS << 6) + (ICN2053_CFG1_RRM << ICN2053_CFG1_RRM_OFFSET) + (ICN2053_CFG1_PWMR << ICN2053_CFG1_PWMR_OFFSET),
-    ICN2053_CFG1_G = ICN2053_CFG1_R,
-    ICN2053_CFG1_B = ICN2053_CFG1_R,
-};
-
-// CFG2 register bits for ICN2053, taken from LEDVISON
-enum
-{
-    // black level threshold
-    ICN2053_CFG2_BL_MASK = 0x7C00, // blanking level (0..31)
-    ICN2053_CFG2_BL_OFFSET = 10,
-    ICN2053_CFG2_BL_R = 31, // 31, //31
-    ICN2053_CFG2_BL_G = 28, // 28, //28
-    ICN2053_CFG2_BL_B = 23, // 23, //23
-
-    ICN2053_CFG2_CURRENT_MASK = 0x003E, // blanking enhancement (4..31): 13%..199%, 16 = 100%
-    ICN2053_CFG2_CURRENT_OFFSET = 1,
-    ICN2053_CFG2_CURRENT_R = 13, // 13
-    ICN2053_CFG2_CURRENT_G = 13, // 13
-    ICN2053_CFG2_CURRENT_B = 13, // 13
-
-    ICN2053_CFG2_BE_MASK = 0x0001, // blanking enhancement (0..1): 1,0
-    ICN2053_CFG2_BE_OFFSET = 0,
-    ICN2053_CFG2_BE_R = 1,             // 1
-    ICN2053_CFG2_BE_G = 1,             // 1
-    ICN2053_CFG2_BE_B = 1,             // 1
-                                       // brightness levels - obtained experimentally
-    ICN2053_CFG2_BRIGHT_MASK = 0x03E0, //(0..15): 1..16
-    ICN2053_CFG2_BRIGHT_OFFSET = 5,
-    ICN2053_CFG2_BRIGHT = 14, // 0x0380,
-
-    ICN2053_CFG2_R = (ICN2053_CFG2_BL_R << 10) + (ICN2053_CFG2_CURRENT_R << 1) + (ICN2053_CFG2_BE_R << 0) + (ICN2053_CFG2_BRIGHT << 5),
-    ICN2053_CFG2_G = (ICN2053_CFG2_BL_G << 10) + (ICN2053_CFG2_CURRENT_G << 1) + (ICN2053_CFG2_BE_G << 0) + (ICN2053_CFG2_BRIGHT << 5),
-    ICN2053_CFG2_B = (ICN2053_CFG2_BL_B << 10) + (ICN2053_CFG2_CURRENT_B << 1) + (ICN2053_CFG2_BE_B << 0) + (ICN2053_CFG2_BRIGHT << 5),
-};
-
-// CFG 3 register bits for ICN2053, taken from LED VISION
-enum
-{
-    ICN2053_CFG3_LGWB_MASK = 0x00f0, // low gray white balance (0..15): 15..0
-    ICN2053_CFG3_LGWB_OFFSET = 4,
-    ICN2053_CFG3_LGWB_R = 4, // 4
-    ICN2053_CFG3_LGWB_G = 4, // 4
-    ICN2053_CFG3_LGWB_B = 4, // 4
-
-    ICN2053_CFG3_BLE_MASK = 0x0004, // blanking level enable (0..1): 0,1
-    ICN2053_CFG3_BLE_OFFSET = 2,
-    ICN2053_CFG3_BLE_R = 1, // 1
-    ICN2053_CFG3_BLE_G = 1, // 1
-    ICN2053_CFG3_BLE_B = 1, // 1
-
-    ICN2053_CFG3_BASE = 0x04003, // taken from LED VISION
-
-    ICN2053_CFG3_R = (ICN2053_CFG3_LGWB_R << 4) + (ICN2053_CFG3_BLE_R << 2) + ICN2053_CFG3_BASE,
-    ICN2053_CFG3_G = (ICN2053_CFG3_LGWB_G << 4) + (ICN2053_CFG3_BLE_G << 2) + ICN2053_CFG3_BASE,
-    ICN2053_CFG3_B = (ICN2053_CFG3_LGWB_B << 4) + (ICN2053_CFG3_BLE_B << 2) + ICN2053_CFG3_BASE,
-};
-
-// CFG 4 register bits for ICN2053, taken from LED VISION
-enum
-{
-    ICN2053_CFG4_LGWBE_MASK = 0x4000, // low gray white balance enable(0..1): 0,1
-    ICN2053_CFG4_LGWBE_OFFSET = 14,
-    ICN2053_CFG4_LGWBE_R = 0, // 0
-    ICN2053_CFG4_LGWBE_G = 0, // 0
-    ICN2053_CFG4_LGWBE_B = 0, // 0
-
-    ICN2053_CFG4_FLO_MASK = 0x0070, // first line optimization (0..4): 0,4,5,6,7
-    ICN2053_CFG4_FLO_OFFSET = 4,
-    ICN2053_CFG4_FLO_R = 4, // 4
-    ICN2053_CFG4_FLO_G = 4, // 4
-    ICN2053_CFG4_FLO_B = 4, // 4
-
-    ICN2053_CFG4_BASE = 0x0e00, // taken from LED VISION
-
-    ICN2053_CFG4_R = (ICN2053_CFG4_LGWBE_R << 14) + (ICN2053_CFG4_FLO_R << 4) + ICN2053_CFG4_BASE,
-    ICN2053_CFG4_G = (ICN2053_CFG4_LGWBE_G << 14) + (ICN2053_CFG4_FLO_G << 4) + ICN2053_CFG4_BASE,
-    ICN2053_CFG4_B = (ICN2053_CFG4_LGWBE_B << 14) + (ICN2053_CFG4_FLO_B << 4) + ICN2053_CFG4_BASE,
-};
-
-#pragma endregion
-// end specifics
-
 // bulk pin access color, only good if pins are in right order
 #if RF == 2 and GF == 3 and BF == 4 and RS == 5 and GS == 6 and BS == 7
 // set 6 color pins and keep the rx tx pins as are
@@ -258,16 +148,22 @@ enum
 #endif
 
 // pin access defines, rest
-#define HIGH_LAT high_pin(PORTC, 4)
-#define CLEAR_LAT clear_pin(PORTC, 4)
-#define SET_LAT(value) set_pin(PORTC, 4, value)
-#define HIGH_CLK high_pin(PORTC, 5)
-#define CLEAR_CLK clear_pin(PORTC, 5)
-#define SET_CLK(value) set_pin(PORTC, 5, value)
-#define HIGH_OE high_pin(PORTB, 1)
-#define CLEAR_OE clear_pin(PORTB, 1)
-#define SET_OE(value) set_pin(PORTB, 1, value)
+#define HIGH_LAT high_pin(PORTB, 2)
+#define CLEAR_LAT clear_pin(PORTB, 2)
+#define SET_LAT(value) set_pin(PORTB, 2, value)
+#define HIGH_CLK high_pin(PORTB, 1)
+#define CLEAR_CLK clear_pin(PORTB, 1)
+#define SET_CLK(value) set_pin(PORTB, 1, value)
+#define HIGH_OE high_pin(PORTB, 3)
+#define CLEAR_OE clear_pin(PORTB, 3)
+#define SET_OE(value) set_pin(PORTB, 3, value)
+
+inline void sendScanLine(uint8_t row)
+{
+    PORTC = row | PORTC & 224;
+}
 #define SET_ROW_PINS(row) PORTC = row | PORTC & 240
+
 #define LATCH \
     HIGH_LAT; \
     CLEAR_LAT
@@ -304,6 +200,287 @@ inline void HIGH_TO_FULL_COLOR(uint16_t color, uint8_t *red, uint8_t *green, uin
     *blue = color & 31;
 }
 
+#pragma region icn2053 // icn / fm chip specifics, hub75e with 3 row lines only
+#define PREFIX_CLOCK_COUNT 14
+#define VSYNC_CLOCK_COUNT 3
+#define CHIP_REGISTER_COUNT 5
+
+// clocks 16 times
+inline void sendClockSpacer16()
+{
+    CLOCK;
+    CLOCK;
+    CLOCK;
+    CLOCK;
+
+    CLOCK;
+    CLOCK;
+    CLOCK;
+    CLOCK;
+
+    CLOCK;
+    CLOCK;
+    CLOCK;
+    CLOCK;
+
+    CLOCK;
+    CLOCK;
+    CLOCK;
+    CLOCK;
+}
+
+inline void clearPins()
+{
+    SET_COLOR(0);
+    CLEAR_LAT;
+    CLEAR_CLK;
+    HIGH_OE;
+}
+
+inline void sendPWMClock()
+{
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 10
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 20
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 30
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 40
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 50
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 60
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 70
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 80
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 90
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 100
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 110
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 120
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 130
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    OUTPUT_ENABLE;
+    // 138 clocks
+}
+
+inline void sendPrefix()
+{
+    // start latch
+    HIGH_LAT;
+    // prefix command, 14 clocks
+    for (uint8_t i = 0; i < PREFIX_CLOCK_COUNT; i++)
+    {
+        CLOCK;
+    }
+    CLEAR_LAT;
+}
+
+inline void sendVsync()
+{
+    // start latch
+    HIGH_LAT;
+    // prefix command, 14 clocks
+    for (uint8_t i = 0; i < VSYNC_CLOCK_COUNT; i++)
+    {
+        CLOCK;
+    }
+    CLEAR_LAT;
+}
+
+inline void sendLatch(uint8_t clocks)
+{
+    // start latch
+    HIGH_LAT;
+    // prefix command, 14 clocks
+    for (uint8_t i = 0; i < clocks; i++)
+    {
+        CLOCK;
+    }
+    CLEAR_LAT;
+}
+
+inline void sendRegisterConfig(uint8_t register_index, uint16_t register_data)
+{
+    // 128 pixels -> 16 led per chip -> 8 chips
+    uint8_t i = 0;
+    for (i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for (i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for (i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for (i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for (i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for (i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for (i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+    }
+    for (i = 0; i < 16; i++)
+    {
+        SET_COLOR(63 * ((register_data >> i) & 1));
+        CLOCK;
+        if (register_index == 16 - i)
+            HIGH_LAT;
+    }
+    CLEAR_LAT;
+}
+// for config register explanation, see https://github.com/LAutour/ESP32-HUB75-MatrixPanel-DMA-ICN2053/blob/main/ESP32-HUB75-MatrixPanel-DMA-leddrivers.h
+#pragma endregion
+// end specifics
+
 class Panel
 {
 public:
@@ -312,6 +489,7 @@ public:
     void selectLine(uint8_t lineIndex);
     void fillScreenShift(uint8_t s, uint8_t f, uint8_t o);
     void fillScreenColor(uint16_t color);
+    void fillScreenColor(uint8_t r, uint8_t g, uint8_t b);
     void sendTwoPixels(uint8_t redUpper, uint8_t greenUpper, uint8_t blueUpper, uint8_t redLower, uint8_t greenLower, uint8_t blueLower);
     void sendWholeRow(uint8_t redUpper, uint8_t greenUpper, uint8_t blueUpper, uint8_t redLower, uint8_t greenLower, uint8_t blueLower);
     const uint8_t ICN_INIT_COMMAND_ID[5] = {
