@@ -3,7 +3,7 @@
   Panel.h can be used to display stuff on a hub75 panel with up to 32 x 64 pixels
   designed for ARDUINO NANO.
 
-  (c) Leonhard Seidel, 2022
+  (c) Leonhard Seidel, 2023
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,12 @@
 */
 
 // many thanks to LAutour/ElectronicsInFocus for his ESP32-HUB75-MatrixPanel-DMA library, was a great help in getting the initialization to work
+// also shout out to sebitimewaster for his implementation on the esp32 as an arduino sketch
+// and http://kuku.eu.org/?projects/hub75e/index for reverse engineering the row selection shift registers.
+
+// row shift registers: A-> CLK   B-> OE    C-> SIN
+
+// 4 SM5368 in series, in 2 rows gives the 8 we find on the board. they just shift form 1st to 32nd output, in parallel for bottom and top -> 64 rows total, just like standard hub75
 
 /*
 Pin mapping:
@@ -51,6 +57,7 @@ GND GND
 // #define PANEL_BIG  // use 2 bit rgb image buffer
 // #define PANEL_CLUT // use 6 bit CLUT image buffer
 #define PANEL_ICN_LIKE_CONTROL
+// #define PANEL_RGB_FLIPPED_TO_BGR
 /////////////////////
 #endif
 #ifndef PANEL_X
@@ -177,6 +184,30 @@ inline void sendScanLine(uint8_t row)
     LATCH;         \
     OUTPUT_ENABLE
 
+#ifdef PANEL_RGB_FLIPPED_TO_BGR
+constexpr uint16_t FULL_TO_HIGH_COLOR(uint8_t r, uint8_t g, uint8_t b)
+{
+    return (((b & 31) << 11) | ((g & 63) << 5) | (r & 31));
+}
+constexpr uint16_t FULL_TO_HIGH_COLOR_FULL(uint8_t r, uint8_t g, uint8_t b)
+{
+    return ((int)(((double)b / 255) + 0.5) << 11) | ((int)(((double)g / 255) + 0.5) << 5) | (int)(((double)r / 255) + 0.5);
+}
+constexpr uint16_t FULL_TO_HIGH_COLOR_CLAMPED(uint8_t r, uint8_t g, uint8_t b)
+{
+    return ((int)(((double)b / COLOR_CLAMP) + 0.5) << 11) | ((int)(((double)g / COLOR_CLAMP) + 0.5) << 5) | (int)(((double)r / COLOR_CLAMP) + 0.5);
+}
+constexpr uint16_t FULL_TO_HIGH_COLORF(float r, float g, float b)
+{
+    return (((int)(b * MAX_COLOR + 0.5f)) << 11) | ((int)((g * MAX_COLOR + 0.5f)) << 5) | (int)((r * MAX_COLOR) + 0.5f);
+}
+inline void HIGH_TO_FULL_COLOR(uint16_t color, uint8_t *red, uint8_t *green, uint8_t *blue)
+{
+    *blue = (color >> 11) & 31;
+    *green = (color >> 5) & 63;
+    *red = color & 31;
+}
+#else
 constexpr uint16_t FULL_TO_HIGH_COLOR(uint8_t r, uint8_t g, uint8_t b)
 {
     return (((r & 31) << 11) | ((g & 63) << 5) | (b & 31));
@@ -199,6 +230,7 @@ inline void HIGH_TO_FULL_COLOR(uint16_t color, uint8_t *red, uint8_t *green, uin
     *green = (color >> 5) & 63;
     *blue = color & 31;
 }
+#endif
 
 #pragma region icn2053 // icn / fm chip specifics, hub75e with 3 row lines only
 #define PREFIX_CLOCK_COUNT 14
@@ -429,6 +461,17 @@ inline void sendLatch(uint8_t clocks)
     CLEAR_LAT;
 }
 
+inline void sendOE(uint8_t clocks)
+{
+    // start latch
+    HIGH_OE;
+    for (uint8_t i = 0; i < clocks; i++)
+    {
+        CLOCK;
+    }
+    CLEAR_OE;
+}
+
 inline void sendRegisterConfig(uint8_t register_index, uint16_t register_data)
 {
     // 128 pixels -> 16 led per chip -> 8 chips
@@ -628,22 +671,20 @@ public:
         PURPLE = FULL_TO_HIGH_COLOR(255, 0, 255),
         YELLOW = FULL_TO_HIGH_COLOR(255, 255, 0),
         CYAN = FULL_TO_HIGH_COLOR(0, 255, 255),
-        DARKRED = FULL_TO_HIGH_COLOR(128, 0, 0),
-        DARKGREEN = FULL_TO_HIGH_COLOR(0, 128, 0),
-        DARKBLUE = FULL_TO_HIGH_COLOR(0, 0, 128),
-        DARKWHITE = FULL_TO_HIGH_COLOR(128, 128, 128),
-        DARKBLACK = FULL_TO_HIGH_COLOR(0, 0, 0),
-        DARKPURPLE = FULL_TO_HIGH_COLOR(128, 0, 128),
-        DARKYELLOW = FULL_TO_HIGH_COLOR(128, 128, 0),
-        DARKCYAN = FULL_TO_HIGH_COLOR(0, 128, 128),
-        DARKERRED = FULL_TO_HIGH_COLOR(64, 0, 0),
-        DARKERGREEN = FULL_TO_HIGH_COLOR(0, 64, 0),
-        DARKERBLUE = FULL_TO_HIGH_COLOR(0, 0, 64),
-        DARKERWHITE = FULL_TO_HIGH_COLOR(64, 64, 64),
-        DARKERBLACK = FULL_TO_HIGH_COLOR(0, 0, 0),
-        DARKERPURPLE = FULL_TO_HIGH_COLOR(64, 0, 64),
-        DARKERYELLOW = FULL_TO_HIGH_COLOR(64, 64, 0),
-        DARKERCYAN = FULL_TO_HIGH_COLOR(0, 64, 64),
+        DARKRED = FULL_TO_HIGH_COLOR(127, 0, 0),
+        DARKGREEN = FULL_TO_HIGH_COLOR(0, 127, 0),
+        DARKBLUE = FULL_TO_HIGH_COLOR(0, 0, 127),
+        DARKWHITE = FULL_TO_HIGH_COLOR(127, 127, 127),
+        DARKPURPLE = FULL_TO_HIGH_COLOR(127, 0, 127),
+        DARKYELLOW = FULL_TO_HIGH_COLOR(127, 127, 0),
+        DARKCYAN = FULL_TO_HIGH_COLOR(0, 127, 127),
+        DARKERRED = FULL_TO_HIGH_COLOR(63, 0, 0),
+        DARKERGREEN = FULL_TO_HIGH_COLOR(0, 63, 0),
+        DARKERBLUE = FULL_TO_HIGH_COLOR(0, 0, 63),
+        DARKERWHITE = FULL_TO_HIGH_COLOR(63, 63, 63),
+        DARKERPURPLE = FULL_TO_HIGH_COLOR(63, 0, 63),
+        DARKERYELLOW = FULL_TO_HIGH_COLOR(63, 63, 0),
+        DARKERCYAN = FULL_TO_HIGH_COLOR(0, 63, 63),
     };
     uint8_t rows = 0, coloumns = 0, halfbsize = 0;
     uint8_t lower = 0, row = 0, red = 0, green = 0, blue = 0;

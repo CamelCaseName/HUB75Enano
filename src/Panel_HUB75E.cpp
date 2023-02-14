@@ -24,20 +24,21 @@ void Panel::setupHUB75E()
 {
     // todo
     clearPins();
-
+    HIGH_OE;
     sendPrefix();
-    sendLatch(12);                // output enable
-    sendLatch(3);                 // vsync
-    sendPrefix();                 // prefix
-    sendRegisterConfig(4, 4976);  // config register 1
-    sendPrefix();                 // prefix
-    sendRegisterConfig(6, 24027); // config register 2
-    sendPrefix();                 // prefix
-    sendRegisterConfig(8, 16455); // cfg register 3
-    sendPrefix();                 // prefix
-    sendRegisterConfig(10, 3648); // config register 4
-    sendPrefix();                 // prefix
-    sendRegisterConfig(2, 0);     // debug registers
+    sendLatch(12);                          // output enable
+    sendLatch(3);                           // vsync
+    sendPrefix();                           // prefix
+    sendRegisterConfig(4, 8048 /*4976*/);   // config register 1
+    sendPrefix();                           // prefix
+    sendRegisterConfig(6, 65535 /*24027*/); // config register 2
+    sendPrefix();                           // prefix
+    sendRegisterConfig(8, 16627 /*16455*/); // config register 1
+    sendPrefix();                           // prefix
+    sendRegisterConfig(10, 0 /*3648*/);     // config register 2
+    sendPrefix();                           // prefix
+    sendRegisterConfig(2, 0 /*8*/);         // config register 2
+    CLEAR_OE;
 }
 
 #ifndef PANEL_NO_BUFFER
