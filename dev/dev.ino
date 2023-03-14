@@ -11,11 +11,13 @@ uint8_t row = 0;
 
 void setup()
 {
-    panel.setupHUB75E();
+    // panel.setupHUB75E();
     panel.fillBuffer(panel.BLACK);
 
-    panel.drawRect(0, 0, 0, 1, panel.RED, true);
-    panel.drawRect(4, 0, 4, 1, panel.BLUE, true);
+    // panel.drawRect(0, 1, 0, 1, panel.RED, true);
+    // panel.drawRect(4, 0, 4, 0, panel.BLUE, true);
+    panel.drawRect(0, 0, 0, 0, panel.WHITE, true);
+    // panel.drawRect(63, 31, 63, 31, panel.WHITE, true);
     /*panel.drawRect(0, 0, 5, 10, panel.YELLOW, true);    // yellow filled rectangle top left
     panel.drawRect(25, 16, 29, 23, panel.GREEN, false); // green hollow rectangle somewhere in the middle
     panel.drawLine(6, 0, 63, 31, panel.WHITE);          // white diagonal through nearly the whole frame
@@ -63,22 +65,19 @@ void loop()
     uint8_t current_pixel = 0;
     for (uint8_t y = 0; y < 32; y++) // 32 rows
     {
-        stepRow();                       // sends 0-N scan lines in every 2 (4 combined) data lines
-        for (uint8_t x = 0; x < 16; x++) // 16 chip outputs
+        stepRow();                               // advance 1 in row once we are done with one
+        for (uint8_t chip = 0; chip < 8; chip++) // 8 chips
         {
-            // sendScanLine(y % 2 * 32 / 2 + x); // sends 0-N scan lines in every 2 (4 combined) data lines
-            // sendOE(10);
-            sendPWMClock(); // send 138 (16*8 + 10) clock cycles for PWM generation inside the chips
+            basic_index = y * 16 + chip * 2; // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2)
 
-            basic_index = ((y / 2) * 64 + (x / 2)) / 4;
-
-            for (uint8_t sect = 0; sect < 8; sect++) // 8 chips per panel, left to right
+            for (uint8_t led = 0; led < 16; led++) // 16 led per chip
             {
-                // we set first pixel of each chip one by one, so we jump over 16 pixels per sect
-                index = basic_index + sect * 2;
+                // we set first pixel of each chip one by one, so we jump over 16 pixels per chip
 
-                // sendOE(16);
-                switch (x % 4)
+                index = basic_index + led / 8;
+
+                /*
+                switch ((led / 2) & 3) // 2 led are the same, then we advance one, basically (led / 2) % 4
                 {
                 case 0:
                 {
@@ -101,26 +100,23 @@ void loop()
                     break;
                 }
                 }
+                */
+                if (y < 2 && chip == 0 && led == 1)
+                    current_pixel = panel.WHITE & 56;
+                else
+                    current_pixel = 0;
 
                 SET_COLOR(current_pixel);
-                CLOCK;
-                SET_COLOR(current_pixel);
-                CLOCK;
 
-                // latch on end of "line" (all 8 chips had 16 bits written to them)
-                if (sect == 7)
-                {
-                    HIGH_LAT;
-                    CLEAR_LAT;
-                    // oe to low so the outputs toggle on
-                    CLEAR_OE;
-                    CLOCK;
-                    HIGH_OE;
-                }
+                HIGH_LAT;
+                CLOCK;
+                CLEAR_LAT;
             }
+            OUTPUT_ENABLE; // todo replace by hardware clock. yeeeesss
         }
-        // panel.displayBuffer(); // makes the buffer visible and the leds all blinky blinky
-        //      panel.fillScreenColor(1 << 11 | 0 << 5 | 0);
-        //     panel.fillScreenColor(panel.BLUE);
+        HIGH_LAT;
+        CLOCK;
+        CLOCK;
+        CLEAR_LAT;
     }
 }
