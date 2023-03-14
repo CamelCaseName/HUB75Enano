@@ -54,9 +54,7 @@ dkms.conf
 #custom
 \.vscode
 \.dev
-\dev
 *.ps
 *.wfm
 *.ult
 *.bmp
-dev/dev.ino
