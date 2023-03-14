@@ -23,6 +23,10 @@
 // many thanks to LAutour/ElectronicsInFocus for his ESP32-HUB75-MatrixPanel-DMA library, was a great help in getting the initialization to work
 // also shout out to sebitimewaster for his implementation on the esp32 as an arduino sketch
 // and http://kuku.eu.org/?projects/hub75e/index for reverse engineering the row selection shift registers.
+// i also retraced them and came to the same conclusion, so i can be very certain that the chips are equivalent, led drivers and row drivers
+
+// BIGGEST help overall was the stp1612pw05 datasheet, i found this chip and its datasheet after searching for comparable chips
+// and it has a full description of everything we need to control those chips
 
 // row shift registers: A-> CLK   B-> OE    C-> SIN
 

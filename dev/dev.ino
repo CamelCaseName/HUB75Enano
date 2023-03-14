@@ -13,10 +13,9 @@ void setup()
 {
     panel.setupHUB75E();
     panel.fillBuffer(panel.BLACK);
-    panel.drawRect(0, 0, 0, 1, panel.YELLOW, true);
-    panel.drawRect(1, 0, 1, 1, panel.BLUE, true);
-    panel.drawRect(2, 0, 2, 1, panel.RED, true);
-    panel.drawRect(3, 0, 3, 1, panel.GREEN, true);
+
+    panel.drawRect(0, 0, 0, 1, panel.RED, true);
+    panel.drawRect(4, 0, 4, 1, panel.BLUE, true);
     /*panel.drawRect(0, 0, 5, 10, panel.YELLOW, true);    // yellow filled rectangle top left
     panel.drawRect(25, 16, 29, 23, panel.GREEN, false); // green hollow rectangle somewhere in the middle
     panel.drawLine(6, 0, 63, 31, panel.WHITE);          // white diagonal through nearly the whole frame
@@ -69,15 +68,13 @@ void loop()
         {
             // sendScanLine(y % 2 * 32 / 2 + x); // sends 0-N scan lines in every 2 (4 combined) data lines
             // sendOE(10);
-            // sendPWMClock(); // send 138 (16*8 + 10) clock cycles for PWM generation inside the chips
-            HIGH_OE;
+            sendPWMClock(); // send 138 (16*8 + 10) clock cycles for PWM generation inside the chips
 
             basic_index = ((y / 2) * 64 + (x / 2)) / 4;
 
             for (uint8_t sect = 0; sect < 8; sect++) // 8 chips per panel, left to right
             {
                 // we set first pixel of each chip one by one, so we jump over 16 pixels per sect
-
                 index = basic_index + sect * 2;
 
                 // sendOE(16);
