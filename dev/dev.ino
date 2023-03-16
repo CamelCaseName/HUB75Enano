@@ -14,11 +14,7 @@ void setup()
     // panel.setupHUB75E();
     panel.fillBuffer(panel.BLACK);
 
-    panel.drawRect(0, 1, 0, 1, panel.RED, true);
-    panel.drawRect(4, 0, 4, 0, panel.BLUE, true);
-    panel.drawRect(0, 0, 0, 0, panel.WHITE, true);
-    panel.drawRect(63, 31, 63, 31, panel.WHITE, true);
-    panel.drawRect(0, 0, 5, 10, panel.YELLOW, true);    // yellow filled rectangle top left
+    panel.drawRect(0, 0, 5, 31, panel.YELLOW, true);    // yellow filled rectangle top left
     panel.drawRect(25, 16, 29, 23, panel.GREEN, false); // green hollow rectangle somewhere in the middle
     panel.drawLine(6, 0, 63, 31, panel.WHITE);          // white diagonal through nearly the whole frame
     panel.drawCircle(50, 10, 5, panel.BLUE, false);     // hollow blue circle top right
@@ -65,20 +61,19 @@ void loop()
     uint8_t current_pixel = 0;
     for (uint8_t y = 0; y < 32; y++) // 32 rows
     {
-        stepRow();
         // bitness needs to be between 1 and 12, changes sent bitdepth. the lower, the faster
-        for (uint8_t bitness = 0; bitness < 2; bitness++)
+        for (uint8_t bitness = 0; bitness < 1; bitness++)
         {
             // advance 1 in row once we are done with one
             for (uint8_t chip = 0; chip < 8; chip++) // 8 chips
             {
-                basic_index = (y * 8) + (chip * 1); // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2)
+                basic_index = ((y >> 1) * 16) + (chip * 2); // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2)
 
                 for (uint8_t led = 0; led < 16; led++) // 16 led per chip
                 {
 
                     // todo: calculate offset correctly
-                    index = basic_index;
+                    index = basic_index + (led / 8);
 
                     switch ((led / 2) % 4) // 2 led are the same, then we advance one, basically (led / 2) % 4
                     {
@@ -104,9 +99,8 @@ void loop()
                     }
                     }
                     // reads color on falling edge it seems?
-                    HIGH_CLK;
                     SET_COLOR(current_pixel);
-                    CLEAR_CLK;
+                    CLOCK;
                 }
                 OUTPUT_ENABLE; // todo replace by hardware clock. yeeeesss
             }
@@ -121,5 +115,10 @@ void loop()
         CLOCK;
         CLOCK;
         CLEAR_LAT;
+
+        // 3 clocks too much in the last row?
+        stepRow();
+
+        // todo fix ghosting, one row under leds
     }
 }
