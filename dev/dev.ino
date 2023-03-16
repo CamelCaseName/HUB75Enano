@@ -65,55 +65,64 @@ void loop()
     uint8_t current_pixel = 0;
     for (uint8_t y = 0; y < 32; y++) // 32 rows
     {
-        stepRow();                               // advance 1 in row once we are done with one
-        for (uint8_t chip = 0; chip < 8; chip++) // 8 chips
+        stepRow();
+        for (uint8_t bitness = 0; bitness < 12; bitness++)
         {
-            basic_index = y * 16 + chip * 2; // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2)
-
-            for (uint8_t led = 0; led < 16; led++) // 16 led per chip
+            // advance 1 in row once we are done with one
+            for (uint8_t chip = 0; chip < 8; chip++) // 8 chips
             {
-                // we set first pixel of each chip one by one, so we jump over 16 pixels per chip
+                basic_index = y * 16 + chip * 2; // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2)
 
-                index = basic_index + led / 8;
+                for (uint8_t led = 0; led < 16; led++) // 16 led per chip
+                {
+                    // we set first pixel of each chip one by one, so we jump over 16 pixels per chip
 
-                /*
-                switch ((led / 2) & 3) // 2 led are the same, then we advance one, basically (led / 2) % 4
-                {
-                case 0:
-                {
-                    current_pixel = *(uint8_t *)(&panel.buffer[index]);
-                    break;
-                }
-                case 1:
-                {
-                    current_pixel = (uint8_t)((*((uint16_t *)(&panel.buffer[index])) >> 6));
-                    break;
-                }
-                case 2:
-                {
-                    current_pixel = (uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[index]) + sizeof(uint8_t))))) >> 4);
-                    break;
-                }
-                case 3:
-                {
-                    current_pixel = ((*(((uint8_t *)(&panel.buffer[index])) + (sizeof(uint8_t) * 2))) >> 2);
-                    break;
-                }
-                }
-                */
-                if (y < 2 && chip == 0 && led == 1)
-                    current_pixel = panel.WHITE & 56;
-                else
-                    current_pixel = 0;
+                    index = basic_index + led / 8;
 
-                SET_COLOR(current_pixel);
+                    /*
+                    switch ((led / 2) & 3) // 2 led are the same, then we advance one, basically (led / 2) % 4
+                    {
+                    case 0:
+                    {
+                        current_pixel = *(uint8_t *)(&panel.buffer[index]);
+                        break;
+                    }
+                    case 1:
+                    {
+                        current_pixel = (uint8_t)((*((uint16_t *)(&panel.buffer[index])) >> 6));
+                        break;
+                    }
+                    case 2:
+                    {
+                        current_pixel = (uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[index]) + sizeof(uint8_t))))) >> 4);
+                        break;
+                    }
+                    case 3:
+                    {
+                        current_pixel = ((*(((uint8_t *)(&panel.buffer[index])) + (sizeof(uint8_t) * 2))) >> 2);
+                        break;
+                    }
+                    }
+                    */
+                    // todo find out how to confirm the led data to one chip? seems we set the same chip and then iterate by led in blocks over all??
+                    if (y < 2 && chip == 0 && led == 1)
+                        current_pixel = 9; // blue
+                    else
+                        current_pixel = 0;
 
-                HIGH_LAT;
-                CLOCK;
-                CLEAR_LAT;
+                    // reads color on falling edge it seems?
+                    HIGH_CLK;
+                    SET_COLOR(current_pixel);
+                    CLEAR_CLK;
+                    OUTPUT_ENABLE; // todo replace by hardware clock. yeeeesss
+                }
             }
-            OUTPUT_ENABLE; // todo replace by hardware clock. yeeeesss
+            // latch data from shift registers to latch register, "buffer" for global release to pwm
+            HIGH_LAT;
+            CLOCK;
+            CLEAR_LAT;
         }
+        // display row once done, so move data from latch registers to pwm modules
         HIGH_LAT;
         CLOCK;
         CLOCK;
