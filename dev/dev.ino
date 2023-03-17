@@ -55,9 +55,7 @@ void stepRow()
 
 void loop()
 {
-    uint16_t index = 0;
     uint16_t basic_index = 0;
-    uint8_t current_pixel = 0;
     for (uint8_t y = 0; y < 32; y++) // 32 rows
     {
         CLEAR_OE;
@@ -71,35 +69,50 @@ void loop()
 
                 for (uint8_t led = 0; led < 16; led++) // 16 led per chip
                 {
-
-                    index = basic_index + (led / 8);
-
-                    // todo potentially opimize modulo away?
-                    switch ((led / 2) % 4) // 2 led are the same, then we advance one, basically (led / 2) % 4
+                    switch (led / 2) // 2 led are the same, then we advance one, basically (led / 2) % 4
                     {
                     case 0:
                     {
-                        current_pixel = *(uint8_t *)(&panel.buffer[index]);
+                        SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index]));
                         break;
                     }
                     case 1:
                     {
-                        current_pixel = (uint8_t)((*((uint16_t *)(&panel.buffer[index])) >> 6));
+                        SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index])) >> 6)));
                         break;
                     }
                     case 2:
                     {
-                        current_pixel = (uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[index]) + sizeof(uint8_t))))) >> 4);
+                        SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
                         break;
                     }
                     case 3:
                     {
-                        current_pixel = ((*(((uint8_t *)(&panel.buffer[index])) + (sizeof(uint8_t) * 2))) >> 2);
+                        SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+                        break;
+                    }
+                    case 4:
+                    {
+                        SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index + 1]));
+                        break;
+                    }
+                    case 5:
+                    {
+                        SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index + 1])) >> 6)));
+                        break;
+                    }
+                    case 6:
+                    {
+                        SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+                        break;
+                    }
+                    case 7:
+                    {
+                        SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
                         break;
                     }
                     }
                     // reads color on falling edge it seems?
-                    SET_COLOR(current_pixel);
                     CLOCK;
                 }
             }
