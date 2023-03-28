@@ -22,6 +22,7 @@ void setup()
     panel.drawCircle(11, 25, 5, panel.RED, true);       // filled cyan circle bottom left
     panel.drawEllipse(30, 6, 6, 3, panel.GREEN, false);
     panel.drawEllipse(61, 19, 2, 7, panel.PURPLE, true);
+    panel.drawChar(7, 12, 'b', panel.PURPLE);
 }
 
 void stepRow()
@@ -65,6 +66,8 @@ void loop()
             // advance 1 in row once we are done with one
             for (uint8_t chip = 0; chip < 8; chip++) // 8 chips
             {
+                // todo: first 2 led, so first buffer entry are swallowed somewhere
+
                 basic_index = ((y >> 1) * 16) + (chip * 2); // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2)
 
                 for (uint8_t led = 0; led < 16; led++) // 16 led per chip
@@ -112,15 +115,19 @@ void loop()
                         break;
                     }
                     }
-                    // reads color on falling edge it seems?
-                    CLOCK;
+                    if (chip == 7 && led >= 13)
+                        ;
+                    else
+                        CLOCK;
                 }
             }
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
             // latch data from shift registers to latch register, "buffer" for global release to pwm
             HIGH_LAT;
             CLOCK;
             CLEAR_LAT;
         }
+        SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
         HIGH_OE;
         // display row once done, so move data from latch registers to pwm modules
         HIGH_LAT;
