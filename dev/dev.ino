@@ -59,82 +59,419 @@ void loop()
     uint16_t basic_index = 0;
     for (uint8_t y = 0; y < 32; y++) // 32 rows
     {
-        CLEAR_OE;
+        HIGH_OE;
+        stepRow();
         // bitness needs to be between 1 and 12, changes sent bitdepth. the lower, the faster
         for (uint8_t bitness = 0; bitness < 2; bitness++)
         {
             // advance 1 in row once we are done with one
-            for (uint8_t chip = 0; chip < 8; chip++) // 8 chips
+            // todo: first 2 led, so first buffer entry are swallowed somewhere
+
+            basic_index = ((y >> 1) * 16); // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2)
+
+            // chip 0
+            for (uint8_t led = 0; led < 16; led++) // 16 led per chip
             {
-                // todo: first 2 led, so first buffer entry are swallowed somewhere
-
-                basic_index = ((y >> 1) * 16) + (chip * 2); // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2)
-
-                for (uint8_t led = 0; led < 16; led++) // 16 led per chip
+                switch (led / 2) // 2 led are the same, then we advance one, basically (led / 2) % 4
                 {
-                    switch (led / 2) // 2 led are the same, then we advance one, basically (led / 2) % 4
-                    {
-                    case 0:
-                    {
-                        SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index]));
-                        break;
-                    }
-                    case 1:
-                    {
-                        SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index])) >> 6)));
-                        break;
-                    }
-                    case 2:
-                    {
-                        SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-                        break;
-                    }
-                    case 3:
-                    {
-                        SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-                        break;
-                    }
-                    case 4:
-                    {
-                        SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index + 1]));
-                        break;
-                    }
-                    case 5:
-                    {
-                        SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index + 1])) >> 6)));
-                        break;
-                    }
-                    case 6:
-                    {
-                        SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
-                        break;
-                    }
-                    case 7:
-                    {
-                        SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
-                        break;
-                    }
-                    }
-                    if (chip == 7 && led >= 13)
-                        ;
-                    else
-                        CLOCK;
+                case 0:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index]));
+                    break;
                 }
+                case 1:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index])) >> 6)));
+                    break;
+                }
+                case 2:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 3:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                case 4:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index + 1]));
+                    break;
+                }
+                case 5:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index + 1])) >> 6)));
+                    break;
+                }
+                case 6:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 7:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                }
+                CLOCK;
             }
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
-            // latch data from shift registers to latch register, "buffer" for global release to pwm
+            basic_index += 2;
+            // chip 1
+            for (uint8_t led = 0; led < 16; led++) // 16 led per chip
+            {
+                switch (led / 2) // 2 led are the same, then we advance one, basically (led / 2) % 4
+                {
+                case 0:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index]));
+                    break;
+                }
+                case 1:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index])) >> 6)));
+                    break;
+                }
+                case 2:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 3:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                case 4:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index + 1]));
+                    break;
+                }
+                case 5:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index + 1])) >> 6)));
+                    break;
+                }
+                case 6:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 7:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                }
+                CLOCK;
+            }
+            basic_index += 2;
+            // chip 2
+            for (uint8_t led = 0; led < 16; led++) // 16 led per chip
+            {
+                switch (led / 2) // 2 led are the same, then we advance one, basically (led / 2) % 4
+                {
+                case 0:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index]));
+                    break;
+                }
+                case 1:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index])) >> 6)));
+                    break;
+                }
+                case 2:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 3:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                case 4:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index + 1]));
+                    break;
+                }
+                case 5:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index + 1])) >> 6)));
+                    break;
+                }
+                case 6:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 7:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                }
+                CLOCK;
+            }
+            basic_index += 2;
+            // chip 3
+            for (uint8_t led = 0; led < 16; led++) // 16 led per chip
+            {
+                switch (led / 2) // 2 led are the same, then we advance one, basically (led / 2) % 4
+                {
+                case 0:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index]));
+                    break;
+                }
+                case 1:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index])) >> 6)));
+                    break;
+                }
+                case 2:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 3:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                case 4:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index + 1]));
+                    break;
+                }
+                case 5:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index + 1])) >> 6)));
+                    break;
+                }
+                case 6:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 7:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                }
+                CLOCK;
+            }
+            basic_index += 2;
+            // chip 4
+            for (uint8_t led = 0; led < 16; led++) // 16 led per chip
+            {
+                switch (led / 2) // 2 led are the same, then we advance one, basically (led / 2) % 4
+                {
+                case 0:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index]));
+                    break;
+                }
+                case 1:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index])) >> 6)));
+                    break;
+                }
+                case 2:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 3:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                case 4:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index + 1]));
+                    break;
+                }
+                case 5:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index + 1])) >> 6)));
+                    break;
+                }
+                case 6:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 7:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                }
+                CLOCK;
+            }
+            basic_index += 2;
+            // chip 5
+            for (uint8_t led = 0; led < 16; led++) // 16 led per chip
+            {
+                switch (led / 2) // 2 led are the same, then we advance one, basically (led / 2) % 4
+                {
+                case 0:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index]));
+                    break;
+                }
+                case 1:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index])) >> 6)));
+                    break;
+                }
+                case 2:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 3:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                case 4:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index + 1]));
+                    break;
+                }
+                case 5:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index + 1])) >> 6)));
+                    break;
+                }
+                case 6:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 7:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                }
+                CLOCK;
+            }
+            basic_index += 2;
+            // chip 6
+            for (uint8_t led = 0; led < 16; led++) // 16 led per chip
+            {
+                switch (led / 2) // 2 led are the same, then we advance one, basically (led / 2) % 4
+                {
+                case 0:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index]));
+                    break;
+                }
+                case 1:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index])) >> 6)));
+                    break;
+                }
+                case 2:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 3:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                case 4:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index + 1]));
+                    break;
+                }
+                case 5:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index + 1])) >> 6)));
+                    break;
+                }
+                case 6:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 7:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                }
+                CLOCK;
+            }
+            basic_index += 2;
+            // chip 7
+            for (uint8_t led = 0; led < 15; led++) // 16 led per chip
+            {
+                switch (led / 2) // 2 led are the same, then we advance one, basically (led / 2) % 4
+                {
+                case 0:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index]));
+                    break;
+                }
+                case 1:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index])) >> 6)));
+                    break;
+                }
+                case 2:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 3:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                case 4:
+                {
+                    SET_COLOR(*(uint8_t *)(&panel.buffer[basic_index + 1]));
+                    break;
+                }
+                case 5:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(&panel.buffer[basic_index + 1])) >> 6)));
+                    break;
+                }
+                case 6:
+                {
+                    SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&panel.buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+                    break;
+                }
+                case 7:
+                {
+                    SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+                    break;
+                }
+                }
+                CLOCK;
+            }
+            //  latch data from shift registers to latch register, "buffer" for global release to pwm
             HIGH_LAT;
             CLOCK;
             CLEAR_LAT;
         }
-        SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
-        HIGH_OE;
-        // display row once done, so move data from latch registers to pwm modules
+        // SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+
+        CLEAR_OE;
+        //  display row once done, so move data from latch registers to pwm modules
         HIGH_LAT;
         CLOCK;
         CLOCK;
         CLEAR_LAT;
-
-        stepRow();
     }
 }
