@@ -68,7 +68,6 @@ void loop()
         for (uint8_t bitness = 0; bitness < 2; bitness++)
         {
             // advance 1 in row once we are done with one
-            // todo: first 2 led, so first buffer entry are swallowed somewhere
 
             basic_index = ((y >> 1) * 16); // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2)
 
