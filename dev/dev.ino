@@ -42,22 +42,6 @@ void stepRow()
     row = (row + 1) & 31;
 }
 
-/*
- * theoretical order of operations:
- * - select row with shift register (set clear of row shift regs when we are in 0, at row 1 put 1 at A and clock for each row, the 1 will "travel down" all rows)
- * - OE low to enable data in with falling edge
- * - clock in data(16 bit) for one chip, then the next until all chips have one LED word in them
- * - Latch the led word in the chips from reg1 via the latch to reg2
- * - oe high to output the one led from each chip
- * - repeat the serial input, latch and OE for all 16 LED per chip -> 16 LED * 8 chips = 128 LED per row
- * - repeat the row selection and all chip stuff 32 times, each row accesses upper and lower half at once
- * -> 32 * 2 rows = 64 rows of 128 LED
- */
-
-// interesting findings from tracing the pcb:
-// - the OE/PWCLK is also buffered via the serial in serial out buffer chips,
-// but split 4 times for each coloumn of drivers. so we must also clock the pwclock with the serial clock, no hardware clock sadly
-
 void loop()
 {
     uint16_t basic_index = 0;

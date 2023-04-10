@@ -25,10 +25,13 @@
 // and http://kuku.eu.org/?projects/hub75e/index for reverse engineering the row selection shift registers.
 // i also retraced them and came to the same conclusion, so i can be very certain that the chips are equivalent, led drivers and row drivers
 
+// the pwclk is also going through the buffer shift registers so we need to set clock it in with the other stuff.
+// it is however split 4 times for each coloumn of drivers. so we must also clock the pwclock with the serial clock, no hardware clock sadly
+
 // BIGGEST help overall was the stp1612pw05 datasheet, i found this chip and its datasheet after searching for comparable chips
 // and it has a full description of everything we need to control those chips
 
-// row shift registers: A-> CLK   B-> OE    C-> SIN
+// PINs for the row shift registers: A-> CLK   B-> OE    C-> SIN
 
 // 4 SM5368 in series, in 2 rows gives the 8 we find on the board. they just shift form 1st to 32nd output, in parallel for bottom and top -> 64 rows total, just like standard hub75
 
