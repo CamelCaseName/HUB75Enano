@@ -54,12 +54,15 @@ void stepRow()
  * -> 32 * 2 rows = 64 rows of 128 LED
  */
 
+// interesting findings from tracing the pcb:
+// - the OE/PWCLK is also buffered via the serial in serial out buffer chips,
+// but split 4 times for each coloumn of drivers. so we must also clock the pwclock with the serial clock, no hardware clock sadly
+
 void loop()
 {
     uint16_t basic_index = 0;
     for (uint8_t y = 0; y < 32; y++) // 32 rows
     {
-        HIGH_OE;
         stepRow();
         // bitness needs to be between 1 and 12, changes sent bitdepth. the lower, the faster
         for (uint8_t bitness = 0; bitness < 2; bitness++)
@@ -72,6 +75,7 @@ void loop()
             // chip 0
             for (uint8_t led = 0; led < 16; led++) // 16 led per chip
             {
+                // todo simplify access code when using sram, we can then store bytes directly and dont need to shift and offset so much
                 switch (led / 2) // 2 led are the same, then we advance one, basically (led / 2) % 4
                 {
                 case 0:
@@ -467,7 +471,6 @@ void loop()
         }
         // SET_COLOR(((*(((uint8_t *)(&panel.buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
 
-        CLEAR_OE;
         //  display row once done, so move data from latch registers to pwm modules
         HIGH_LAT;
         CLOCK;
