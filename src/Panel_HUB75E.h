@@ -187,6 +187,9 @@ inline void sendScanLine(uint8_t row)
 #define PWM_REF_CLK \
     CLEAR_OE;       \
     HIGH_OE;
+#define PWCLK \
+    HIGH_OE;  \
+    CLEAR_OE;
 
 #ifdef PANEL_RGB_FLIPPED_TO_BGR
 constexpr uint16_t FULL_TO_HIGH_COLOR(uint8_t r, uint8_t g, uint8_t b)
@@ -427,6 +430,61 @@ inline void sendPWMClock()
     PWM_REF_CLK;
     PWM_REF_CLK;
     // 138 clocks
+}
+
+inline void sendPWCLKReference()
+{
+    // 50 pwclk reference clocks are enough for 5 bit, so also more than enough for 4 bit. why send more than we need...
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
+    PWCLK;
 }
 
 inline void sendPrefix()
