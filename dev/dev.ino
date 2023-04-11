@@ -1,17 +1,15 @@
-// #define PANEL_BIG
+#define PANEL_BIG
 // #define PANEL_NO_BUFFER
-#define PANEL_ICN_LIKE_CONTROL
-#define PANEL_RGB_FLIPPED_TO_BGR
 #include "Panel_HUB75E.h"
 #include <Arduino.h>
 
 // create an instance of the panel
 Panel panel = {};
-uint8_t row = 0;
 
 void setup()
 {
     // panel.setupHUB75E();
+
     panel.fillBuffer(panel.BLACK);
 
     panel.drawSquare(63, 1, 0, panel.CYAN, true);
@@ -27,5 +25,6 @@ void setup()
 
 void loop()
 {
+    // panel.fillScreenColor(3, 0, 1);
     panel.displayBuffer();
 }

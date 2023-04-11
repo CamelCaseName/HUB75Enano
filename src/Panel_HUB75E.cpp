@@ -23,7 +23,8 @@ void Panel::swapBuffer(const LED *newBuffer, uint8_t bufferLength)
 }
 
 void Panel::fillScreenColor(uint16_t c)
-{ // fills the screeen with the set color
+{
+    // fills the screeen with the set color
     // switches all the colors and sets the values depending on colors
     HIGH_TO_FULL_COLOR(c, &red, &green, &blue); // gets first couple colors
     fillScreenColor(red, green, blue);
@@ -31,7 +32,148 @@ void Panel::fillScreenColor(uint16_t c)
 
 void Panel::fillScreenColor(uint8_t r, uint8_t g, uint8_t b)
 {
-    // TODO
+    // todo continue work here building it up, but not top priority
+    for (uint8_t y = 0; y < 32; y++) // 32 rows
+    {
+        sendPWCLKReference();
+        // bitness needs to be between 1 and 8, changes sent bitdepth. the lower, the faster
+        for (uint8_t bitness = 0; bitness < 4; bitness++)
+        {
+            SET_COLOR((((r >> bitness) & 1) << 5) | (((g >> bitness) & 1) << 4) | (((b >> bitness) & 1) << 3) | (((r >> bitness) & 1) << 2) | (((g >> bitness) & 1) << 1) | ((b >> bitness) & 1));
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+            CLOCK;
+
+            //  latch data from shift registers to latch register, "buffer" for global release to pwm
+            HIGH_LAT;
+            CLOCK;
+            CLEAR_LAT;
+        }
+
+        //  display row once done, so move data from latch registers to pwm modules
+        HIGH_LAT;
+        CLOCK;
+        CLOCK;
+        CLEAR_LAT;
+
+        // advance 1 in row once we are done with one
+        stepRow();
+    }
 }
 
 void Panel::displaySmallBuffer()
@@ -284,9 +426,258 @@ void Panel::displaySmallBuffer()
         stepRow();
     }
 }
+
 void Panel::displayBigBuffer()
 {
+    uint16_t basic_index = 0;
+    for (uint8_t y = 0; y < 32; y++) // 32 rows
+    {
+        sendPWCLKReference();
+        // bitness needs to be between 1 and 12, changes sent bitdepth. the lower, the faster
+        for (uint8_t bitness = 0; bitness < 4; bitness++)
+        {
+            basic_index = ((y >> 1) * 16); // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2)
+
+            // we integer divide the screen by 2 and then set 16 led to 8 values in pairs
+
+            // chip 0
+
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index + 1]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index + 1])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+
+            basic_index += 2;
+
+            // chip 1
+
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index + 1]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index + 1])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+
+            basic_index += 2;
+
+            // chip 2
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index + 1]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index + 1])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+
+            basic_index += 2;
+
+            // chip 3
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index + 1]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index + 1])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+
+            basic_index += 2;
+
+            // chip 4
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index + 1]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index + 1])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+
+            basic_index += 2;
+
+            // chip 5
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index + 1]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index + 1])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+
+            basic_index += 2;
+
+            // chip 6
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index + 1]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index + 1])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+
+            basic_index += 2;
+
+            // chip 7
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
+            CLOCK;
+            CLOCK;
+            SET_COLOR(*(uint8_t *)(&buffer[basic_index + 1]));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index + 1])) >> 6)));
+            CLOCK;
+            CLOCK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index + 1]) + sizeof(uint8_t))))) >> 4));
+            CLOCK;
+
+            //  latch data from shift registers to latch register, "buffer" for global release to pwm
+            HIGH_LAT;
+            CLOCK;
+            CLEAR_LAT;
+        }
+        SET_COLOR(((*(((uint8_t *)(&buffer[basic_index + 1])) + (sizeof(uint8_t) * 2))) >> 2));
+
+        //  display row once done, so move data from latch registers to pwm modules
+        HIGH_LAT;
+        CLOCK;
+        CLOCK;
+        CLEAR_LAT;
+
+        // advance 1 in row once we are done with one
+        stepRow();
+    }
 }
+
 void Panel::displayFlashBuffer()
 {
 }
