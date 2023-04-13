@@ -1,4 +1,4 @@
-// #define PANEL_BIG
+#define PANEL_BIG
 //   #define PANEL_NO_BUFFER
 #include "Panel_HUB75E.h"
 #include <Arduino.h>

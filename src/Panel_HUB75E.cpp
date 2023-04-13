@@ -437,6 +437,7 @@ void Panel::displayBigBuffer()
 
         // we integer divide the screen by 2 and then set 16 led to 8 values in pairs
 #pragma region LSB
+/*
         // chip 0
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
         CLOCK;
@@ -671,7 +672,7 @@ void Panel::displayBigBuffer()
         HIGH_LAT;
         CLOCK;
         CLEAR_LAT;
-
+*/
 #pragma endregion
 
 #pragma region MSB
