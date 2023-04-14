@@ -55,7 +55,7 @@ GND GND
 #define PANEL_HUB75E_H
 
 /////////////////////
-// #define PANEL_BIG  // use 2 bit rgb image buffer
+// #define PANEL_BIG // use 2 bit rgb image buffer
 /////////////////////
 
 #ifndef PANEL_X
@@ -86,8 +86,8 @@ GND GND
 #define RS 5   // red second byte
 #define GS 6   // green second byte
 #define BS 7   // blue second byte
-#define LAT 9  // data latch
-#define CLK 10 // clock signal
+#define CLK 9  // clock signal
+#define LAT 10 // data latch
 #define OE 11  // output enable
 
 // pin access defines, rows
@@ -106,10 +106,10 @@ GND GND
 #endif
 
 // pin access defines, rest
-#define HIGH_LAT high_pin(PORTB, 2)
-#define CLEAR_LAT clear_pin(PORTB, 2)
 #define HIGH_CLK high_pin(PORTB, 1)
 #define CLEAR_CLK clear_pin(PORTB, 1)
+#define HIGH_LAT high_pin(PORTB, 2)
+#define CLEAR_LAT clear_pin(PORTB, 2)
 #define HIGH_OE high_pin(PORTB, 3)
 #define CLEAR_OE clear_pin(PORTB, 3)
 
@@ -119,6 +119,9 @@ GND GND
 #define PWCLK \
     HIGH_OE;  \
     CLEAR_OE;
+#define PWCLK_GCLK \
+    PORTB |= 3UL <<
+#define clear_pin(port, number) port &= ~(1UL << number)
 
 #pragma region color_helpers
 inline void HIGH_TO_FULL_COLOR(uint16_t color, uint8_t *red, uint8_t *green, uint8_t *blue)
@@ -133,7 +136,7 @@ constexpr uint16_t FULL_TO_HIGH_COLOR(uint8_t r, uint8_t g, uint8_t b)
 }
 constexpr uint16_t FULL_TO_HIGH_COLOR_FULL(uint8_t r, uint8_t g, uint8_t b)
 {
-    return ((int)(((double)r / 255) + 0.5) << 11) | ((int)(((double)g / 255) + 0.5) << 5) | (int)(((double)b / 255) + 0.5);
+    return ((int)(((double)r / 8) - 0.5) << 11) | ((int)(((double)g / 4) - 0.5) << 5) | (int)(((double)b / 8) - 0.5);
 }
 constexpr uint16_t FULL_TO_HIGH_COLOR_CLAMPED(uint8_t r, uint8_t g, uint8_t b)
 {
@@ -288,6 +291,9 @@ public:
     void drawCircle(uint8_t xm, uint8_t ym, uint8_t radius, uint16_t color, bool fill);
     void drawChar(uint8_t x, uint8_t y, char letter, uint16_t color);
     void drawBigChar(uint8_t x, uint8_t y, char letter, uint16_t color, uint8_t size_modifier);
+    void displayBigBuffer();
+    void displaySmallBuffer();
+    void displayFlashBuffer();
 
     LED buffer[PANEL_BUFFERSIZE]; // uses 768 bytes on max size display with 1 bit, 1536 bytes with 2 bits of depth
 
@@ -309,9 +315,6 @@ public:
 #endif
 private:
     uint8_t rows = 0, coloumns = 0, row = 0, red = 0, green = 0, blue = 0;
-    void displayBigBuffer();
-    void displaySmallBuffer();
-    void displayFlashBuffer();
     inline void stepRow()
     {
         if (row == 0)
