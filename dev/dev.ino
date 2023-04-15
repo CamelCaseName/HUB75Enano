@@ -1,5 +1,6 @@
-#define PANEL_BIG
-//     #define PANEL_NO_BUFFER
+// #define PANEL_BIG
+// #define PANEL_NO_BUFFER
+// #define PANEL_FLASH
 #include "Panel_HUB75E.h"
 #include <Arduino.h>
 
@@ -56,6 +57,8 @@ void setup()
 
 void loop()
 {
+    panel.displayBuffer();
+    /*
     uint16_t basic_index = 0;
     for (uint8_t y = 0; y < 32; y++) // 32 rows
     {
@@ -549,5 +552,5 @@ void loop()
 
         // advance 1 in row once we are done with one
         stepRow();
-    }
+    }*/
 }
