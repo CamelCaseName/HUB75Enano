@@ -1013,7 +1013,6 @@ public:
 #endif
     }
 #pragma endregion // buffer_output_definitions
-#endif
 private:
     uint8_t rows = 0, coloumns = 0, row = 0, red = 0, green = 0, blue = 0;
     inline void stepRow()
@@ -1362,3 +1361,4 @@ private:
 
 #pragma endregion // buffer_specifics
 };
+#endif
