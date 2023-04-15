@@ -55,7 +55,7 @@ GND GND
 #define PANEL_HUB75E_H
 
 /////////////////////
-// #define PANEL_BIG // use 2 bit rgb image buffer
+#define PANEL_BIG // use 2 bit rgb image buffer
 /////////////////////
 
 #ifndef PANEL_X
@@ -74,8 +74,8 @@ GND GND
 
 // ref https://roboticsbackend.com/arduino-fast-digitalwrite/#Using_direct_port_manipulation_instead_of_digitalWrite
 // helper definitions
-#define high_pin(port, number) port |= 1UL << number
-#define clear_pin(port, number) port &= ~(1UL << number)
+#define high_pin(port, number) port |= 1 << number
+#define clear_pin(port, number) port &= ~(1 << number)
 
 // actual pin numbers
 #define RA 14  // register selector a
@@ -119,9 +119,11 @@ GND GND
 #define PWCLK \
     HIGH_OE;  \
     CLEAR_OE;
-#define PWCLK_GCLK \
-    PORTB |= 3UL <<
-#define clear_pin(port, number) port &= ~(1UL << number)
+#define PWCLK_GCLK                          \
+    PORTB |= 5 << 1;                        \
+    /*turn on clk and oe at the same time*/ \
+    PORTB &= ~(5 << 1);                     \
+    /*turn off clk and oe at the same time*/
 
 #pragma region color_helpers
 inline void HIGH_TO_FULL_COLOR(uint16_t color, uint8_t *red, uint8_t *green, uint8_t *blue)
@@ -191,32 +193,32 @@ public:
 #pragma pack(1)
     struct LED
     { // 3 bytes long, contains 8 leds at 1 bit color depth
-        uint8_t redUpper1 : 1;
-        uint8_t greenUpper1 : 1;
-        uint8_t blueUpper1 : 1;
-        uint8_t redLower1 : 1;
-        uint8_t greenLower1 : 1;
-        uint8_t blueLower1 : 1;
-        uint8_t redUpper2 : 1;
-        uint8_t greenUpper2 : 1;
+        uint8_t redUpperBit1Led1 : 1;
+        uint8_t greenUpperBit1Led1 : 1;
+        uint8_t blueUpperBit1Led1 : 1;
+        uint8_t redLowerBit1Led1 : 1;
+        uint8_t greenLowerBit1Led1 : 1;
+        uint8_t blueLowerBit1Led1 : 1;
+        uint8_t redUpperBit1Led2 : 1;
+        uint8_t greenUpperBit1Led2 : 1;
         uint8_t : 0;
-        uint8_t blueUpper2 : 1;
-        uint8_t redLower2 : 1;
-        uint8_t greenLower2 : 1;
-        uint8_t blueLower2 : 1;
-        uint8_t redUpper3 : 1;
-        uint8_t greenUpper3 : 1;
-        uint8_t blueUpper3 : 1;
-        uint8_t redLower3 : 1;
+        uint8_t blueUpperBit1Led2 : 1;
+        uint8_t redLowerBit1Led2 : 1;
+        uint8_t greenLowerBit1Led2 : 1;
+        uint8_t blueLowerBit1Led2 : 1;
+        uint8_t redUpperBit1Led3 : 1;
+        uint8_t greenUpperBit1Led3 : 1;
+        uint8_t blueUpperBit1Led3 : 1;
+        uint8_t redLowerBit1Led3 : 1;
         uint8_t : 0;
-        uint8_t greenLower3 : 1;
-        uint8_t blueLower3 : 1;
-        uint8_t redUpper4 : 1;
-        uint8_t greenUpper4 : 1;
-        uint8_t blueUpper4 : 1;
-        uint8_t redLower4 : 1;
-        uint8_t greenLower4 : 1;
-        uint8_t blueLower4 : 1;
+        uint8_t greenLowerBit1Led3 : 1;
+        uint8_t blueLowerBit1Led3 : 1;
+        uint8_t redUpperBit1Led4 : 1;
+        uint8_t greenUpperBit1Led4 : 1;
+        uint8_t blueUpperBit1Led4 : 1;
+        uint8_t redLowerBit1Led4 : 1;
+        uint8_t greenLowerBit1Led4 : 1;
+        uint8_t blueLowerBit1Led4 : 1;
         uint8_t : 0;
     };
 #else

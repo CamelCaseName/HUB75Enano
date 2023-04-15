@@ -431,477 +431,476 @@ void Panel::displayBigBuffer()
     uint16_t basic_index = 0;
     for (uint8_t y = 0; y < 32; y++) // 32 rows
     {
-        sendPWCLKReference();
         // bitness needs to be between 1 and 12, changes sent bitdepth. the lower, the faster
         basic_index = ((y >> 1) * 16); // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2)
 
         // we integer divide the screen by 2 and then set 16 led to 8 values in pairs
 #pragma region LSB
-/*
+
         // chip 0
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 1
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 2
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 3
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 4
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 5
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 6
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 7
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + sizeof(uint8_t)))) >> 4));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 4)))) >> 4));
-        CLOCK;
+        PWCLK_GCLK;
 
         //  latch data from shift registers to latch register, "buffer" for global release to pwm
         HIGH_LAT;
         CLOCK;
         CLEAR_LAT;
-*/
+
 #pragma endregion
 
 #pragma region MSB
         // chip 0
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 1
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 2
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 3
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 4
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 5
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 6
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         // chip 7
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 5))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
 
         ++basic_index;
         SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-        CLOCK;
-        CLOCK;
+        PWCLK_GCLK;
+        PWCLK_GCLK;
         SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 3)))) >> 6));
-        CLOCK;
+        PWCLK_GCLK;
 
         // shift data into buffers
         HIGH_LAT;
@@ -916,6 +915,7 @@ void Panel::displayBigBuffer()
         CLOCK;
         CLEAR_LAT;
 #pragma endregion
+
         // advance 1 in row once we are done with one
         stepRow();
     }
@@ -942,161 +942,163 @@ void Panel::fillBuffer(uint16_t color)
 
 void Panel::setBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
 {
-#ifndef PANEL_BIG
-    if (y < (PANEL_Y / 2))
+    if (sizeof(LED) == 3)
     {
-        // we are in upper half of pixels
-        uint8_t index = (y * coloumns + x) / 4;
-        switch (x % 4)
+        if (y < (PANEL_Y / 2))
         {
-        case 0: /*first pixel*/
-            buffer[index].redUpper1 = red;
-            buffer[index].greenUpper1 = green;
-            buffer[index].blueUpper1 = blue;
-            break;
-        case 1: /*second pixel*/
-            buffer[index].redUpper2 = red;
-            buffer[index].greenUpper2 = green;
-            buffer[index].blueUpper2 = blue;
-            break;
-        case 2: /*third pixel*/
-            buffer[index].redUpper3 = red;
-            buffer[index].greenUpper3 = green;
-            buffer[index].blueUpper3 = blue;
-            break;
-        case 3: /*fourth pixel*/
-            buffer[index].redUpper4 = red;
-            buffer[index].greenUpper4 = green;
-            buffer[index].blueUpper4 = blue;
-            break;
+            // we are in upper half of pixels
+            uint8_t index = (y * coloumns + x) / 4;
+            switch (x % 4)
+            {
+            case 0: /*first pixel*/
+                buffer[index].redUpperBit1Led1 = red;
+                buffer[index].greenUpperBit1Led1 = green;
+                buffer[index].blueUpperBit1Led1 = blue;
+                break;
+            case 1: /*second pixel*/
+                buffer[index].redUpperBit1Led2 = red;
+                buffer[index].greenUpperBit1Led2 = green;
+                buffer[index].blueUpperBit1Led2 = blue;
+                break;
+            case 2: /*third pixel*/
+                buffer[index].redUpperBit1Led3 = red;
+                buffer[index].greenUpperBit1Led3 = green;
+                buffer[index].blueUpperBit1Led3 = blue;
+                break;
+            case 3: /*fourth pixel*/
+                buffer[index].redUpperBit1Led4 = red;
+                buffer[index].greenUpperBit1Led4 = green;
+                buffer[index].blueUpperBit1Led4 = blue;
+                break;
 
-        default:
-            break;
+            default:
+                break;
+            }
+        }
+        else
+        {
+            y -= (PANEL_Y / 2);
+            // we are in lower half of pixels
+            uint8_t index = (y * coloumns + x) / 4;
+            switch (x % 4)
+            {
+            case 0: /*first pixel*/
+                buffer[index].redLowerBit1Led1 = red;
+                buffer[index].greenLowerBit1Led1 = green;
+                buffer[index].blueLowerBit1Led1 = blue;
+                break;
+            case 1: /*second pixel*/
+                buffer[index].redLowerBit1Led2 = red;
+                buffer[index].greenLowerBit1Led2 = green;
+                buffer[index].blueLowerBit1Led2 = blue;
+                break;
+            case 2: /*third pixel*/
+                buffer[index].redLowerBit1Led3 = red;
+                buffer[index].greenLowerBit1Led3 = green;
+                buffer[index].blueLowerBit1Led3 = blue;
+                break;
+            case 3: /*fourth pixel*/
+                buffer[index].redLowerBit1Led4 = red;
+                buffer[index].greenLowerBit1Led4 = green;
+                buffer[index].blueLowerBit1Led4 = blue;
+                break;
+
+            default:
+                break;
+            }
         }
     }
     else
     {
-        y -= (PANEL_Y / 2);
-        // we are in lower half of pixels
-        uint8_t index = (y * coloumns + x) / 4;
-        switch (x % 4)
-        {
-        case 0: /*first pixel*/
-            buffer[index].redLower1 = red;
-            buffer[index].greenLower1 = green;
-            buffer[index].blueLower1 = blue;
-            break;
-        case 1: /*second pixel*/
-            buffer[index].redLower2 = red;
-            buffer[index].greenLower2 = green;
-            buffer[index].blueLower2 = blue;
-            break;
-        case 2: /*third pixel*/
-            buffer[index].redLower3 = red;
-            buffer[index].greenLower3 = green;
-            buffer[index].blueLower3 = blue;
-            break;
-        case 3: /*fourth pixel*/
-            buffer[index].redLower4 = red;
-            buffer[index].greenLower4 = green;
-            buffer[index].blueLower4 = blue;
-            break;
 
-        default:
-            break;
+        if (y < (PANEL_Y / 2))
+        {
+            // we are in upper half of pixels
+            uint8_t index = (y * coloumns + x) / 4;
+            switch (x % 4)
+            {
+            case 0: /*first pixel*/
+                buffer[index].redUpperBit1Led1 = red;
+                buffer[index].greenUpperBit1Led1 = green;
+                buffer[index].blueUpperBit1Led1 = blue;
+                buffer[index].redUpperBit2Led1 = red >> 1;
+                buffer[index].greenUpperBit2Led1 = green >> 1;
+                buffer[index].blueUpperBit2Led1 = blue >> 1;
+                break;
+            case 1: /*second pixel*/
+                buffer[index].redUpperBit1Led2 = red;
+                buffer[index].greenUpperBit1Led2 = green;
+                buffer[index].blueUpperBit1Led2 = blue;
+                buffer[index].redUpperBit2Led2 = red >> 1;
+                buffer[index].greenUpperBit2Led2 = green >> 1;
+                buffer[index].blueUpperBit2Led2 = blue >> 1;
+                break;
+            case 2: /*third pixel*/
+                buffer[index].redUpperBit1Led3 = red;
+                buffer[index].greenUpperBit1Led3 = green;
+                buffer[index].blueUpperBit1Led3 = blue;
+                buffer[index].redUpperBit2Led3 = red >> 1;
+                buffer[index].greenUpperBit2Led3 = green >> 1;
+                buffer[index].blueUpperBit2Led3 = blue >> 1;
+                break;
+            case 3: /*fourth pixel*/
+                buffer[index].redUpperBit1Led4 = red;
+                buffer[index].greenUpperBit1Led4 = green;
+                buffer[index].blueUpperBit1Led4 = blue;
+                buffer[index].redUpperBit2Led4 = red >> 1;
+                buffer[index].greenUpperBit2Led4 = green >> 1;
+                buffer[index].blueUpperBit2Led4 = blue >> 1;
+                break;
+
+            default:
+                break;
+            }
+        }
+        else
+        {
+            y -= (PANEL_Y / 2);
+            // we are in lower half of pixels
+            uint8_t index = (y * coloumns + x) / 4;
+            switch (x % 4)
+            {
+            case 0:
+                buffer[index].redLowerBit1Led1 = red;
+                buffer[index].greenLowerBit1Led1 = green;
+                buffer[index].blueLowerBit1Led1 = blue;
+                buffer[index].redLowerBit2Led1 = red >> 1;
+                buffer[index].greenLowerBit2Led1 = green >> 1;
+                buffer[index].blueLowerBit2Led1 = blue >> 1;
+                break;
+            case 1: /*second pixel*/
+                buffer[index].redLowerBit1Led2 = red;
+                buffer[index].greenLowerBit1Led2 = green;
+                buffer[index].blueLowerBit1Led2 = blue;
+                buffer[index].redLowerBit2Led2 = red >> 1;
+                buffer[index].greenLowerBit2Led2 = green >> 1;
+                buffer[index].blueLowerBit2Led2 = blue >> 1;
+                break;
+            case 2: /*third pixel*/
+                buffer[index].redLowerBit1Led3 = red;
+                buffer[index].greenLowerBit1Led3 = green;
+                buffer[index].blueLowerBit1Led3 = blue;
+                buffer[index].redLowerBit2Led3 = red >> 1;
+                buffer[index].greenLowerBit2Led3 = green >> 1;
+                buffer[index].blueLowerBit2Led3 = blue >> 1;
+                break;
+            case 3: /*fourth pixel*/
+                buffer[index].redLowerBit1Led4 = red;
+                buffer[index].greenLowerBit1Led4 = green;
+                buffer[index].blueLowerBit1Led4 = blue;
+                buffer[index].redLowerBit2Led4 = red >> 1;
+                buffer[index].greenLowerBit2Led4 = green >> 1;
+                buffer[index].blueLowerBit2Led4 = blue >> 1;
+                break;
+
+            default:
+                break;
+            }
         }
     }
-
-#else
-
-    if (y < (PANEL_Y / 2))
-    {
-        // we are in upper half of pixels
-        uint8_t index = (y * coloumns + x) / 4;
-        switch (x % 4)
-        {
-        case 0: /*first pixel*/
-            buffer[index].redUpperBit1Led1 = red;
-            buffer[index].greenUpperBit1Led1 = green;
-            buffer[index].blueUpperBit1Led1 = blue;
-            buffer[index].redUpperBit2Led1 = red >> 1;
-            buffer[index].greenUpperBit2Led1 = green >> 1;
-            buffer[index].blueUpperBit2Led1 = blue >> 1;
-            break;
-        case 1: /*second pixel*/
-            buffer[index].redUpperBit1Led2 = red;
-            buffer[index].greenUpperBit1Led2 = green;
-            buffer[index].blueUpperBit1Led2 = blue;
-            buffer[index].redUpperBit2Led2 = red >> 1;
-            buffer[index].greenUpperBit2Led2 = green >> 1;
-            buffer[index].blueUpperBit2Led2 = blue >> 1;
-            break;
-        case 2: /*third pixel*/
-            buffer[index].redUpperBit1Led3 = red;
-            buffer[index].greenUpperBit1Led3 = green;
-            buffer[index].blueUpperBit1Led3 = blue;
-            buffer[index].redUpperBit2Led3 = red >> 1;
-            buffer[index].greenUpperBit2Led3 = green >> 1;
-            buffer[index].blueUpperBit2Led3 = blue >> 1;
-            break;
-        case 3: /*fourth pixel*/
-            buffer[index].redUpperBit1Led4 = red;
-            buffer[index].greenUpperBit1Led4 = green;
-            buffer[index].blueUpperBit1Led4 = blue;
-            buffer[index].redUpperBit2Led4 = red >> 1;
-            buffer[index].greenUpperBit2Led4 = green >> 1;
-            buffer[index].blueUpperBit2Led4 = blue >> 1;
-            break;
-
-        default:
-            break;
-        }
-    }
-    else
-    {
-        y -= (PANEL_Y / 2);
-        // we are in lower half of pixels
-        uint8_t index = (y * coloumns + x) / 4;
-        switch (x % 4)
-        {
-        case 0:
-            buffer[index].redLowerBit1Led1 = red;
-            buffer[index].greenLowerBit1Led1 = green;
-            buffer[index].blueLowerBit1Led1 = blue;
-            buffer[index].redLowerBit2Led1 = red >> 1;
-            buffer[index].greenLowerBit2Led1 = green >> 1;
-            buffer[index].blueLowerBit2Led1 = blue >> 1;
-            break;
-        case 1: /*second pixel*/
-            buffer[index].redLowerBit1Led2 = red;
-            buffer[index].greenLowerBit1Led2 = green;
-            buffer[index].blueLowerBit1Led2 = blue;
-            buffer[index].redLowerBit2Led2 = red >> 1;
-            buffer[index].greenLowerBit2Led2 = green >> 1;
-            buffer[index].blueLowerBit2Led2 = blue >> 1;
-            break;
-        case 2: /*third pixel*/
-            buffer[index].redLowerBit1Led3 = red;
-            buffer[index].greenLowerBit1Led3 = green;
-            buffer[index].blueLowerBit1Led3 = blue;
-            buffer[index].redLowerBit2Led3 = red >> 1;
-            buffer[index].greenLowerBit2Led3 = green >> 1;
-            buffer[index].blueLowerBit2Led3 = blue >> 1;
-            break;
-        case 3: /*fourth pixel*/
-            buffer[index].redLowerBit1Led4 = red;
-            buffer[index].greenLowerBit1Led4 = green;
-            buffer[index].blueLowerBit1Led4 = blue;
-            buffer[index].redLowerBit2Led4 = red >> 1;
-            buffer[index].greenLowerBit2Led4 = green >> 1;
-            buffer[index].blueLowerBit2Led4 = blue >> 1;
-            break;
-
-        default:
-            break;
-        }
-    }
-#endif
 }
 
 void Panel::drawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint16_t color)
