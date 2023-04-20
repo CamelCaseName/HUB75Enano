@@ -595,162 +595,20 @@ public:
         }
     }
 
-    void setBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
+#pragma region buffer_setting_definitions:
+    inline void setBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
     {
-#ifndef PANEL_BIG
-        if (y < (PANEL_Y / 2))
-        {
-            // we are in upper half of pixels
-            uint8_t index = (y * coloumns + x) / 4;
-            switch (x % 4)
-            {
-            case 0: /*first pixel*/
-                buffer[index].redUpperBit1Led1 = red;
-                buffer[index].greenUpperBit1Led1 = green;
-                buffer[index].blueUpperBit1Led1 = blue;
-                break;
-            case 1: /*second pixel*/
-                buffer[index].redUpperBit1Led2 = red;
-                buffer[index].greenUpperBit1Led2 = green;
-                buffer[index].blueUpperBit1Led2 = blue;
-                break;
-            case 2: /*third pixel*/
-                buffer[index].redUpperBit1Led3 = red;
-                buffer[index].greenUpperBit1Led3 = green;
-                buffer[index].blueUpperBit1Led3 = blue;
-                break;
-            case 3: /*fourth pixel*/
-                buffer[index].redUpperBit1Led4 = red;
-                buffer[index].greenUpperBit1Led4 = green;
-                buffer[index].blueUpperBit1Led4 = blue;
-                break;
-
-            default:
-                break;
-            }
-        }
-        else
-        {
-            y -= (PANEL_Y / 2);
-            // we are in lower half of pixels
-            uint8_t index = (y * coloumns + x) / 4;
-            switch (x % 4)
-            {
-            case 0: /*first pixel*/
-                buffer[index].redLowerBit1Led1 = red;
-                buffer[index].greenLowerBit1Led1 = green;
-                buffer[index].blueLowerBit1Led1 = blue;
-                break;
-            case 1: /*second pixel*/
-                buffer[index].redLowerBit1Led2 = red;
-                buffer[index].greenLowerBit1Led2 = green;
-                buffer[index].blueLowerBit1Led2 = blue;
-                break;
-            case 2: /*third pixel*/
-                buffer[index].redLowerBit1Led3 = red;
-                buffer[index].greenLowerBit1Led3 = green;
-                buffer[index].blueLowerBit1Led3 = blue;
-                break;
-            case 3: /*fourth pixel*/
-                buffer[index].redLowerBit1Led4 = red;
-                buffer[index].greenLowerBit1Led4 = green;
-                buffer[index].blueLowerBit1Led4 = blue;
-                break;
-
-            default:
-                break;
-            }
-        }
+#ifdef PANEL_BIG
+        setBigBuffer(x, y, red, green, blue); // 1 bit buffer in ram
 #else
-        if (y < (PANEL_Y / 2))
-        {
-            // we are in upper half of pixels
-            uint8_t index = (y * coloumns + x) / 4;
-            switch (x % 4)
-            {
-            case 0: /*first pixel*/
-                buffer[index].redUpperBit1Led1 = red;
-                buffer[index].greenUpperBit1Led1 = green;
-                buffer[index].blueUpperBit1Led1 = blue;
-                buffer[index].redUpperBit2Led1 = red >> 1;
-                buffer[index].greenUpperBit2Led1 = green >> 1;
-                buffer[index].blueUpperBit2Led1 = blue >> 1;
-                break;
-            case 1: /*second pixel*/
-                buffer[index].redUpperBit1Led2 = red;
-                buffer[index].greenUpperBit1Led2 = green;
-                buffer[index].blueUpperBit1Led2 = blue;
-                buffer[index].redUpperBit2Led2 = red >> 1;
-                buffer[index].greenUpperBit2Led2 = green >> 1;
-                buffer[index].blueUpperBit2Led2 = blue >> 1;
-                break;
-            case 2: /*third pixel*/
-                buffer[index].redUpperBit1Led3 = red;
-                buffer[index].greenUpperBit1Led3 = green;
-                buffer[index].blueUpperBit1Led3 = blue;
-                buffer[index].redUpperBit2Led3 = red >> 1;
-                buffer[index].greenUpperBit2Led3 = green >> 1;
-                buffer[index].blueUpperBit2Led3 = blue >> 1;
-                break;
-            case 3: /*fourth pixel*/
-                buffer[index].redUpperBit1Led4 = red;
-                buffer[index].greenUpperBit1Led4 = green;
-                buffer[index].blueUpperBit1Led4 = blue;
-                buffer[index].redUpperBit2Led4 = red >> 1;
-                buffer[index].greenUpperBit2Led4 = green >> 1;
-                buffer[index].blueUpperBit2Led4 = blue >> 1;
-                break;
-
-            default:
-                break;
-            }
-        }
-        else
-        {
-            y -= (PANEL_Y / 2);
-            // we are in lower half of pixels
-            uint8_t index = (y * coloumns + x) / 4;
-            switch (x % 4)
-            {
-            case 0:
-                buffer[index].redLowerBit1Led1 = red;
-                buffer[index].greenLowerBit1Led1 = green;
-                buffer[index].blueLowerBit1Led1 = blue;
-                buffer[index].redLowerBit2Led1 = red >> 1;
-                buffer[index].greenLowerBit2Led1 = green >> 1;
-                buffer[index].blueLowerBit2Led1 = blue >> 1;
-                break;
-            case 1: /*second pixel*/
-                buffer[index].redLowerBit1Led2 = red;
-                buffer[index].greenLowerBit1Led2 = green;
-                buffer[index].blueLowerBit1Led2 = blue;
-                buffer[index].redLowerBit2Led2 = red >> 1;
-                buffer[index].greenLowerBit2Led2 = green >> 1;
-                buffer[index].blueLowerBit2Led2 = blue >> 1;
-                break;
-            case 2: /*third pixel*/
-                buffer[index].redLowerBit1Led3 = red;
-                buffer[index].greenLowerBit1Led3 = green;
-                buffer[index].blueLowerBit1Led3 = blue;
-                buffer[index].redLowerBit2Led3 = red >> 1;
-                buffer[index].greenLowerBit2Led3 = green >> 1;
-                buffer[index].blueLowerBit2Led3 = blue >> 1;
-                break;
-            case 3: /*fourth pixel*/
-                buffer[index].redLowerBit1Led4 = red;
-                buffer[index].greenLowerBit1Led4 = green;
-                buffer[index].blueLowerBit1Led4 = blue;
-                buffer[index].redLowerBit2Led4 = red >> 1;
-                buffer[index].greenLowerBit2Led4 = green >> 1;
-                buffer[index].blueLowerBit2Led4 = blue >> 1;
-                break;
-
-            default:
-                break;
-            }
-        }
+#ifdef PANEL_FLASH
+        setFLashBuffer(x, y, red, green, blue); // 4 bit buffer in flash
+#else
+        setSmallBuffer(x, y, red, green, blue); // 2 bit buffer in ram
+#endif
 #endif
     }
+#pragma endregion // buffer_setting_definitions
 
     void drawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint16_t color)
     { // draws a line with color between the coords given
@@ -1008,7 +866,7 @@ public:
 #ifdef PANEL_FLASH
         displayFLashBuffer(); // 4 bit buffer in flash
 #else
-        displaySmallBuffer(); // 2 bit buffer in ram
+        displaySmallBuffer();                   // 2 bit buffer in ram
 #endif
 #endif
     }
@@ -2477,6 +2335,170 @@ private:
     }
 
     void displayFlashBuffer()
+    {
+    }
+
+    void setBigBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
+    {
+#ifdef PANEL_BIG
+        if (y < (PANEL_Y / 2))
+        {
+            // we are in upper half of pixels
+            uint8_t index = (y * coloumns + x) / 4;
+            switch (x % 4)
+            {
+            case 0: /*first pixel*/
+                buffer[index].redUpperBit1Led1 = red;
+                buffer[index].greenUpperBit1Led1 = green;
+                buffer[index].blueUpperBit1Led1 = blue;
+                buffer[index].redUpperBit2Led1 = red >> 1;
+                buffer[index].greenUpperBit2Led1 = green >> 1;
+                buffer[index].blueUpperBit2Led1 = blue >> 1;
+                break;
+            case 1: /*second pixel*/
+                buffer[index].redUpperBit1Led2 = red;
+                buffer[index].greenUpperBit1Led2 = green;
+                buffer[index].blueUpperBit1Led2 = blue;
+                buffer[index].redUpperBit2Led2 = red >> 1;
+                buffer[index].greenUpperBit2Led2 = green >> 1;
+                buffer[index].blueUpperBit2Led2 = blue >> 1;
+                break;
+            case 2: /*third pixel*/
+                buffer[index].redUpperBit1Led3 = red;
+                buffer[index].greenUpperBit1Led3 = green;
+                buffer[index].blueUpperBit1Led3 = blue;
+                buffer[index].redUpperBit2Led3 = red >> 1;
+                buffer[index].greenUpperBit2Led3 = green >> 1;
+                buffer[index].blueUpperBit2Led3 = blue >> 1;
+                break;
+            case 3: /*fourth pixel*/
+                buffer[index].redUpperBit1Led4 = red;
+                buffer[index].greenUpperBit1Led4 = green;
+                buffer[index].blueUpperBit1Led4 = blue;
+                buffer[index].redUpperBit2Led4 = red >> 1;
+                buffer[index].greenUpperBit2Led4 = green >> 1;
+                buffer[index].blueUpperBit2Led4 = blue >> 1;
+                break;
+
+            default:
+                break;
+            }
+        }
+        else
+        {
+            y -= (PANEL_Y / 2);
+            // we are in lower half of pixels
+            uint8_t index = (y * coloumns + x) / 4;
+            switch (x % 4)
+            {
+            case 0:
+                buffer[index].redLowerBit1Led1 = red;
+                buffer[index].greenLowerBit1Led1 = green;
+                buffer[index].blueLowerBit1Led1 = blue;
+                buffer[index].redLowerBit2Led1 = red >> 1;
+                buffer[index].greenLowerBit2Led1 = green >> 1;
+                buffer[index].blueLowerBit2Led1 = blue >> 1;
+                break;
+            case 1: /*second pixel*/
+                buffer[index].redLowerBit1Led2 = red;
+                buffer[index].greenLowerBit1Led2 = green;
+                buffer[index].blueLowerBit1Led2 = blue;
+                buffer[index].redLowerBit2Led2 = red >> 1;
+                buffer[index].greenLowerBit2Led2 = green >> 1;
+                buffer[index].blueLowerBit2Led2 = blue >> 1;
+                break;
+            case 2: /*third pixel*/
+                buffer[index].redLowerBit1Led3 = red;
+                buffer[index].greenLowerBit1Led3 = green;
+                buffer[index].blueLowerBit1Led3 = blue;
+                buffer[index].redLowerBit2Led3 = red >> 1;
+                buffer[index].greenLowerBit2Led3 = green >> 1;
+                buffer[index].blueLowerBit2Led3 = blue >> 1;
+                break;
+            case 3: /*fourth pixel*/
+                buffer[index].redLowerBit1Led4 = red;
+                buffer[index].greenLowerBit1Led4 = green;
+                buffer[index].blueLowerBit1Led4 = blue;
+                buffer[index].redLowerBit2Led4 = red >> 1;
+                buffer[index].greenLowerBit2Led4 = green >> 1;
+                buffer[index].blueLowerBit2Led4 = blue >> 1;
+                break;
+
+            default:
+                break;
+            }
+        }
+#endif
+    }
+
+    void setSmallBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
+    {
+        if (y < (PANEL_Y / 2))
+        {
+            // we are in upper half of pixels
+            uint8_t index = (y * coloumns + x) / 4;
+            switch (x % 4)
+            {
+            case 0: /*first pixel*/
+                buffer[index].redUpperBit1Led1 = red;
+                buffer[index].greenUpperBit1Led1 = green;
+                buffer[index].blueUpperBit1Led1 = blue;
+                break;
+            case 1: /*second pixel*/
+                buffer[index].redUpperBit1Led2 = red;
+                buffer[index].greenUpperBit1Led2 = green;
+                buffer[index].blueUpperBit1Led2 = blue;
+                break;
+            case 2: /*third pixel*/
+                buffer[index].redUpperBit1Led3 = red;
+                buffer[index].greenUpperBit1Led3 = green;
+                buffer[index].blueUpperBit1Led3 = blue;
+                break;
+            case 3: /*fourth pixel*/
+                buffer[index].redUpperBit1Led4 = red;
+                buffer[index].greenUpperBit1Led4 = green;
+                buffer[index].blueUpperBit1Led4 = blue;
+                break;
+
+            default:
+                break;
+            }
+        }
+        else
+        {
+            y -= (PANEL_Y / 2);
+            // we are in lower half of pixels
+            uint8_t index = (y * coloumns + x) / 4;
+            switch (x % 4)
+            {
+            case 0: /*first pixel*/
+                buffer[index].redLowerBit1Led1 = red;
+                buffer[index].greenLowerBit1Led1 = green;
+                buffer[index].blueLowerBit1Led1 = blue;
+                break;
+            case 1: /*second pixel*/
+                buffer[index].redLowerBit1Led2 = red;
+                buffer[index].greenLowerBit1Led2 = green;
+                buffer[index].blueLowerBit1Led2 = blue;
+                break;
+            case 2: /*third pixel*/
+                buffer[index].redLowerBit1Led3 = red;
+                buffer[index].greenLowerBit1Led3 = green;
+                buffer[index].blueLowerBit1Led3 = blue;
+                break;
+            case 3: /*fourth pixel*/
+                buffer[index].redLowerBit1Led4 = red;
+                buffer[index].greenLowerBit1Led4 = green;
+                buffer[index].blueLowerBit1Led4 = blue;
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+
+    void setFlashBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
     {
     }
 
