@@ -2500,6 +2500,36 @@ private:
 
     void setFlashBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
     {
+        // digging the datasheet shows a flash write time between 3.5ms and 4.5ms (per page), and read time should be this here
+        /*
+            1. A: Load command “0000 0010”.
+            2. G: Load address high byte (0x00 - 0xFF).
+            3. B: Load address low byte (0x00 - 0xFF).
+            4. Set OE to “0”, and BS1 to “0”. The flash word low byte can now be read at DATA.
+            5. Set BS1 to “1”. The flash word high byte can now be read at DATA.
+            6. Set OE to “1”.
+
+            where:
+            A. Load Command “Write Flash”
+                1. Set XA1, XA0 to “10”. This enables command loading.
+                2. Set BS1 to “0”.
+                3. Set DATA to “0001 0000”. This is the command for write flash.
+                4. Give XTAL1 a positive pulse. This loads the command.
+
+            G. Load Address High byte
+                1. Set XA1, XA0 to “00”. This enables address loading.
+                2. Set BS1 to “1”. This selects high address.
+                3. Set DATA = Address high byte (0x00 - 0xFF).
+                4. Give XTAL1 a positive pulse. This loads the address high byte.
+
+            B. Load Address Low byte
+                1. Set XA1, XA0 to “00”. This enables address loading.
+                2. Set BS1 to “0”. This selects low address.
+                3. Set DATA = Address low byte (0x00 - 0xFF).
+                4. Give XTAL1 a positive pulse. This loads the address low byte.
+
+        so depending on how that is implemented it could be quicker than the address manipulation that is used in the sram buffer
+        */
     }
 
 #pragma endregion // buffer_specifics

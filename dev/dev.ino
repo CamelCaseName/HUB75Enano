@@ -1,6 +1,6 @@
 // #define PANEL_BIG
 //  #define PANEL_NO_BUFFER
-//  #define PANEL_FLASH
+#define PANEL_FLASH
 #include "Panel_HUB75E.h"
 #include <Arduino.h>
 
