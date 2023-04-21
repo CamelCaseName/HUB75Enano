@@ -1,14 +1,19 @@
-// #define PANEL_BIG
-//  #define PANEL_NO_BUFFER
 #define PANEL_FLASH
+// #define PANEL_FLASH
 #include "Panel_HUB75E.h"
 #include <Arduino.h>
 
 // create an instance of the panel
+#ifdef PANEL_FLASH
+const unsigned char buffer[PANEL_BUFFERSIZE] PROGMEM = {};
+Panel panel(buffer);
+#else
 Panel panel = {};
+#endif
 
 void setup()
 {
+#ifndef PANEL_FLASH
     panel.fillBuffer(panel.BLACK);
 #ifndef PANEL_BIG
     panel.drawSquare(63, 1, 0, panel.CYAN, true);
@@ -23,7 +28,6 @@ void setup()
     panel.drawSquare(0, 0, 2, panel.RED, true);
     panel.drawSquare(0, 8, 2, panel.GREEN, true);
     panel.drawSquare(0, 16, 2, panel.BLUE, true);
-    panel.setBuffer(0, 0, 0, 0, 0);
 #else
 
     panel.drawRect(0, 0, 63, 1, FULL_TO_HIGH_COLOR(3, 0, 0), true);
@@ -36,6 +40,7 @@ void setup()
     panel.drawRect(0, 14, 63, 15, FULL_TO_HIGH_COLOR(0, 0, 2), true);
     panel.drawRect(0, 16, 63, 17, FULL_TO_HIGH_COLOR(0, 0, 1), true);
 
+#endif
 #endif
 }
 
