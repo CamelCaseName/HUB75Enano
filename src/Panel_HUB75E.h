@@ -76,7 +76,7 @@ GND GND
 #ifdef PANEL_FLASH
 #undef PANEL_BIG
 // have it bigger size as we have more available lol
-#define PANEL_BUFFERSIZE (PANEL_X * PANEL_Y * 3) // 3 byte per led -> about 6k
+#define PANEL_BUFFERSIZE (PANEL_X * PANEL_Y * 2) // 4 byte per led, we have 6 bit per 2 led per color depth -> about 4k
 #endif
 
 #ifndef PANEL_BUFFERSIZE

@@ -5,7 +5,7 @@
 
 // create an instance of the panel
 #ifdef PANEL_FLASH
-const unsigned char buffer[PANEL_BUFFERSIZE] PROGMEM = {};
+const unsigned char buffer[PANEL_BUFFERSIZE] PROGMEM = {63, 63};
 Panel panel(buffer);
 #else
 Panel panel = {};
