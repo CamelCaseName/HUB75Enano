@@ -1,5 +1,5 @@
 /*
-  Panel_HUB75E.h can be used to display stuff on a hub75e (icnd2153 or clone) panel with row shift registers with 64x128px
+  Panel_HUB75E.h can be used to display stuff on a hub75e (icnd2153 or clone) panel with row shift registers with 64x128px in either 8 colors, 64 or 4096 colors
   designed for ARDUINO nano.
 
   (c) Leonhard Seidel, 2023
@@ -2564,7 +2564,7 @@ private:
             // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2) so 8 times every second row
 
             // we send first the MMSB, then MSB, LSB, LLSB
-            index = ((y & ~1) << 3);
+            index = ((y & ~1) << 5);
 
 #pragma region MMSB
             // chip 0
@@ -2781,7 +2781,7 @@ private:
 
 #pragma endregion // MMSB
 
-            index = ((y & ~1) << 3) + (PANEL_BUFFERSIZE / 4);
+            index = ((y & ~1) << 5) + (PANEL_BUFFERSIZE / 4);
 
 #pragma region MSB
             // chip 0
@@ -2998,7 +2998,7 @@ private:
 
 #pragma endregion // MSB
 
-            index = ((y & ~1) << 3) + (PANEL_BUFFERSIZE / 2); // advance index to next section
+            index = ((y & ~1) << 5) + (PANEL_BUFFERSIZE / 2); // advance index to next section
 
 #pragma region LSB
             // chip 0
@@ -3215,7 +3215,7 @@ private:
 
 #pragma endregion // LSB
 
-            index = ((y & ~1) << 3) + (PANEL_BUFFERSIZE * 3 / 4); // advance index to next section
+            index = ((y & ~1) << 5) + (PANEL_BUFFERSIZE * 3 / 4); // advance index to next section
 
 #pragma region LLSB
                                                                   // chip 0
