@@ -1,11 +1,12 @@
 #define PANEL_FLASH
-// #define PANEL_FLASH
+// #define PANEL_BIG
+// #define PANEL_NO_BUFFER
 #include "Panel_HUB75E.h"
 #include <Arduino.h>
 
 // create an instance of the panel
 #ifdef PANEL_FLASH
-const unsigned char buffer[PANEL_BUFFERSIZE] PROGMEM = {63, 63};
+const unsigned char buffer[PANEL_BUFFERSIZE] PROGMEM = {63, 0, 63};
 Panel panel(buffer);
 #else
 Panel panel = {};
