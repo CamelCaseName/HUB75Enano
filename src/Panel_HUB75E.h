@@ -68,7 +68,21 @@ GND GND
 #define PANEL_Y 32
 #endif
 
+#ifdef PANEL_FLASH
+#undef PANEL_BIG
+
+// have it bigger
+#define PANEL_BUFFERSIZE (PANEL_X * PANEL_Y)
+#define panel_void _Pragma("message \"the flash buffer is currently read only and has to be set at compile time!\"") void
+#define inline_panel_void _Pragma("message \"the flash buffer is currently read only and has to be set at compile time!\"") inline void
+#else
+#define panel_void void
+#define inline_panel_void inline void
+#endif
+
+#ifndef PANEL_BUFFERSIZE
 #define PANEL_BUFFERSIZE (PANEL_X * PANEL_Y / 8)
+#endif
 
 #define MAX_COLORDEPTH 2
 #define MAX_COLOR (MAX_COLORDEPTH * MAX_COLORDEPTH - 1)
@@ -577,10 +591,14 @@ public:
 
     void swapBuffer(const LED *newBuffer, uint8_t bufferLength)
     {
+#ifdef PANEL_FLASH
+        memcpy_P(buffer, newBuffer, bufferLength);
+#else
         memcpy(buffer, newBuffer, bufferLength);
+#endif
     }
 
-    void fillBuffer(uint16_t color)
+    panel_void fillBuffer(uint16_t color)
     {
         // get colors
         HIGH_TO_FULL_COLOR(color, &red, &green, &blue);
@@ -596,23 +614,21 @@ public:
     }
 
 #pragma region buffer_setting_definitions:
-    inline void setBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
+    inline_panel_void setBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
     {
 #ifdef PANEL_BIG
         setBigBuffer(x, y, red, green, blue); // 1 bit buffer in ram
 #else
-#ifdef PANEL_FLASH
-        setFLashBuffer(x, y, red, green, blue); // 4 bit buffer in flash
-#else
+#ifndef PANEL_FLASH
         setSmallBuffer(x, y, red, green, blue); // 2 bit buffer in ram
 #endif
 #endif
     }
 #pragma endregion // buffer_setting_definitions
 
-    void drawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint16_t color)
+    panel_void drawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint16_t color)
     { // draws a line with color between the coords given
-        // get colors
+      // get colors
         HIGH_TO_FULL_COLOR(color, &red, &green, &blue);
 
         // calculate both gradients
@@ -644,7 +660,7 @@ public:
         }
     }
 
-    void drawEllipse(uint8_t xm, uint8_t ym, uint8_t a, uint8_t b, uint16_t color, bool fill)
+    panel_void drawEllipse(uint8_t xm, uint8_t ym, uint8_t a, uint8_t b, uint16_t color, bool fill)
     {
         // get colors
         HIGH_TO_FULL_COLOR(color, &red, &green, &blue);
@@ -684,7 +700,7 @@ public:
         }
     }
 
-    void drawCircle(uint8_t xm, uint8_t ym, uint8_t radius, uint16_t color, bool fill)
+    panel_void drawCircle(uint8_t xm, uint8_t ym, uint8_t radius, uint16_t color, bool fill)
     {
         // draws a circle at the coords with radius and color
         // get colors
@@ -724,8 +740,9 @@ public:
         }
     }
 
-    void drawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint16_t color, bool fill)
-    { // draws a rect filled ro not filled with the given color at coords (landscape, origin in upper left corner)
+    panel_void drawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint16_t color, bool fill)
+    {
+        // draws a rect filled ro not filled with the given color at coords (landscape, origin in upper left corner)
         // get colors
         HIGH_TO_FULL_COLOR(color, &red, &green, &blue);
 
@@ -767,12 +784,12 @@ public:
         }
     }
 
-    void drawSquare(uint8_t x, uint8_t y, uint8_t size, uint16_t color, bool fill)
+    panel_void drawSquare(uint8_t x, uint8_t y, uint8_t size, uint16_t color, bool fill)
     {
         drawRect(x, y, x + size, y + size, color, fill);
     }
 
-    void drawChar(uint8_t x, uint8_t y, char letter, uint16_t color)
+    panel_void drawChar(uint8_t x, uint8_t y, char letter, uint16_t color)
     {
         // color for the char
         HIGH_TO_FULL_COLOR(color, &red, &green, &blue);
@@ -794,8 +811,9 @@ public:
         }
     }
 
-    void drawBigChar(uint8_t x, uint8_t y, char letter, uint16_t color, uint8_t size_modifier)
-    { // new with scaling, but may be slower
+    panel_void drawBigChar(uint8_t x, uint8_t y, char letter, uint16_t color, uint8_t size_modifier)
+    {
+        // new with scaling, but may be slower
         // color for the char
         HIGH_TO_FULL_COLOR(color, &red, &green, &blue);
 
@@ -851,6 +869,7 @@ public:
 #pragma endregion // color_enum_definition
 
 #ifndef PANEL_NO_BUFFER
+#ifdef PANEL_BIG
     LED buffer[PANEL_BUFFERSIZE]; // uses 768 bytes on max size display with 1 bit, 1536 bytes with 2 bits of depth
 #else
     LED buffer[0];
@@ -864,16 +883,18 @@ public:
         displayBigBuffer(); // 1 bit buffer in ram
 #else
 #ifdef PANEL_FLASH
-        displayFLashBuffer(); // 4 bit buffer in flash
+        displayFlashBuffer(); // 4 bit buffer in flash
 #else
-        displaySmallBuffer();                   // 2 bit buffer in ram
+        displaySmallBuffer(); // 2 bit buffer in ram
 #endif
 #endif
     }
+#endif
 #pragma endregion // buffer_output_definitions
 
 private:
     uint8_t rows = 0, coloumns = 0, row = 0, red = 0, green = 0, blue = 0;
+
     inline void stepRow()
     {
         if (row == 0)
@@ -2338,7 +2359,7 @@ private:
     {
     }
 
-    void setBigBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
+    panel_void setBigBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
     {
 #ifdef PANEL_BIG
         if (y < (PANEL_Y / 2))
@@ -2431,7 +2452,7 @@ private:
 #endif
     }
 
-    void setSmallBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
+    panel_void setSmallBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
     {
         if (y < (PANEL_Y / 2))
         {
@@ -2500,36 +2521,11 @@ private:
 
     void setFlashBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
     {
-        // digging the datasheet shows a flash write time between 3.5ms and 4.5ms (per page), and read time should be this here
-        /*
-            1. A: Load command “0000 0010”.
-            2. G: Load address high byte (0x00 - 0xFF).
-            3. B: Load address low byte (0x00 - 0xFF).
-            4. Set OE to “0”, and BS1 to “0”. The flash word low byte can now be read at DATA.
-            5. Set BS1 to “1”. The flash word high byte can now be read at DATA.
-            6. Set OE to “1”.
-
-            where:
-            A. Load Command “Write Flash”
-                1. Set XA1, XA0 to “10”. This enables command loading.
-                2. Set BS1 to “0”.
-                3. Set DATA to “0001 0000”. This is the command for write flash.
-                4. Give XTAL1 a positive pulse. This loads the command.
-
-            G. Load Address High byte
-                1. Set XA1, XA0 to “00”. This enables address loading.
-                2. Set BS1 to “1”. This selects high address.
-                3. Set DATA = Address high byte (0x00 - 0xFF).
-                4. Give XTAL1 a positive pulse. This loads the address high byte.
-
-            B. Load Address Low byte
-                1. Set XA1, XA0 to “00”. This enables address loading.
-                2. Set BS1 to “0”. This selects low address.
-                3. Set DATA = Address low byte (0x00 - 0xFF).
-                4. Give XTAL1 a positive pulse. This loads the address low byte.
-
-        so depending on how that is implemented it could be quicker than the address manipulation that is used in the sram buffer
-        */
+        // digging the datasheet shows a flash write time between 3.5ms and 4.5ms (per page), read times have yet to be measured
+        // problem: the standard bootloader forbids spm instructions after flashing. so we cant write to the flash after the sketch has been transferred
+        // proposed solution: write macros/constexpr to build an image or build a code generator?
+        //
+        // or check out the memcpy_p instruction, one of those can copy from program land to flash i think
     }
 
 #pragma endregion // buffer_specifics

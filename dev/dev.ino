@@ -23,6 +23,7 @@ void setup()
     panel.drawSquare(0, 0, 2, panel.RED, true);
     panel.drawSquare(0, 8, 2, panel.GREEN, true);
     panel.drawSquare(0, 16, 2, panel.BLUE, true);
+    panel.setBuffer(0, 0, 0, 0, 0);
 #else
 
     panel.drawRect(0, 0, 63, 1, FULL_TO_HIGH_COLOR(3, 0, 0), true);
