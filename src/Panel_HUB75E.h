@@ -3218,7 +3218,7 @@ private:
             index = ((y & ~1) << 5) + (PANEL_BUFFERSIZE * 3 / 4); // advance index to next section
 
 #pragma region LLSB
-                                                                  // chip 0
+            // chip 0
             SET_COLOR(pgm_read_byte(buffer + index + 0));
             PWCLK_GCLK;
             PWCLK_GCLK;
@@ -3432,7 +3432,6 @@ private:
 
 #pragma endregion // LLSB
 
-            // fake new data so we fill the buffer
 #pragma region LSB_fake
             SET_COLOR(0);
 
@@ -3576,6 +3575,7 @@ private:
             CLEAR_LAT;
 #pragma endregion // LSB_fake
         }
+
         //  display all leds once done, so move data from latch registers to pwm modules, now with two/four bits of information
         HIGH_LAT;
         PWCLK_GCLK;
