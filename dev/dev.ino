@@ -1,6 +1,8 @@
 #define PANEL_FLASH
 // #define PANEL_BIG
+// #define PANEL_GPIO_NON_INTRUSIVE
 // #define PANEL_NO_BUFFER
+// #define PANEL_SMALL_BRIGHT
 #include "Panel_HUB75E.h"
 #include <Arduino.h>
 
@@ -78,6 +80,7 @@ const unsigned char buffer[4096] PROGMEM = {
 
 };
 Panel panel(buffer);
+int8_t phase = 0;
 #else
 Panel panel = {};
 #endif
@@ -117,5 +120,9 @@ void setup()
 
 void loop()
 {
+#ifdef PANEL_NO_BUFFER
+    panel.fillScreenColor(255, 1, 0);
+#else
     panel.displayBuffer();
+#endif
 }
