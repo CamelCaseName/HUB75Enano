@@ -140,7 +140,7 @@ GND GND
     /*turn on clk and oe at the same time*/ \
     PORTB &= ~(5 << 1);                     \
 /*turn off clk and oe at the same time*/
-#define LATCH_GCLK
+#define LATCH_GCLK PWCLK_GCLK
 #else
 #define PWCLK_GCLK                                                           \
     PORTB = 5 << 1;                                                          \
