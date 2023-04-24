@@ -2062,7 +2062,7 @@ Disassembly of section .text:
     10a0:	04 08 10 20                                         ... 
 
 000010a4 <__ctors_start>:
-    10a4:	55 2a       	or	r5, r21
+    10a4:	67 23       	and	r22, r23
 
 000010a6 <__ctors_end>:
     10a6:	11 24       	eor	r1, r1
@@ -2093,12 +2093,12 @@ Disassembly of section .text:
     10c8:	04 c0       	rjmp	.+8      	; 0x10d2 <__do_global_ctors+0x10>
     10ca:	21 97       	sbiw	r28, 0x01	; 1
     10cc:	fe 01       	movw	r30, r28
-    10ce:	0e 94 84 2a 	call	0x5508	; 0x5508 <__tablejump2__>
+    10ce:	0e 94 96 23 	call	0x472c	; 0x472c <__tablejump2__>
     10d2:	c2 35       	cpi	r28, 0x52	; 82
     10d4:	d1 07       	cpc	r29, r17
     10d6:	c9 f7       	brne	.-14     	; 0x10ca <__do_global_ctors+0x8>
     10d8:	0e 94 db 08 	call	0x11b6	; 0x11b6 <main>
-    10dc:	0c 94 8a 2a 	jmp	0x5514	; 0x5514 <_exit>
+    10dc:	0c 94 9c 23 	jmp	0x4738	; 0x4738 <_exit>
 
 000010e0 <__bad_interrupt>:
     10e0:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -2400,7 +2400,7 @@ private:
         if (row == 0)
     1244:	80 91 04 01 	lds	r24, 0x0104	; 0x800104 <_edata+0x4>
     1248:	81 11       	cpse	r24, r1
-    124a:	0c 94 51 2a 	jmp	0x54a2	; 0x54a2 <main+0x42ec>
+    124a:	0c 94 63 23 	jmp	0x46c6	; 0x46c6 <main+0x3510>
         {
             HIGH_RC;
     124e:	42 9a       	sbi	0x08, 2	; 8
@@ -2424,2129 +2424,3016 @@ private:
             // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2) so 8 times every second row
 
             // we send first the MMSB, then MSB, LSB, LLSB
-            index = ((y & ~1) << 5);
+            index = buffer + ((y & ~1) << 5);
     125e:	ca 01       	movw	r24, r20
     1260:	80 7c       	andi	r24, 0xC0	; 192
+    1262:	20 91 00 01 	lds	r18, 0x0100	; 0x800100 <_edata>
+    1266:	30 91 01 01 	lds	r19, 0x0101	; 0x800101 <_edata+0x1>
+    126a:	28 0f       	add	r18, r24
+    126c:	39 1f       	adc	r19, r25
 
 #pragma region MMSB
             // chip 0
-            SET_COLOR(pgm_read_byte(buffer + index + 0));
-    1262:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1266:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    126a:	e8 0f       	add	r30, r24
-    126c:	f9 1f       	adc	r31, r25
-    126e:	e4 91       	lpm	r30, Z
-    1270:	2b b1       	in	r18, 0x0b	; 11
-    1272:	34 e0       	ldi	r19, 0x04	; 4
-    1274:	e3 9f       	mul	r30, r19
-    1276:	f0 01       	movw	r30, r0
-    1278:	11 24       	eor	r1, r1
-    127a:	23 70       	andi	r18, 0x03	; 3
-    127c:	e2 2b       	or	r30, r18
-    127e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    126e:	f9 01       	movw	r30, r18
+    1270:	a4 91       	lpm	r26, Z
+    1272:	6b b1       	in	r22, 0x0b	; 11
+    1274:	74 e0       	ldi	r23, 0x04	; 4
+    1276:	a7 9f       	mul	r26, r23
+    1278:	f0 01       	movw	r30, r0
+    127a:	11 24       	eor	r1, r1
+    127c:	63 70       	andi	r22, 0x03	; 3
+    127e:	6e 2b       	or	r22, r30
+    1280:	6b b9       	out	0x0b, r22	; 11
             PWCLK_GCLK;
-    1280:	25 b1       	in	r18, 0x05	; 5
-    1282:	2a 60       	ori	r18, 0x0A	; 10
-    1284:	25 b9       	out	0x05, r18	; 5
-    1286:	25 b1       	in	r18, 0x05	; 5
-    1288:	25 7f       	andi	r18, 0xF5	; 245
-    128a:	25 b9       	out	0x05, r18	; 5
+    1282:	65 b1       	in	r22, 0x05	; 5
+    1284:	6a 60       	ori	r22, 0x0A	; 10
+    1286:	65 b9       	out	0x05, r22	; 5
+    1288:	65 b1       	in	r22, 0x05	; 5
+    128a:	65 7f       	andi	r22, 0xF5	; 245
+    128c:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    128c:	25 b1       	in	r18, 0x05	; 5
-    128e:	2a 60       	ori	r18, 0x0A	; 10
-    1290:	25 b9       	out	0x05, r18	; 5
-    1292:	25 b1       	in	r18, 0x05	; 5
-    1294:	25 7f       	andi	r18, 0xF5	; 245
-    1296:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 1));
-    1298:	9c 01       	movw	r18, r24
-    129a:	2f 5f       	subi	r18, 0xFF	; 255
-    129c:	3f 4f       	sbci	r19, 0xFF	; 255
-    129e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    12a2:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    12a6:	e2 0f       	add	r30, r18
-    12a8:	f3 1f       	adc	r31, r19
-    12aa:	e4 91       	lpm	r30, Z
-    12ac:	2b b1       	in	r18, 0x0b	; 11
-    12ae:	64 e0       	ldi	r22, 0x04	; 4
-    12b0:	e6 9f       	mul	r30, r22
-    12b2:	f0 01       	movw	r30, r0
-    12b4:	11 24       	eor	r1, r1
-    12b6:	23 70       	andi	r18, 0x03	; 3
-    12b8:	e2 2b       	or	r30, r18
-    12ba:	eb b9       	out	0x0b, r30	; 11
+    128e:	65 b1       	in	r22, 0x05	; 5
+    1290:	6a 60       	ori	r22, 0x0A	; 10
+    1292:	65 b9       	out	0x05, r22	; 5
+    1294:	65 b1       	in	r22, 0x05	; 5
+    1296:	65 7f       	andi	r22, 0xF5	; 245
+    1298:	65 b9       	out	0x05, r22	; 5
+            // we send first the MMSB, then MSB, LSB, LLSB
+            index = buffer + ((y & ~1) << 5);
+
+#pragma region MMSB
+            // chip 0
+            SET_COLOR(pgm_read_byte(index++));
+    129a:	f9 01       	movw	r30, r18
+    129c:	31 96       	adiw	r30, 0x01	; 1
             PWCLK_GCLK;
-    12bc:	25 b1       	in	r18, 0x05	; 5
-    12be:	2a 60       	ori	r18, 0x0A	; 10
-    12c0:	25 b9       	out	0x05, r18	; 5
-    12c2:	25 b1       	in	r18, 0x05	; 5
-    12c4:	25 7f       	andi	r18, 0xF5	; 245
-    12c6:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    12c8:	25 b1       	in	r18, 0x05	; 5
-    12ca:	2a 60       	ori	r18, 0x0A	; 10
-    12cc:	25 b9       	out	0x05, r18	; 5
-    12ce:	25 b1       	in	r18, 0x05	; 5
-    12d0:	25 7f       	andi	r18, 0xF5	; 245
-    12d2:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 2));
-    12d4:	9c 01       	movw	r18, r24
-    12d6:	2e 5f       	subi	r18, 0xFE	; 254
-    12d8:	3f 4f       	sbci	r19, 0xFF	; 255
-    12da:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    12de:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    12e2:	e2 0f       	add	r30, r18
-    12e4:	f3 1f       	adc	r31, r19
-    12e6:	e4 91       	lpm	r30, Z
-    12e8:	2b b1       	in	r18, 0x0b	; 11
-    12ea:	74 e0       	ldi	r23, 0x04	; 4
-    12ec:	e7 9f       	mul	r30, r23
-    12ee:	f0 01       	movw	r30, r0
-    12f0:	11 24       	eor	r1, r1
-    12f2:	23 70       	andi	r18, 0x03	; 3
-    12f4:	e2 2b       	or	r30, r18
-    12f6:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    129e:	64 91       	lpm	r22, Z
+    12a0:	eb b1       	in	r30, 0x0b	; 11
+    12a2:	f4 e0       	ldi	r31, 0x04	; 4
+    12a4:	6f 9f       	mul	r22, r31
+    12a6:	b0 01       	movw	r22, r0
+    12a8:	11 24       	eor	r1, r1
+    12aa:	e3 70       	andi	r30, 0x03	; 3
+    12ac:	e6 2b       	or	r30, r22
+    12ae:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    12f8:	25 b1       	in	r18, 0x05	; 5
-    12fa:	2a 60       	ori	r18, 0x0A	; 10
-    12fc:	25 b9       	out	0x05, r18	; 5
-    12fe:	25 b1       	in	r18, 0x05	; 5
-    1300:	25 7f       	andi	r18, 0xF5	; 245
-    1302:	25 b9       	out	0x05, r18	; 5
+    12b0:	65 b1       	in	r22, 0x05	; 5
+    12b2:	6a 60       	ori	r22, 0x0A	; 10
+    12b4:	65 b9       	out	0x05, r22	; 5
+    12b6:	65 b1       	in	r22, 0x05	; 5
+    12b8:	65 7f       	andi	r22, 0xF5	; 245
+    12ba:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1304:	25 b1       	in	r18, 0x05	; 5
-    1306:	2a 60       	ori	r18, 0x0A	; 10
-    1308:	25 b9       	out	0x05, r18	; 5
-    130a:	25 b1       	in	r18, 0x05	; 5
-    130c:	25 7f       	andi	r18, 0xF5	; 245
-    130e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 3));
-    1310:	9c 01       	movw	r18, r24
-    1312:	2d 5f       	subi	r18, 0xFD	; 253
-    1314:	3f 4f       	sbci	r19, 0xFF	; 255
-    1316:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    131a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    131e:	e2 0f       	add	r30, r18
-    1320:	f3 1f       	adc	r31, r19
-    1322:	e4 91       	lpm	r30, Z
-    1324:	2b b1       	in	r18, 0x0b	; 11
-    1326:	34 e0       	ldi	r19, 0x04	; 4
-    1328:	e3 9f       	mul	r30, r19
-    132a:	f0 01       	movw	r30, r0
-    132c:	11 24       	eor	r1, r1
-    132e:	23 70       	andi	r18, 0x03	; 3
-    1330:	e2 2b       	or	r30, r18
-    1332:	eb b9       	out	0x0b, r30	; 11
+    12bc:	65 b1       	in	r22, 0x05	; 5
+    12be:	6a 60       	ori	r22, 0x0A	; 10
+    12c0:	65 b9       	out	0x05, r22	; 5
+    12c2:	65 b1       	in	r22, 0x05	; 5
+    12c4:	65 7f       	andi	r22, 0xF5	; 245
+    12c6:	65 b9       	out	0x05, r22	; 5
+#pragma region MMSB
+            // chip 0
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    1334:	25 b1       	in	r18, 0x05	; 5
-    1336:	2a 60       	ori	r18, 0x0A	; 10
-    1338:	25 b9       	out	0x05, r18	; 5
-    133a:	25 b1       	in	r18, 0x05	; 5
-    133c:	25 7f       	andi	r18, 0xF5	; 245
-    133e:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1340:	25 b1       	in	r18, 0x05	; 5
-    1342:	2a 60       	ori	r18, 0x0A	; 10
-    1344:	25 b9       	out	0x05, r18	; 5
-    1346:	25 b1       	in	r18, 0x05	; 5
-    1348:	25 7f       	andi	r18, 0xF5	; 245
-    134a:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 4));
-    134c:	9c 01       	movw	r18, r24
-    134e:	2c 5f       	subi	r18, 0xFC	; 252
-    1350:	3f 4f       	sbci	r19, 0xFF	; 255
-    1352:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1356:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    135a:	e2 0f       	add	r30, r18
-    135c:	f3 1f       	adc	r31, r19
-    135e:	e4 91       	lpm	r30, Z
-    1360:	2b b1       	in	r18, 0x0b	; 11
-    1362:	64 e0       	ldi	r22, 0x04	; 4
-    1364:	e6 9f       	mul	r30, r22
-    1366:	f0 01       	movw	r30, r0
-    1368:	11 24       	eor	r1, r1
-    136a:	23 70       	andi	r18, 0x03	; 3
-    136c:	e2 2b       	or	r30, r18
-    136e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    12c8:	f9 01       	movw	r30, r18
+    12ca:	32 96       	adiw	r30, 0x02	; 2
             PWCLK_GCLK;
-    1370:	25 b1       	in	r18, 0x05	; 5
-    1372:	2a 60       	ori	r18, 0x0A	; 10
-    1374:	25 b9       	out	0x05, r18	; 5
-    1376:	25 b1       	in	r18, 0x05	; 5
-    1378:	25 7f       	andi	r18, 0xF5	; 245
-    137a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    137c:	25 b1       	in	r18, 0x05	; 5
-    137e:	2a 60       	ori	r18, 0x0A	; 10
-    1380:	25 b9       	out	0x05, r18	; 5
-    1382:	25 b1       	in	r18, 0x05	; 5
-    1384:	25 7f       	andi	r18, 0xF5	; 245
-    1386:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 5));
-    1388:	9c 01       	movw	r18, r24
-    138a:	2b 5f       	subi	r18, 0xFB	; 251
-    138c:	3f 4f       	sbci	r19, 0xFF	; 255
-    138e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1392:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1396:	e2 0f       	add	r30, r18
-    1398:	f3 1f       	adc	r31, r19
-    139a:	e4 91       	lpm	r30, Z
-    139c:	2b b1       	in	r18, 0x0b	; 11
-    139e:	74 e0       	ldi	r23, 0x04	; 4
-    13a0:	e7 9f       	mul	r30, r23
-    13a2:	f0 01       	movw	r30, r0
-    13a4:	11 24       	eor	r1, r1
-    13a6:	23 70       	andi	r18, 0x03	; 3
-    13a8:	e2 2b       	or	r30, r18
-    13aa:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    12cc:	64 91       	lpm	r22, Z
+    12ce:	eb b1       	in	r30, 0x0b	; 11
+    12d0:	f4 e0       	ldi	r31, 0x04	; 4
+    12d2:	6f 9f       	mul	r22, r31
+    12d4:	b0 01       	movw	r22, r0
+    12d6:	11 24       	eor	r1, r1
+    12d8:	e3 70       	andi	r30, 0x03	; 3
+    12da:	e6 2b       	or	r30, r22
+    12dc:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    13ac:	25 b1       	in	r18, 0x05	; 5
-    13ae:	2a 60       	ori	r18, 0x0A	; 10
-    13b0:	25 b9       	out	0x05, r18	; 5
-    13b2:	25 b1       	in	r18, 0x05	; 5
-    13b4:	25 7f       	andi	r18, 0xF5	; 245
-    13b6:	25 b9       	out	0x05, r18	; 5
+    12de:	65 b1       	in	r22, 0x05	; 5
+    12e0:	6a 60       	ori	r22, 0x0A	; 10
+    12e2:	65 b9       	out	0x05, r22	; 5
+    12e4:	65 b1       	in	r22, 0x05	; 5
+    12e6:	65 7f       	andi	r22, 0xF5	; 245
+    12e8:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    13b8:	25 b1       	in	r18, 0x05	; 5
-    13ba:	2a 60       	ori	r18, 0x0A	; 10
-    13bc:	25 b9       	out	0x05, r18	; 5
-    13be:	25 b1       	in	r18, 0x05	; 5
-    13c0:	25 7f       	andi	r18, 0xF5	; 245
-    13c2:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 6));
-    13c4:	9c 01       	movw	r18, r24
-    13c6:	2a 5f       	subi	r18, 0xFA	; 250
-    13c8:	3f 4f       	sbci	r19, 0xFF	; 255
-    13ca:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    13ce:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    13d2:	e2 0f       	add	r30, r18
-    13d4:	f3 1f       	adc	r31, r19
-    13d6:	e4 91       	lpm	r30, Z
-    13d8:	2b b1       	in	r18, 0x0b	; 11
-    13da:	34 e0       	ldi	r19, 0x04	; 4
-    13dc:	e3 9f       	mul	r30, r19
-    13de:	f0 01       	movw	r30, r0
-    13e0:	11 24       	eor	r1, r1
-    13e2:	23 70       	andi	r18, 0x03	; 3
-    13e4:	e2 2b       	or	r30, r18
-    13e6:	eb b9       	out	0x0b, r30	; 11
+    12ea:	65 b1       	in	r22, 0x05	; 5
+    12ec:	6a 60       	ori	r22, 0x0A	; 10
+    12ee:	65 b9       	out	0x05, r22	; 5
+    12f0:	65 b1       	in	r22, 0x05	; 5
+    12f2:	65 7f       	andi	r22, 0xF5	; 245
+    12f4:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    13e8:	25 b1       	in	r18, 0x05	; 5
-    13ea:	2a 60       	ori	r18, 0x0A	; 10
-    13ec:	25 b9       	out	0x05, r18	; 5
-    13ee:	25 b1       	in	r18, 0x05	; 5
-    13f0:	25 7f       	andi	r18, 0xF5	; 245
-    13f2:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    13f4:	25 b1       	in	r18, 0x05	; 5
-    13f6:	2a 60       	ori	r18, 0x0A	; 10
-    13f8:	25 b9       	out	0x05, r18	; 5
-    13fa:	25 b1       	in	r18, 0x05	; 5
-    13fc:	25 7f       	andi	r18, 0xF5	; 245
-    13fe:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 7));
-    1400:	9c 01       	movw	r18, r24
-    1402:	29 5f       	subi	r18, 0xF9	; 249
-    1404:	3f 4f       	sbci	r19, 0xFF	; 255
-    1406:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    140a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    140e:	e2 0f       	add	r30, r18
-    1410:	f3 1f       	adc	r31, r19
-    1412:	e4 91       	lpm	r30, Z
-    1414:	2b b1       	in	r18, 0x0b	; 11
-    1416:	64 e0       	ldi	r22, 0x04	; 4
-    1418:	e6 9f       	mul	r30, r22
-    141a:	f0 01       	movw	r30, r0
-    141c:	11 24       	eor	r1, r1
-    141e:	23 70       	andi	r18, 0x03	; 3
-    1420:	e2 2b       	or	r30, r18
-    1422:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    1424:	25 b1       	in	r18, 0x05	; 5
-    1426:	2a 60       	ori	r18, 0x0A	; 10
-    1428:	25 b9       	out	0x05, r18	; 5
-    142a:	25 b1       	in	r18, 0x05	; 5
-    142c:	25 7f       	andi	r18, 0xF5	; 245
-    142e:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1430:	25 b1       	in	r18, 0x05	; 5
-    1432:	2a 60       	ori	r18, 0x0A	; 10
-    1434:	25 b9       	out	0x05, r18	; 5
-    1436:	25 b1       	in	r18, 0x05	; 5
-    1438:	25 7f       	andi	r18, 0xF5	; 245
-    143a:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    12f6:	f9 01       	movw	r30, r18
+    12f8:	33 96       	adiw	r30, 0x03	; 3
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    12fa:	64 91       	lpm	r22, Z
+    12fc:	eb b1       	in	r30, 0x0b	; 11
+    12fe:	f4 e0       	ldi	r31, 0x04	; 4
+    1300:	6f 9f       	mul	r22, r31
+    1302:	b0 01       	movw	r22, r0
+    1304:	11 24       	eor	r1, r1
+    1306:	e3 70       	andi	r30, 0x03	; 3
+    1308:	e6 2b       	or	r30, r22
+    130a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    130c:	65 b1       	in	r22, 0x05	; 5
+    130e:	6a 60       	ori	r22, 0x0A	; 10
+    1310:	65 b9       	out	0x05, r22	; 5
+    1312:	65 b1       	in	r22, 0x05	; 5
+    1314:	65 7f       	andi	r22, 0xF5	; 245
+    1316:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1318:	65 b1       	in	r22, 0x05	; 5
+    131a:	6a 60       	ori	r22, 0x0A	; 10
+    131c:	65 b9       	out	0x05, r22	; 5
+    131e:	65 b1       	in	r22, 0x05	; 5
+    1320:	65 7f       	andi	r22, 0xF5	; 245
+    1322:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1324:	f9 01       	movw	r30, r18
+    1326:	34 96       	adiw	r30, 0x04	; 4
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1328:	64 91       	lpm	r22, Z
+    132a:	eb b1       	in	r30, 0x0b	; 11
+    132c:	f4 e0       	ldi	r31, 0x04	; 4
+    132e:	6f 9f       	mul	r22, r31
+    1330:	b0 01       	movw	r22, r0
+    1332:	11 24       	eor	r1, r1
+    1334:	e3 70       	andi	r30, 0x03	; 3
+    1336:	e6 2b       	or	r30, r22
+    1338:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    133a:	65 b1       	in	r22, 0x05	; 5
+    133c:	6a 60       	ori	r22, 0x0A	; 10
+    133e:	65 b9       	out	0x05, r22	; 5
+    1340:	65 b1       	in	r22, 0x05	; 5
+    1342:	65 7f       	andi	r22, 0xF5	; 245
+    1344:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1346:	65 b1       	in	r22, 0x05	; 5
+    1348:	6a 60       	ori	r22, 0x0A	; 10
+    134a:	65 b9       	out	0x05, r22	; 5
+    134c:	65 b1       	in	r22, 0x05	; 5
+    134e:	65 7f       	andi	r22, 0xF5	; 245
+    1350:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1352:	f9 01       	movw	r30, r18
+    1354:	35 96       	adiw	r30, 0x05	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1356:	64 91       	lpm	r22, Z
+    1358:	eb b1       	in	r30, 0x0b	; 11
+    135a:	f4 e0       	ldi	r31, 0x04	; 4
+    135c:	6f 9f       	mul	r22, r31
+    135e:	b0 01       	movw	r22, r0
+    1360:	11 24       	eor	r1, r1
+    1362:	e3 70       	andi	r30, 0x03	; 3
+    1364:	e6 2b       	or	r30, r22
+    1366:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1368:	65 b1       	in	r22, 0x05	; 5
+    136a:	6a 60       	ori	r22, 0x0A	; 10
+    136c:	65 b9       	out	0x05, r22	; 5
+    136e:	65 b1       	in	r22, 0x05	; 5
+    1370:	65 7f       	andi	r22, 0xF5	; 245
+    1372:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1374:	65 b1       	in	r22, 0x05	; 5
+    1376:	6a 60       	ori	r22, 0x0A	; 10
+    1378:	65 b9       	out	0x05, r22	; 5
+    137a:	65 b1       	in	r22, 0x05	; 5
+    137c:	65 7f       	andi	r22, 0xF5	; 245
+    137e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1380:	f9 01       	movw	r30, r18
+    1382:	36 96       	adiw	r30, 0x06	; 6
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1384:	64 91       	lpm	r22, Z
+    1386:	eb b1       	in	r30, 0x0b	; 11
+    1388:	f4 e0       	ldi	r31, 0x04	; 4
+    138a:	6f 9f       	mul	r22, r31
+    138c:	b0 01       	movw	r22, r0
+    138e:	11 24       	eor	r1, r1
+    1390:	e3 70       	andi	r30, 0x03	; 3
+    1392:	e6 2b       	or	r30, r22
+    1394:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1396:	65 b1       	in	r22, 0x05	; 5
+    1398:	6a 60       	ori	r22, 0x0A	; 10
+    139a:	65 b9       	out	0x05, r22	; 5
+    139c:	65 b1       	in	r22, 0x05	; 5
+    139e:	65 7f       	andi	r22, 0xF5	; 245
+    13a0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    13a2:	65 b1       	in	r22, 0x05	; 5
+    13a4:	6a 60       	ori	r22, 0x0A	; 10
+    13a6:	65 b9       	out	0x05, r22	; 5
+    13a8:	65 b1       	in	r22, 0x05	; 5
+    13aa:	65 7f       	andi	r22, 0xF5	; 245
+    13ac:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    13ae:	f9 01       	movw	r30, r18
+    13b0:	37 96       	adiw	r30, 0x07	; 7
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    13b2:	64 91       	lpm	r22, Z
+    13b4:	eb b1       	in	r30, 0x0b	; 11
+    13b6:	f4 e0       	ldi	r31, 0x04	; 4
+    13b8:	6f 9f       	mul	r22, r31
+    13ba:	b0 01       	movw	r22, r0
+    13bc:	11 24       	eor	r1, r1
+    13be:	e3 70       	andi	r30, 0x03	; 3
+    13c0:	e6 2b       	or	r30, r22
+    13c2:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    13c4:	65 b1       	in	r22, 0x05	; 5
+    13c6:	6a 60       	ori	r22, 0x0A	; 10
+    13c8:	65 b9       	out	0x05, r22	; 5
+    13ca:	65 b1       	in	r22, 0x05	; 5
+    13cc:	65 7f       	andi	r22, 0xF5	; 245
+    13ce:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    13d0:	65 b1       	in	r22, 0x05	; 5
+    13d2:	6a 60       	ori	r22, 0x0A	; 10
+    13d4:	65 b9       	out	0x05, r22	; 5
+    13d6:	65 b1       	in	r22, 0x05	; 5
+    13d8:	65 7f       	andi	r22, 0xF5	; 245
+    13da:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    13dc:	f9 01       	movw	r30, r18
+    13de:	38 96       	adiw	r30, 0x08	; 8
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 1
-            SET_COLOR(pgm_read_byte(buffer + index + 8));
-    143c:	9c 01       	movw	r18, r24
-    143e:	28 5f       	subi	r18, 0xF8	; 248
-    1440:	3f 4f       	sbci	r19, 0xFF	; 255
-    1442:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1446:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    144a:	e2 0f       	add	r30, r18
-    144c:	f3 1f       	adc	r31, r19
-    144e:	e4 91       	lpm	r30, Z
-    1450:	2b b1       	in	r18, 0x0b	; 11
-    1452:	74 e0       	ldi	r23, 0x04	; 4
-    1454:	e7 9f       	mul	r30, r23
-    1456:	f0 01       	movw	r30, r0
-    1458:	11 24       	eor	r1, r1
-    145a:	23 70       	andi	r18, 0x03	; 3
-    145c:	e2 2b       	or	r30, r18
-    145e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    13e0:	64 91       	lpm	r22, Z
+    13e2:	eb b1       	in	r30, 0x0b	; 11
+    13e4:	f4 e0       	ldi	r31, 0x04	; 4
+    13e6:	6f 9f       	mul	r22, r31
+    13e8:	b0 01       	movw	r22, r0
+    13ea:	11 24       	eor	r1, r1
+    13ec:	e3 70       	andi	r30, 0x03	; 3
+    13ee:	e6 2b       	or	r30, r22
+    13f0:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1460:	25 b1       	in	r18, 0x05	; 5
-    1462:	2a 60       	ori	r18, 0x0A	; 10
-    1464:	25 b9       	out	0x05, r18	; 5
-    1466:	25 b1       	in	r18, 0x05	; 5
-    1468:	25 7f       	andi	r18, 0xF5	; 245
-    146a:	25 b9       	out	0x05, r18	; 5
+    13f2:	65 b1       	in	r22, 0x05	; 5
+    13f4:	6a 60       	ori	r22, 0x0A	; 10
+    13f6:	65 b9       	out	0x05, r22	; 5
+    13f8:	65 b1       	in	r22, 0x05	; 5
+    13fa:	65 7f       	andi	r22, 0xF5	; 245
+    13fc:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    146c:	25 b1       	in	r18, 0x05	; 5
-    146e:	2a 60       	ori	r18, 0x0A	; 10
-    1470:	25 b9       	out	0x05, r18	; 5
-    1472:	25 b1       	in	r18, 0x05	; 5
-    1474:	25 7f       	andi	r18, 0xF5	; 245
-    1476:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 9));
-    1478:	9c 01       	movw	r18, r24
-    147a:	27 5f       	subi	r18, 0xF7	; 247
-    147c:	3f 4f       	sbci	r19, 0xFF	; 255
-    147e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1482:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1486:	e2 0f       	add	r30, r18
-    1488:	f3 1f       	adc	r31, r19
-    148a:	e4 91       	lpm	r30, Z
-    148c:	2b b1       	in	r18, 0x0b	; 11
-    148e:	34 e0       	ldi	r19, 0x04	; 4
-    1490:	e3 9f       	mul	r30, r19
-    1492:	f0 01       	movw	r30, r0
-    1494:	11 24       	eor	r1, r1
-    1496:	23 70       	andi	r18, 0x03	; 3
-    1498:	e2 2b       	or	r30, r18
-    149a:	eb b9       	out	0x0b, r30	; 11
+    13fe:	65 b1       	in	r22, 0x05	; 5
+    1400:	6a 60       	ori	r22, 0x0A	; 10
+    1402:	65 b9       	out	0x05, r22	; 5
+    1404:	65 b1       	in	r22, 0x05	; 5
+    1406:	65 7f       	andi	r22, 0xF5	; 245
+    1408:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    149c:	25 b1       	in	r18, 0x05	; 5
-    149e:	2a 60       	ori	r18, 0x0A	; 10
-    14a0:	25 b9       	out	0x05, r18	; 5
-    14a2:	25 b1       	in	r18, 0x05	; 5
-    14a4:	25 7f       	andi	r18, 0xF5	; 245
-    14a6:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    14a8:	25 b1       	in	r18, 0x05	; 5
-    14aa:	2a 60       	ori	r18, 0x0A	; 10
-    14ac:	25 b9       	out	0x05, r18	; 5
-    14ae:	25 b1       	in	r18, 0x05	; 5
-    14b0:	25 7f       	andi	r18, 0xF5	; 245
-    14b2:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 10));
-    14b4:	9c 01       	movw	r18, r24
-    14b6:	26 5f       	subi	r18, 0xF6	; 246
-    14b8:	3f 4f       	sbci	r19, 0xFF	; 255
-    14ba:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    14be:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    14c2:	e2 0f       	add	r30, r18
-    14c4:	f3 1f       	adc	r31, r19
-    14c6:	e4 91       	lpm	r30, Z
-    14c8:	2b b1       	in	r18, 0x0b	; 11
-    14ca:	64 e0       	ldi	r22, 0x04	; 4
-    14cc:	e6 9f       	mul	r30, r22
-    14ce:	f0 01       	movw	r30, r0
+
+            // chip 1
+            SET_COLOR(pgm_read_byte(index++));
+    140a:	f9 01       	movw	r30, r18
+    140c:	39 96       	adiw	r30, 0x09	; 9
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    140e:	64 91       	lpm	r22, Z
+    1410:	eb b1       	in	r30, 0x0b	; 11
+    1412:	f4 e0       	ldi	r31, 0x04	; 4
+    1414:	6f 9f       	mul	r22, r31
+    1416:	b0 01       	movw	r22, r0
+    1418:	11 24       	eor	r1, r1
+    141a:	e3 70       	andi	r30, 0x03	; 3
+    141c:	e6 2b       	or	r30, r22
+    141e:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1420:	65 b1       	in	r22, 0x05	; 5
+    1422:	6a 60       	ori	r22, 0x0A	; 10
+    1424:	65 b9       	out	0x05, r22	; 5
+    1426:	65 b1       	in	r22, 0x05	; 5
+    1428:	65 7f       	andi	r22, 0xF5	; 245
+    142a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    142c:	65 b1       	in	r22, 0x05	; 5
+    142e:	6a 60       	ori	r22, 0x0A	; 10
+    1430:	65 b9       	out	0x05, r22	; 5
+    1432:	65 b1       	in	r22, 0x05	; 5
+    1434:	65 7f       	andi	r22, 0xF5	; 245
+    1436:	65 b9       	out	0x05, r22	; 5
+
+            // chip 1
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1438:	f9 01       	movw	r30, r18
+    143a:	3a 96       	adiw	r30, 0x0a	; 10
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    143c:	64 91       	lpm	r22, Z
+    143e:	eb b1       	in	r30, 0x0b	; 11
+    1440:	f4 e0       	ldi	r31, 0x04	; 4
+    1442:	6f 9f       	mul	r22, r31
+    1444:	b0 01       	movw	r22, r0
+    1446:	11 24       	eor	r1, r1
+    1448:	e3 70       	andi	r30, 0x03	; 3
+    144a:	e6 2b       	or	r30, r22
+    144c:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    144e:	65 b1       	in	r22, 0x05	; 5
+    1450:	6a 60       	ori	r22, 0x0A	; 10
+    1452:	65 b9       	out	0x05, r22	; 5
+    1454:	65 b1       	in	r22, 0x05	; 5
+    1456:	65 7f       	andi	r22, 0xF5	; 245
+    1458:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    145a:	65 b1       	in	r22, 0x05	; 5
+    145c:	6a 60       	ori	r22, 0x0A	; 10
+    145e:	65 b9       	out	0x05, r22	; 5
+    1460:	65 b1       	in	r22, 0x05	; 5
+    1462:	65 7f       	andi	r22, 0xF5	; 245
+    1464:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1466:	f9 01       	movw	r30, r18
+    1468:	3b 96       	adiw	r30, 0x0b	; 11
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    146a:	64 91       	lpm	r22, Z
+    146c:	eb b1       	in	r30, 0x0b	; 11
+    146e:	f4 e0       	ldi	r31, 0x04	; 4
+    1470:	6f 9f       	mul	r22, r31
+    1472:	b0 01       	movw	r22, r0
+    1474:	11 24       	eor	r1, r1
+    1476:	e3 70       	andi	r30, 0x03	; 3
+    1478:	e6 2b       	or	r30, r22
+    147a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    147c:	65 b1       	in	r22, 0x05	; 5
+    147e:	6a 60       	ori	r22, 0x0A	; 10
+    1480:	65 b9       	out	0x05, r22	; 5
+    1482:	65 b1       	in	r22, 0x05	; 5
+    1484:	65 7f       	andi	r22, 0xF5	; 245
+    1486:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1488:	65 b1       	in	r22, 0x05	; 5
+    148a:	6a 60       	ori	r22, 0x0A	; 10
+    148c:	65 b9       	out	0x05, r22	; 5
+    148e:	65 b1       	in	r22, 0x05	; 5
+    1490:	65 7f       	andi	r22, 0xF5	; 245
+    1492:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1494:	f9 01       	movw	r30, r18
+    1496:	3c 96       	adiw	r30, 0x0c	; 12
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1498:	64 91       	lpm	r22, Z
+    149a:	eb b1       	in	r30, 0x0b	; 11
+    149c:	f4 e0       	ldi	r31, 0x04	; 4
+    149e:	6f 9f       	mul	r22, r31
+    14a0:	b0 01       	movw	r22, r0
+    14a2:	11 24       	eor	r1, r1
+    14a4:	e3 70       	andi	r30, 0x03	; 3
+    14a6:	e6 2b       	or	r30, r22
+    14a8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    14aa:	65 b1       	in	r22, 0x05	; 5
+    14ac:	6a 60       	ori	r22, 0x0A	; 10
+    14ae:	65 b9       	out	0x05, r22	; 5
+    14b0:	65 b1       	in	r22, 0x05	; 5
+    14b2:	65 7f       	andi	r22, 0xF5	; 245
+    14b4:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    14b6:	65 b1       	in	r22, 0x05	; 5
+    14b8:	6a 60       	ori	r22, 0x0A	; 10
+    14ba:	65 b9       	out	0x05, r22	; 5
+    14bc:	65 b1       	in	r22, 0x05	; 5
+    14be:	65 7f       	andi	r22, 0xF5	; 245
+    14c0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    14c2:	f9 01       	movw	r30, r18
+    14c4:	3d 96       	adiw	r30, 0x0d	; 13
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    14c6:	64 91       	lpm	r22, Z
+    14c8:	eb b1       	in	r30, 0x0b	; 11
+    14ca:	f4 e0       	ldi	r31, 0x04	; 4
+    14cc:	6f 9f       	mul	r22, r31
+    14ce:	b0 01       	movw	r22, r0
     14d0:	11 24       	eor	r1, r1
-    14d2:	23 70       	andi	r18, 0x03	; 3
-    14d4:	e2 2b       	or	r30, r18
+    14d2:	e3 70       	andi	r30, 0x03	; 3
+    14d4:	e6 2b       	or	r30, r22
     14d6:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    14d8:	25 b1       	in	r18, 0x05	; 5
-    14da:	2a 60       	ori	r18, 0x0A	; 10
-    14dc:	25 b9       	out	0x05, r18	; 5
-    14de:	25 b1       	in	r18, 0x05	; 5
-    14e0:	25 7f       	andi	r18, 0xF5	; 245
-    14e2:	25 b9       	out	0x05, r18	; 5
+    14d8:	65 b1       	in	r22, 0x05	; 5
+    14da:	6a 60       	ori	r22, 0x0A	; 10
+    14dc:	65 b9       	out	0x05, r22	; 5
+    14de:	65 b1       	in	r22, 0x05	; 5
+    14e0:	65 7f       	andi	r22, 0xF5	; 245
+    14e2:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    14e4:	25 b1       	in	r18, 0x05	; 5
-    14e6:	2a 60       	ori	r18, 0x0A	; 10
-    14e8:	25 b9       	out	0x05, r18	; 5
-    14ea:	25 b1       	in	r18, 0x05	; 5
-    14ec:	25 7f       	andi	r18, 0xF5	; 245
-    14ee:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 11));
-    14f0:	9c 01       	movw	r18, r24
-    14f2:	25 5f       	subi	r18, 0xF5	; 245
-    14f4:	3f 4f       	sbci	r19, 0xFF	; 255
-    14f6:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    14fa:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    14fe:	e2 0f       	add	r30, r18
-    1500:	f3 1f       	adc	r31, r19
-    1502:	e4 91       	lpm	r30, Z
-    1504:	2b b1       	in	r18, 0x0b	; 11
-    1506:	74 e0       	ldi	r23, 0x04	; 4
-    1508:	e7 9f       	mul	r30, r23
-    150a:	f0 01       	movw	r30, r0
-    150c:	11 24       	eor	r1, r1
-    150e:	23 70       	andi	r18, 0x03	; 3
-    1510:	e2 2b       	or	r30, r18
-    1512:	eb b9       	out	0x0b, r30	; 11
+    14e4:	65 b1       	in	r22, 0x05	; 5
+    14e6:	6a 60       	ori	r22, 0x0A	; 10
+    14e8:	65 b9       	out	0x05, r22	; 5
+    14ea:	65 b1       	in	r22, 0x05	; 5
+    14ec:	65 7f       	andi	r22, 0xF5	; 245
+    14ee:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1514:	25 b1       	in	r18, 0x05	; 5
-    1516:	2a 60       	ori	r18, 0x0A	; 10
-    1518:	25 b9       	out	0x05, r18	; 5
-    151a:	25 b1       	in	r18, 0x05	; 5
-    151c:	25 7f       	andi	r18, 0xF5	; 245
-    151e:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1520:	25 b1       	in	r18, 0x05	; 5
-    1522:	2a 60       	ori	r18, 0x0A	; 10
-    1524:	25 b9       	out	0x05, r18	; 5
-    1526:	25 b1       	in	r18, 0x05	; 5
-    1528:	25 7f       	andi	r18, 0xF5	; 245
-    152a:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 12));
-    152c:	9c 01       	movw	r18, r24
-    152e:	24 5f       	subi	r18, 0xF4	; 244
-    1530:	3f 4f       	sbci	r19, 0xFF	; 255
-    1532:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1536:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    153a:	e2 0f       	add	r30, r18
-    153c:	f3 1f       	adc	r31, r19
-    153e:	e4 91       	lpm	r30, Z
-    1540:	2b b1       	in	r18, 0x0b	; 11
-    1542:	34 e0       	ldi	r19, 0x04	; 4
-    1544:	e3 9f       	mul	r30, r19
-    1546:	f0 01       	movw	r30, r0
-    1548:	11 24       	eor	r1, r1
-    154a:	23 70       	andi	r18, 0x03	; 3
-    154c:	e2 2b       	or	r30, r18
-    154e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    1550:	25 b1       	in	r18, 0x05	; 5
-    1552:	2a 60       	ori	r18, 0x0A	; 10
-    1554:	25 b9       	out	0x05, r18	; 5
-    1556:	25 b1       	in	r18, 0x05	; 5
-    1558:	25 7f       	andi	r18, 0xF5	; 245
-    155a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    155c:	25 b1       	in	r18, 0x05	; 5
-    155e:	2a 60       	ori	r18, 0x0A	; 10
-    1560:	25 b9       	out	0x05, r18	; 5
-    1562:	25 b1       	in	r18, 0x05	; 5
-    1564:	25 7f       	andi	r18, 0xF5	; 245
-    1566:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 13));
-    1568:	9c 01       	movw	r18, r24
-    156a:	23 5f       	subi	r18, 0xF3	; 243
-    156c:	3f 4f       	sbci	r19, 0xFF	; 255
-    156e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1572:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1576:	e2 0f       	add	r30, r18
-    1578:	f3 1f       	adc	r31, r19
-    157a:	e4 91       	lpm	r30, Z
-    157c:	2b b1       	in	r18, 0x0b	; 11
-    157e:	64 e0       	ldi	r22, 0x04	; 4
-    1580:	e6 9f       	mul	r30, r22
-    1582:	f0 01       	movw	r30, r0
-    1584:	11 24       	eor	r1, r1
-    1586:	23 70       	andi	r18, 0x03	; 3
-    1588:	e2 2b       	or	r30, r18
-    158a:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    14f0:	f9 01       	movw	r30, r18
+    14f2:	3e 96       	adiw	r30, 0x0e	; 14
             PWCLK_GCLK;
-    158c:	25 b1       	in	r18, 0x05	; 5
-    158e:	2a 60       	ori	r18, 0x0A	; 10
-    1590:	25 b9       	out	0x05, r18	; 5
-    1592:	25 b1       	in	r18, 0x05	; 5
-    1594:	25 7f       	andi	r18, 0xF5	; 245
-    1596:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1598:	25 b1       	in	r18, 0x05	; 5
-    159a:	2a 60       	ori	r18, 0x0A	; 10
-    159c:	25 b9       	out	0x05, r18	; 5
-    159e:	25 b1       	in	r18, 0x05	; 5
-    15a0:	25 7f       	andi	r18, 0xF5	; 245
-    15a2:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 14));
-    15a4:	9c 01       	movw	r18, r24
-    15a6:	22 5f       	subi	r18, 0xF2	; 242
-    15a8:	3f 4f       	sbci	r19, 0xFF	; 255
-    15aa:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    15ae:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    15b2:	e2 0f       	add	r30, r18
-    15b4:	f3 1f       	adc	r31, r19
-    15b6:	e4 91       	lpm	r30, Z
-    15b8:	2b b1       	in	r18, 0x0b	; 11
-    15ba:	74 e0       	ldi	r23, 0x04	; 4
-    15bc:	e7 9f       	mul	r30, r23
-    15be:	f0 01       	movw	r30, r0
-    15c0:	11 24       	eor	r1, r1
-    15c2:	23 70       	andi	r18, 0x03	; 3
-    15c4:	e2 2b       	or	r30, r18
-    15c6:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    14f4:	64 91       	lpm	r22, Z
+    14f6:	eb b1       	in	r30, 0x0b	; 11
+    14f8:	f4 e0       	ldi	r31, 0x04	; 4
+    14fa:	6f 9f       	mul	r22, r31
+    14fc:	b0 01       	movw	r22, r0
+    14fe:	11 24       	eor	r1, r1
+    1500:	e3 70       	andi	r30, 0x03	; 3
+    1502:	e6 2b       	or	r30, r22
+    1504:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    15c8:	25 b1       	in	r18, 0x05	; 5
-    15ca:	2a 60       	ori	r18, 0x0A	; 10
-    15cc:	25 b9       	out	0x05, r18	; 5
-    15ce:	25 b1       	in	r18, 0x05	; 5
-    15d0:	25 7f       	andi	r18, 0xF5	; 245
-    15d2:	25 b9       	out	0x05, r18	; 5
+    1506:	65 b1       	in	r22, 0x05	; 5
+    1508:	6a 60       	ori	r22, 0x0A	; 10
+    150a:	65 b9       	out	0x05, r22	; 5
+    150c:	65 b1       	in	r22, 0x05	; 5
+    150e:	65 7f       	andi	r22, 0xF5	; 245
+    1510:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    15d4:	25 b1       	in	r18, 0x05	; 5
-    15d6:	2a 60       	ori	r18, 0x0A	; 10
-    15d8:	25 b9       	out	0x05, r18	; 5
-    15da:	25 b1       	in	r18, 0x05	; 5
-    15dc:	25 7f       	andi	r18, 0xF5	; 245
-    15de:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 15));
-    15e0:	9c 01       	movw	r18, r24
-    15e2:	21 5f       	subi	r18, 0xF1	; 241
-    15e4:	3f 4f       	sbci	r19, 0xFF	; 255
-    15e6:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    15ea:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    15ee:	e2 0f       	add	r30, r18
-    15f0:	f3 1f       	adc	r31, r19
-    15f2:	e4 91       	lpm	r30, Z
-    15f4:	2b b1       	in	r18, 0x0b	; 11
-    15f6:	34 e0       	ldi	r19, 0x04	; 4
-    15f8:	e3 9f       	mul	r30, r19
-    15fa:	f0 01       	movw	r30, r0
-    15fc:	11 24       	eor	r1, r1
-    15fe:	23 70       	andi	r18, 0x03	; 3
-    1600:	e2 2b       	or	r30, r18
-    1602:	eb b9       	out	0x0b, r30	; 11
+    1512:	65 b1       	in	r22, 0x05	; 5
+    1514:	6a 60       	ori	r22, 0x0A	; 10
+    1516:	65 b9       	out	0x05, r22	; 5
+    1518:	65 b1       	in	r22, 0x05	; 5
+    151a:	65 7f       	andi	r22, 0xF5	; 245
+    151c:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1604:	25 b1       	in	r18, 0x05	; 5
-    1606:	2a 60       	ori	r18, 0x0A	; 10
-    1608:	25 b9       	out	0x05, r18	; 5
-    160a:	25 b1       	in	r18, 0x05	; 5
-    160c:	25 7f       	andi	r18, 0xF5	; 245
-    160e:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1610:	25 b1       	in	r18, 0x05	; 5
-    1612:	2a 60       	ori	r18, 0x0A	; 10
-    1614:	25 b9       	out	0x05, r18	; 5
-    1616:	25 b1       	in	r18, 0x05	; 5
-    1618:	25 7f       	andi	r18, 0xF5	; 245
-    161a:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    151e:	f9 01       	movw	r30, r18
+    1520:	3f 96       	adiw	r30, 0x0f	; 15
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1522:	64 91       	lpm	r22, Z
+    1524:	eb b1       	in	r30, 0x0b	; 11
+    1526:	f4 e0       	ldi	r31, 0x04	; 4
+    1528:	6f 9f       	mul	r22, r31
+    152a:	b0 01       	movw	r22, r0
+    152c:	11 24       	eor	r1, r1
+    152e:	e3 70       	andi	r30, 0x03	; 3
+    1530:	e6 2b       	or	r30, r22
+    1532:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1534:	65 b1       	in	r22, 0x05	; 5
+    1536:	6a 60       	ori	r22, 0x0A	; 10
+    1538:	65 b9       	out	0x05, r22	; 5
+    153a:	65 b1       	in	r22, 0x05	; 5
+    153c:	65 7f       	andi	r22, 0xF5	; 245
+    153e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1540:	65 b1       	in	r22, 0x05	; 5
+    1542:	6a 60       	ori	r22, 0x0A	; 10
+    1544:	65 b9       	out	0x05, r22	; 5
+    1546:	65 b1       	in	r22, 0x05	; 5
+    1548:	65 7f       	andi	r22, 0xF5	; 245
+    154a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    154c:	f9 01       	movw	r30, r18
+    154e:	70 96       	adiw	r30, 0x10	; 16
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 2
-            SET_COLOR(pgm_read_byte(buffer + index + 16));
-    161c:	9c 01       	movw	r18, r24
-    161e:	20 5f       	subi	r18, 0xF0	; 240
-    1620:	3f 4f       	sbci	r19, 0xFF	; 255
-    1622:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1626:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    162a:	e2 0f       	add	r30, r18
-    162c:	f3 1f       	adc	r31, r19
-    162e:	e4 91       	lpm	r30, Z
-    1630:	2b b1       	in	r18, 0x0b	; 11
-    1632:	64 e0       	ldi	r22, 0x04	; 4
-    1634:	e6 9f       	mul	r30, r22
-    1636:	f0 01       	movw	r30, r0
-    1638:	11 24       	eor	r1, r1
-    163a:	23 70       	andi	r18, 0x03	; 3
-    163c:	e2 2b       	or	r30, r18
-    163e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1550:	64 91       	lpm	r22, Z
+    1552:	eb b1       	in	r30, 0x0b	; 11
+    1554:	f4 e0       	ldi	r31, 0x04	; 4
+    1556:	6f 9f       	mul	r22, r31
+    1558:	b0 01       	movw	r22, r0
+    155a:	11 24       	eor	r1, r1
+    155c:	e3 70       	andi	r30, 0x03	; 3
+    155e:	e6 2b       	or	r30, r22
+    1560:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1640:	25 b1       	in	r18, 0x05	; 5
-    1642:	2a 60       	ori	r18, 0x0A	; 10
-    1644:	25 b9       	out	0x05, r18	; 5
-    1646:	25 b1       	in	r18, 0x05	; 5
-    1648:	25 7f       	andi	r18, 0xF5	; 245
-    164a:	25 b9       	out	0x05, r18	; 5
+    1562:	65 b1       	in	r22, 0x05	; 5
+    1564:	6a 60       	ori	r22, 0x0A	; 10
+    1566:	65 b9       	out	0x05, r22	; 5
+    1568:	65 b1       	in	r22, 0x05	; 5
+    156a:	65 7f       	andi	r22, 0xF5	; 245
+    156c:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    164c:	25 b1       	in	r18, 0x05	; 5
-    164e:	2a 60       	ori	r18, 0x0A	; 10
-    1650:	25 b9       	out	0x05, r18	; 5
-    1652:	25 b1       	in	r18, 0x05	; 5
-    1654:	25 7f       	andi	r18, 0xF5	; 245
-    1656:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 17));
-    1658:	9c 01       	movw	r18, r24
-    165a:	2f 5e       	subi	r18, 0xEF	; 239
-    165c:	3f 4f       	sbci	r19, 0xFF	; 255
-    165e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1662:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1666:	e2 0f       	add	r30, r18
-    1668:	f3 1f       	adc	r31, r19
-    166a:	e4 91       	lpm	r30, Z
-    166c:	2b b1       	in	r18, 0x0b	; 11
-    166e:	74 e0       	ldi	r23, 0x04	; 4
-    1670:	e7 9f       	mul	r30, r23
-    1672:	f0 01       	movw	r30, r0
-    1674:	11 24       	eor	r1, r1
-    1676:	23 70       	andi	r18, 0x03	; 3
-    1678:	e2 2b       	or	r30, r18
-    167a:	eb b9       	out	0x0b, r30	; 11
+    156e:	65 b1       	in	r22, 0x05	; 5
+    1570:	6a 60       	ori	r22, 0x0A	; 10
+    1572:	65 b9       	out	0x05, r22	; 5
+    1574:	65 b1       	in	r22, 0x05	; 5
+    1576:	65 7f       	andi	r22, 0xF5	; 245
+    1578:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    167c:	25 b1       	in	r18, 0x05	; 5
-    167e:	2a 60       	ori	r18, 0x0A	; 10
-    1680:	25 b9       	out	0x05, r18	; 5
-    1682:	25 b1       	in	r18, 0x05	; 5
-    1684:	25 7f       	andi	r18, 0xF5	; 245
-    1686:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1688:	25 b1       	in	r18, 0x05	; 5
-    168a:	2a 60       	ori	r18, 0x0A	; 10
-    168c:	25 b9       	out	0x05, r18	; 5
-    168e:	25 b1       	in	r18, 0x05	; 5
-    1690:	25 7f       	andi	r18, 0xF5	; 245
-    1692:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 18));
-    1694:	9c 01       	movw	r18, r24
-    1696:	2e 5e       	subi	r18, 0xEE	; 238
-    1698:	3f 4f       	sbci	r19, 0xFF	; 255
-    169a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    169e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    16a2:	e2 0f       	add	r30, r18
-    16a4:	f3 1f       	adc	r31, r19
-    16a6:	e4 91       	lpm	r30, Z
-    16a8:	2b b1       	in	r18, 0x0b	; 11
-    16aa:	34 e0       	ldi	r19, 0x04	; 4
-    16ac:	e3 9f       	mul	r30, r19
-    16ae:	f0 01       	movw	r30, r0
-    16b0:	11 24       	eor	r1, r1
-    16b2:	23 70       	andi	r18, 0x03	; 3
-    16b4:	e2 2b       	or	r30, r18
-    16b6:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
+    157a:	f9 01       	movw	r30, r18
+    157c:	71 96       	adiw	r30, 0x11	; 17
             PWCLK_GCLK;
-    16b8:	25 b1       	in	r18, 0x05	; 5
-    16ba:	2a 60       	ori	r18, 0x0A	; 10
-    16bc:	25 b9       	out	0x05, r18	; 5
-    16be:	25 b1       	in	r18, 0x05	; 5
-    16c0:	25 7f       	andi	r18, 0xF5	; 245
-    16c2:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    16c4:	25 b1       	in	r18, 0x05	; 5
-    16c6:	2a 60       	ori	r18, 0x0A	; 10
-    16c8:	25 b9       	out	0x05, r18	; 5
-    16ca:	25 b1       	in	r18, 0x05	; 5
-    16cc:	25 7f       	andi	r18, 0xF5	; 245
-    16ce:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 19));
-    16d0:	9c 01       	movw	r18, r24
-    16d2:	2d 5e       	subi	r18, 0xED	; 237
-    16d4:	3f 4f       	sbci	r19, 0xFF	; 255
-    16d6:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    16da:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    16de:	e2 0f       	add	r30, r18
-    16e0:	f3 1f       	adc	r31, r19
-    16e2:	e4 91       	lpm	r30, Z
-    16e4:	2b b1       	in	r18, 0x0b	; 11
-    16e6:	64 e0       	ldi	r22, 0x04	; 4
-    16e8:	e6 9f       	mul	r30, r22
-    16ea:	f0 01       	movw	r30, r0
-    16ec:	11 24       	eor	r1, r1
-    16ee:	23 70       	andi	r18, 0x03	; 3
-    16f0:	e2 2b       	or	r30, r18
-    16f2:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    157e:	64 91       	lpm	r22, Z
+    1580:	eb b1       	in	r30, 0x0b	; 11
+    1582:	f4 e0       	ldi	r31, 0x04	; 4
+    1584:	6f 9f       	mul	r22, r31
+    1586:	b0 01       	movw	r22, r0
+    1588:	11 24       	eor	r1, r1
+    158a:	e3 70       	andi	r30, 0x03	; 3
+    158c:	e6 2b       	or	r30, r22
+    158e:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    16f4:	25 b1       	in	r18, 0x05	; 5
-    16f6:	2a 60       	ori	r18, 0x0A	; 10
-    16f8:	25 b9       	out	0x05, r18	; 5
-    16fa:	25 b1       	in	r18, 0x05	; 5
-    16fc:	25 7f       	andi	r18, 0xF5	; 245
-    16fe:	25 b9       	out	0x05, r18	; 5
+    1590:	65 b1       	in	r22, 0x05	; 5
+    1592:	6a 60       	ori	r22, 0x0A	; 10
+    1594:	65 b9       	out	0x05, r22	; 5
+    1596:	65 b1       	in	r22, 0x05	; 5
+    1598:	65 7f       	andi	r22, 0xF5	; 245
+    159a:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1700:	25 b1       	in	r18, 0x05	; 5
-    1702:	2a 60       	ori	r18, 0x0A	; 10
-    1704:	25 b9       	out	0x05, r18	; 5
-    1706:	25 b1       	in	r18, 0x05	; 5
-    1708:	25 7f       	andi	r18, 0xF5	; 245
-    170a:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 20));
-    170c:	9c 01       	movw	r18, r24
-    170e:	2c 5e       	subi	r18, 0xEC	; 236
-    1710:	3f 4f       	sbci	r19, 0xFF	; 255
-    1712:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1716:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    171a:	e2 0f       	add	r30, r18
-    171c:	f3 1f       	adc	r31, r19
-    171e:	e4 91       	lpm	r30, Z
-    1720:	2b b1       	in	r18, 0x0b	; 11
-    1722:	74 e0       	ldi	r23, 0x04	; 4
-    1724:	e7 9f       	mul	r30, r23
-    1726:	f0 01       	movw	r30, r0
-    1728:	11 24       	eor	r1, r1
-    172a:	23 70       	andi	r18, 0x03	; 3
-    172c:	e2 2b       	or	r30, r18
-    172e:	eb b9       	out	0x0b, r30	; 11
+    159c:	65 b1       	in	r22, 0x05	; 5
+    159e:	6a 60       	ori	r22, 0x0A	; 10
+    15a0:	65 b9       	out	0x05, r22	; 5
+    15a2:	65 b1       	in	r22, 0x05	; 5
+    15a4:	65 7f       	andi	r22, 0xF5	; 245
+    15a6:	65 b9       	out	0x05, r22	; 5
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    1730:	25 b1       	in	r18, 0x05	; 5
-    1732:	2a 60       	ori	r18, 0x0A	; 10
-    1734:	25 b9       	out	0x05, r18	; 5
-    1736:	25 b1       	in	r18, 0x05	; 5
-    1738:	25 7f       	andi	r18, 0xF5	; 245
-    173a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    173c:	25 b1       	in	r18, 0x05	; 5
-    173e:	2a 60       	ori	r18, 0x0A	; 10
-    1740:	25 b9       	out	0x05, r18	; 5
-    1742:	25 b1       	in	r18, 0x05	; 5
-    1744:	25 7f       	andi	r18, 0xF5	; 245
-    1746:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 21));
-    1748:	9c 01       	movw	r18, r24
-    174a:	2b 5e       	subi	r18, 0xEB	; 235
-    174c:	3f 4f       	sbci	r19, 0xFF	; 255
-    174e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1752:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1756:	e2 0f       	add	r30, r18
-    1758:	f3 1f       	adc	r31, r19
-    175a:	e4 91       	lpm	r30, Z
-    175c:	2b b1       	in	r18, 0x0b	; 11
-    175e:	34 e0       	ldi	r19, 0x04	; 4
-    1760:	e3 9f       	mul	r30, r19
-    1762:	f0 01       	movw	r30, r0
-    1764:	11 24       	eor	r1, r1
-    1766:	23 70       	andi	r18, 0x03	; 3
-    1768:	e2 2b       	or	r30, r18
-    176a:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    15a8:	f9 01       	movw	r30, r18
+    15aa:	72 96       	adiw	r30, 0x12	; 18
             PWCLK_GCLK;
-    176c:	25 b1       	in	r18, 0x05	; 5
-    176e:	2a 60       	ori	r18, 0x0A	; 10
-    1770:	25 b9       	out	0x05, r18	; 5
-    1772:	25 b1       	in	r18, 0x05	; 5
-    1774:	25 7f       	andi	r18, 0xF5	; 245
-    1776:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1778:	25 b1       	in	r18, 0x05	; 5
-    177a:	2a 60       	ori	r18, 0x0A	; 10
-    177c:	25 b9       	out	0x05, r18	; 5
-    177e:	25 b1       	in	r18, 0x05	; 5
-    1780:	25 7f       	andi	r18, 0xF5	; 245
-    1782:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 22));
-    1784:	9c 01       	movw	r18, r24
-    1786:	2a 5e       	subi	r18, 0xEA	; 234
-    1788:	3f 4f       	sbci	r19, 0xFF	; 255
-    178a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    178e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1792:	e2 0f       	add	r30, r18
-    1794:	f3 1f       	adc	r31, r19
-    1796:	e4 91       	lpm	r30, Z
-    1798:	2b b1       	in	r18, 0x0b	; 11
-    179a:	64 e0       	ldi	r22, 0x04	; 4
-    179c:	e6 9f       	mul	r30, r22
-    179e:	f0 01       	movw	r30, r0
-    17a0:	11 24       	eor	r1, r1
-    17a2:	23 70       	andi	r18, 0x03	; 3
-    17a4:	e2 2b       	or	r30, r18
-    17a6:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    15ac:	64 91       	lpm	r22, Z
+    15ae:	eb b1       	in	r30, 0x0b	; 11
+    15b0:	f4 e0       	ldi	r31, 0x04	; 4
+    15b2:	6f 9f       	mul	r22, r31
+    15b4:	b0 01       	movw	r22, r0
+    15b6:	11 24       	eor	r1, r1
+    15b8:	e3 70       	andi	r30, 0x03	; 3
+    15ba:	e6 2b       	or	r30, r22
+    15bc:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    17a8:	25 b1       	in	r18, 0x05	; 5
-    17aa:	2a 60       	ori	r18, 0x0A	; 10
-    17ac:	25 b9       	out	0x05, r18	; 5
-    17ae:	25 b1       	in	r18, 0x05	; 5
-    17b0:	25 7f       	andi	r18, 0xF5	; 245
-    17b2:	25 b9       	out	0x05, r18	; 5
+    15be:	65 b1       	in	r22, 0x05	; 5
+    15c0:	6a 60       	ori	r22, 0x0A	; 10
+    15c2:	65 b9       	out	0x05, r22	; 5
+    15c4:	65 b1       	in	r22, 0x05	; 5
+    15c6:	65 7f       	andi	r22, 0xF5	; 245
+    15c8:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    17b4:	25 b1       	in	r18, 0x05	; 5
-    17b6:	2a 60       	ori	r18, 0x0A	; 10
-    17b8:	25 b9       	out	0x05, r18	; 5
-    17ba:	25 b1       	in	r18, 0x05	; 5
-    17bc:	25 7f       	andi	r18, 0xF5	; 245
-    17be:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 23));
-    17c0:	9c 01       	movw	r18, r24
-    17c2:	29 5e       	subi	r18, 0xE9	; 233
-    17c4:	3f 4f       	sbci	r19, 0xFF	; 255
-    17c6:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    17ca:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    17ce:	e2 0f       	add	r30, r18
-    17d0:	f3 1f       	adc	r31, r19
-    17d2:	e4 91       	lpm	r30, Z
-    17d4:	2b b1       	in	r18, 0x0b	; 11
-    17d6:	74 e0       	ldi	r23, 0x04	; 4
-    17d8:	e7 9f       	mul	r30, r23
-    17da:	f0 01       	movw	r30, r0
-    17dc:	11 24       	eor	r1, r1
-    17de:	23 70       	andi	r18, 0x03	; 3
-    17e0:	e2 2b       	or	r30, r18
-    17e2:	eb b9       	out	0x0b, r30	; 11
+    15ca:	65 b1       	in	r22, 0x05	; 5
+    15cc:	6a 60       	ori	r22, 0x0A	; 10
+    15ce:	65 b9       	out	0x05, r22	; 5
+    15d0:	65 b1       	in	r22, 0x05	; 5
+    15d2:	65 7f       	andi	r22, 0xF5	; 245
+    15d4:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    17e4:	25 b1       	in	r18, 0x05	; 5
-    17e6:	2a 60       	ori	r18, 0x0A	; 10
-    17e8:	25 b9       	out	0x05, r18	; 5
-    17ea:	25 b1       	in	r18, 0x05	; 5
-    17ec:	25 7f       	andi	r18, 0xF5	; 245
-    17ee:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    17f0:	25 b1       	in	r18, 0x05	; 5
-    17f2:	2a 60       	ori	r18, 0x0A	; 10
-    17f4:	25 b9       	out	0x05, r18	; 5
-    17f6:	25 b1       	in	r18, 0x05	; 5
-    17f8:	25 7f       	andi	r18, 0xF5	; 245
-    17fa:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    15d6:	f9 01       	movw	r30, r18
+    15d8:	73 96       	adiw	r30, 0x13	; 19
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    15da:	64 91       	lpm	r22, Z
+    15dc:	eb b1       	in	r30, 0x0b	; 11
+    15de:	f4 e0       	ldi	r31, 0x04	; 4
+    15e0:	6f 9f       	mul	r22, r31
+    15e2:	b0 01       	movw	r22, r0
+    15e4:	11 24       	eor	r1, r1
+    15e6:	e3 70       	andi	r30, 0x03	; 3
+    15e8:	e6 2b       	or	r30, r22
+    15ea:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    15ec:	65 b1       	in	r22, 0x05	; 5
+    15ee:	6a 60       	ori	r22, 0x0A	; 10
+    15f0:	65 b9       	out	0x05, r22	; 5
+    15f2:	65 b1       	in	r22, 0x05	; 5
+    15f4:	65 7f       	andi	r22, 0xF5	; 245
+    15f6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    15f8:	65 b1       	in	r22, 0x05	; 5
+    15fa:	6a 60       	ori	r22, 0x0A	; 10
+    15fc:	65 b9       	out	0x05, r22	; 5
+    15fe:	65 b1       	in	r22, 0x05	; 5
+    1600:	65 7f       	andi	r22, 0xF5	; 245
+    1602:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1604:	f9 01       	movw	r30, r18
+    1606:	74 96       	adiw	r30, 0x14	; 20
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1608:	64 91       	lpm	r22, Z
+    160a:	eb b1       	in	r30, 0x0b	; 11
+    160c:	f4 e0       	ldi	r31, 0x04	; 4
+    160e:	6f 9f       	mul	r22, r31
+    1610:	b0 01       	movw	r22, r0
+    1612:	11 24       	eor	r1, r1
+    1614:	e3 70       	andi	r30, 0x03	; 3
+    1616:	e6 2b       	or	r30, r22
+    1618:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    161a:	65 b1       	in	r22, 0x05	; 5
+    161c:	6a 60       	ori	r22, 0x0A	; 10
+    161e:	65 b9       	out	0x05, r22	; 5
+    1620:	65 b1       	in	r22, 0x05	; 5
+    1622:	65 7f       	andi	r22, 0xF5	; 245
+    1624:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1626:	65 b1       	in	r22, 0x05	; 5
+    1628:	6a 60       	ori	r22, 0x0A	; 10
+    162a:	65 b9       	out	0x05, r22	; 5
+    162c:	65 b1       	in	r22, 0x05	; 5
+    162e:	65 7f       	andi	r22, 0xF5	; 245
+    1630:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1632:	f9 01       	movw	r30, r18
+    1634:	75 96       	adiw	r30, 0x15	; 21
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1636:	64 91       	lpm	r22, Z
+    1638:	eb b1       	in	r30, 0x0b	; 11
+    163a:	f4 e0       	ldi	r31, 0x04	; 4
+    163c:	6f 9f       	mul	r22, r31
+    163e:	b0 01       	movw	r22, r0
+    1640:	11 24       	eor	r1, r1
+    1642:	e3 70       	andi	r30, 0x03	; 3
+    1644:	e6 2b       	or	r30, r22
+    1646:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1648:	65 b1       	in	r22, 0x05	; 5
+    164a:	6a 60       	ori	r22, 0x0A	; 10
+    164c:	65 b9       	out	0x05, r22	; 5
+    164e:	65 b1       	in	r22, 0x05	; 5
+    1650:	65 7f       	andi	r22, 0xF5	; 245
+    1652:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1654:	65 b1       	in	r22, 0x05	; 5
+    1656:	6a 60       	ori	r22, 0x0A	; 10
+    1658:	65 b9       	out	0x05, r22	; 5
+    165a:	65 b1       	in	r22, 0x05	; 5
+    165c:	65 7f       	andi	r22, 0xF5	; 245
+    165e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1660:	f9 01       	movw	r30, r18
+    1662:	76 96       	adiw	r30, 0x16	; 22
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1664:	64 91       	lpm	r22, Z
+    1666:	eb b1       	in	r30, 0x0b	; 11
+    1668:	f4 e0       	ldi	r31, 0x04	; 4
+    166a:	6f 9f       	mul	r22, r31
+    166c:	b0 01       	movw	r22, r0
+    166e:	11 24       	eor	r1, r1
+    1670:	e3 70       	andi	r30, 0x03	; 3
+    1672:	e6 2b       	or	r30, r22
+    1674:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1676:	65 b1       	in	r22, 0x05	; 5
+    1678:	6a 60       	ori	r22, 0x0A	; 10
+    167a:	65 b9       	out	0x05, r22	; 5
+    167c:	65 b1       	in	r22, 0x05	; 5
+    167e:	65 7f       	andi	r22, 0xF5	; 245
+    1680:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1682:	65 b1       	in	r22, 0x05	; 5
+    1684:	6a 60       	ori	r22, 0x0A	; 10
+    1686:	65 b9       	out	0x05, r22	; 5
+    1688:	65 b1       	in	r22, 0x05	; 5
+    168a:	65 7f       	andi	r22, 0xF5	; 245
+    168c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    168e:	f9 01       	movw	r30, r18
+    1690:	77 96       	adiw	r30, 0x17	; 23
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1692:	64 91       	lpm	r22, Z
+    1694:	eb b1       	in	r30, 0x0b	; 11
+    1696:	f4 e0       	ldi	r31, 0x04	; 4
+    1698:	6f 9f       	mul	r22, r31
+    169a:	b0 01       	movw	r22, r0
+    169c:	11 24       	eor	r1, r1
+    169e:	e3 70       	andi	r30, 0x03	; 3
+    16a0:	e6 2b       	or	r30, r22
+    16a2:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    16a4:	65 b1       	in	r22, 0x05	; 5
+    16a6:	6a 60       	ori	r22, 0x0A	; 10
+    16a8:	65 b9       	out	0x05, r22	; 5
+    16aa:	65 b1       	in	r22, 0x05	; 5
+    16ac:	65 7f       	andi	r22, 0xF5	; 245
+    16ae:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    16b0:	65 b1       	in	r22, 0x05	; 5
+    16b2:	6a 60       	ori	r22, 0x0A	; 10
+    16b4:	65 b9       	out	0x05, r22	; 5
+    16b6:	65 b1       	in	r22, 0x05	; 5
+    16b8:	65 7f       	andi	r22, 0xF5	; 245
+    16ba:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    16bc:	f9 01       	movw	r30, r18
+    16be:	78 96       	adiw	r30, 0x18	; 24
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 3
-            SET_COLOR(pgm_read_byte(buffer + index + 24));
-    17fc:	9c 01       	movw	r18, r24
-    17fe:	28 5e       	subi	r18, 0xE8	; 232
-    1800:	3f 4f       	sbci	r19, 0xFF	; 255
-    1802:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1806:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    180a:	e2 0f       	add	r30, r18
-    180c:	f3 1f       	adc	r31, r19
-    180e:	e4 91       	lpm	r30, Z
-    1810:	2b b1       	in	r18, 0x0b	; 11
-    1812:	34 e0       	ldi	r19, 0x04	; 4
-    1814:	e3 9f       	mul	r30, r19
-    1816:	f0 01       	movw	r30, r0
-    1818:	11 24       	eor	r1, r1
-    181a:	23 70       	andi	r18, 0x03	; 3
-    181c:	e2 2b       	or	r30, r18
-    181e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    16c0:	64 91       	lpm	r22, Z
+    16c2:	eb b1       	in	r30, 0x0b	; 11
+    16c4:	f4 e0       	ldi	r31, 0x04	; 4
+    16c6:	6f 9f       	mul	r22, r31
+    16c8:	b0 01       	movw	r22, r0
+    16ca:	11 24       	eor	r1, r1
+    16cc:	e3 70       	andi	r30, 0x03	; 3
+    16ce:	e6 2b       	or	r30, r22
+    16d0:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1820:	25 b1       	in	r18, 0x05	; 5
-    1822:	2a 60       	ori	r18, 0x0A	; 10
-    1824:	25 b9       	out	0x05, r18	; 5
-    1826:	25 b1       	in	r18, 0x05	; 5
-    1828:	25 7f       	andi	r18, 0xF5	; 245
-    182a:	25 b9       	out	0x05, r18	; 5
+    16d2:	65 b1       	in	r22, 0x05	; 5
+    16d4:	6a 60       	ori	r22, 0x0A	; 10
+    16d6:	65 b9       	out	0x05, r22	; 5
+    16d8:	65 b1       	in	r22, 0x05	; 5
+    16da:	65 7f       	andi	r22, 0xF5	; 245
+    16dc:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    182c:	25 b1       	in	r18, 0x05	; 5
-    182e:	2a 60       	ori	r18, 0x0A	; 10
-    1830:	25 b9       	out	0x05, r18	; 5
-    1832:	25 b1       	in	r18, 0x05	; 5
-    1834:	25 7f       	andi	r18, 0xF5	; 245
-    1836:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 25));
-    1838:	9c 01       	movw	r18, r24
-    183a:	27 5e       	subi	r18, 0xE7	; 231
-    183c:	3f 4f       	sbci	r19, 0xFF	; 255
-    183e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1842:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1846:	e2 0f       	add	r30, r18
-    1848:	f3 1f       	adc	r31, r19
-    184a:	e4 91       	lpm	r30, Z
-    184c:	2b b1       	in	r18, 0x0b	; 11
-    184e:	64 e0       	ldi	r22, 0x04	; 4
-    1850:	e6 9f       	mul	r30, r22
-    1852:	f0 01       	movw	r30, r0
-    1854:	11 24       	eor	r1, r1
-    1856:	23 70       	andi	r18, 0x03	; 3
-    1858:	e2 2b       	or	r30, r18
-    185a:	eb b9       	out	0x0b, r30	; 11
+    16de:	65 b1       	in	r22, 0x05	; 5
+    16e0:	6a 60       	ori	r22, 0x0A	; 10
+    16e2:	65 b9       	out	0x05, r22	; 5
+    16e4:	65 b1       	in	r22, 0x05	; 5
+    16e6:	65 7f       	andi	r22, 0xF5	; 245
+    16e8:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    185c:	25 b1       	in	r18, 0x05	; 5
-    185e:	2a 60       	ori	r18, 0x0A	; 10
-    1860:	25 b9       	out	0x05, r18	; 5
-    1862:	25 b1       	in	r18, 0x05	; 5
-    1864:	25 7f       	andi	r18, 0xF5	; 245
-    1866:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1868:	25 b1       	in	r18, 0x05	; 5
-    186a:	2a 60       	ori	r18, 0x0A	; 10
-    186c:	25 b9       	out	0x05, r18	; 5
-    186e:	25 b1       	in	r18, 0x05	; 5
-    1870:	25 7f       	andi	r18, 0xF5	; 245
-    1872:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 26));
-    1874:	9c 01       	movw	r18, r24
-    1876:	26 5e       	subi	r18, 0xE6	; 230
-    1878:	3f 4f       	sbci	r19, 0xFF	; 255
-    187a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    187e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1882:	e2 0f       	add	r30, r18
-    1884:	f3 1f       	adc	r31, r19
-    1886:	e4 91       	lpm	r30, Z
-    1888:	2b b1       	in	r18, 0x0b	; 11
-    188a:	74 e0       	ldi	r23, 0x04	; 4
-    188c:	e7 9f       	mul	r30, r23
-    188e:	f0 01       	movw	r30, r0
-    1890:	11 24       	eor	r1, r1
-    1892:	23 70       	andi	r18, 0x03	; 3
-    1894:	e2 2b       	or	r30, r18
-    1896:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
+    16ea:	f9 01       	movw	r30, r18
+    16ec:	79 96       	adiw	r30, 0x19	; 25
             PWCLK_GCLK;
-    1898:	25 b1       	in	r18, 0x05	; 5
-    189a:	2a 60       	ori	r18, 0x0A	; 10
-    189c:	25 b9       	out	0x05, r18	; 5
-    189e:	25 b1       	in	r18, 0x05	; 5
-    18a0:	25 7f       	andi	r18, 0xF5	; 245
-    18a2:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    18a4:	25 b1       	in	r18, 0x05	; 5
-    18a6:	2a 60       	ori	r18, 0x0A	; 10
-    18a8:	25 b9       	out	0x05, r18	; 5
-    18aa:	25 b1       	in	r18, 0x05	; 5
-    18ac:	25 7f       	andi	r18, 0xF5	; 245
-    18ae:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 27));
-    18b0:	9c 01       	movw	r18, r24
-    18b2:	25 5e       	subi	r18, 0xE5	; 229
-    18b4:	3f 4f       	sbci	r19, 0xFF	; 255
-    18b6:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    18ba:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    18be:	e2 0f       	add	r30, r18
-    18c0:	f3 1f       	adc	r31, r19
-    18c2:	e4 91       	lpm	r30, Z
-    18c4:	2b b1       	in	r18, 0x0b	; 11
-    18c6:	34 e0       	ldi	r19, 0x04	; 4
-    18c8:	e3 9f       	mul	r30, r19
-    18ca:	f0 01       	movw	r30, r0
-    18cc:	11 24       	eor	r1, r1
-    18ce:	23 70       	andi	r18, 0x03	; 3
-    18d0:	e2 2b       	or	r30, r18
-    18d2:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    16ee:	64 91       	lpm	r22, Z
+    16f0:	eb b1       	in	r30, 0x0b	; 11
+    16f2:	f4 e0       	ldi	r31, 0x04	; 4
+    16f4:	6f 9f       	mul	r22, r31
+    16f6:	b0 01       	movw	r22, r0
+    16f8:	11 24       	eor	r1, r1
+    16fa:	e3 70       	andi	r30, 0x03	; 3
+    16fc:	e6 2b       	or	r30, r22
+    16fe:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    18d4:	25 b1       	in	r18, 0x05	; 5
-    18d6:	2a 60       	ori	r18, 0x0A	; 10
-    18d8:	25 b9       	out	0x05, r18	; 5
-    18da:	25 b1       	in	r18, 0x05	; 5
-    18dc:	25 7f       	andi	r18, 0xF5	; 245
-    18de:	25 b9       	out	0x05, r18	; 5
+    1700:	65 b1       	in	r22, 0x05	; 5
+    1702:	6a 60       	ori	r22, 0x0A	; 10
+    1704:	65 b9       	out	0x05, r22	; 5
+    1706:	65 b1       	in	r22, 0x05	; 5
+    1708:	65 7f       	andi	r22, 0xF5	; 245
+    170a:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    18e0:	25 b1       	in	r18, 0x05	; 5
-    18e2:	2a 60       	ori	r18, 0x0A	; 10
-    18e4:	25 b9       	out	0x05, r18	; 5
-    18e6:	25 b1       	in	r18, 0x05	; 5
-    18e8:	25 7f       	andi	r18, 0xF5	; 245
-    18ea:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 28));
-    18ec:	9c 01       	movw	r18, r24
-    18ee:	24 5e       	subi	r18, 0xE4	; 228
-    18f0:	3f 4f       	sbci	r19, 0xFF	; 255
-    18f2:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    18f6:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    18fa:	e2 0f       	add	r30, r18
-    18fc:	f3 1f       	adc	r31, r19
-    18fe:	e4 91       	lpm	r30, Z
-    1900:	2b b1       	in	r18, 0x0b	; 11
-    1902:	64 e0       	ldi	r22, 0x04	; 4
-    1904:	e6 9f       	mul	r30, r22
-    1906:	f0 01       	movw	r30, r0
-    1908:	11 24       	eor	r1, r1
-    190a:	23 70       	andi	r18, 0x03	; 3
-    190c:	e2 2b       	or	r30, r18
-    190e:	eb b9       	out	0x0b, r30	; 11
+    170c:	65 b1       	in	r22, 0x05	; 5
+    170e:	6a 60       	ori	r22, 0x0A	; 10
+    1710:	65 b9       	out	0x05, r22	; 5
+    1712:	65 b1       	in	r22, 0x05	; 5
+    1714:	65 7f       	andi	r22, 0xF5	; 245
+    1716:	65 b9       	out	0x05, r22	; 5
+
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    1910:	25 b1       	in	r18, 0x05	; 5
-    1912:	2a 60       	ori	r18, 0x0A	; 10
-    1914:	25 b9       	out	0x05, r18	; 5
-    1916:	25 b1       	in	r18, 0x05	; 5
-    1918:	25 7f       	andi	r18, 0xF5	; 245
-    191a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    191c:	25 b1       	in	r18, 0x05	; 5
-    191e:	2a 60       	ori	r18, 0x0A	; 10
-    1920:	25 b9       	out	0x05, r18	; 5
-    1922:	25 b1       	in	r18, 0x05	; 5
-    1924:	25 7f       	andi	r18, 0xF5	; 245
-    1926:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 29));
-    1928:	9c 01       	movw	r18, r24
-    192a:	23 5e       	subi	r18, 0xE3	; 227
-    192c:	3f 4f       	sbci	r19, 0xFF	; 255
-    192e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1932:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1936:	e2 0f       	add	r30, r18
-    1938:	f3 1f       	adc	r31, r19
-    193a:	e4 91       	lpm	r30, Z
-    193c:	2b b1       	in	r18, 0x0b	; 11
-    193e:	74 e0       	ldi	r23, 0x04	; 4
-    1940:	e7 9f       	mul	r30, r23
-    1942:	f0 01       	movw	r30, r0
-    1944:	11 24       	eor	r1, r1
-    1946:	23 70       	andi	r18, 0x03	; 3
-    1948:	e2 2b       	or	r30, r18
-    194a:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1718:	f9 01       	movw	r30, r18
+    171a:	7a 96       	adiw	r30, 0x1a	; 26
             PWCLK_GCLK;
-    194c:	25 b1       	in	r18, 0x05	; 5
-    194e:	2a 60       	ori	r18, 0x0A	; 10
-    1950:	25 b9       	out	0x05, r18	; 5
-    1952:	25 b1       	in	r18, 0x05	; 5
-    1954:	25 7f       	andi	r18, 0xF5	; 245
-    1956:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1958:	25 b1       	in	r18, 0x05	; 5
-    195a:	2a 60       	ori	r18, 0x0A	; 10
-    195c:	25 b9       	out	0x05, r18	; 5
-    195e:	25 b1       	in	r18, 0x05	; 5
-    1960:	25 7f       	andi	r18, 0xF5	; 245
-    1962:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 30));
-    1964:	9c 01       	movw	r18, r24
-    1966:	22 5e       	subi	r18, 0xE2	; 226
-    1968:	3f 4f       	sbci	r19, 0xFF	; 255
-    196a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    196e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1972:	e2 0f       	add	r30, r18
-    1974:	f3 1f       	adc	r31, r19
-    1976:	e4 91       	lpm	r30, Z
-    1978:	2b b1       	in	r18, 0x0b	; 11
-    197a:	34 e0       	ldi	r19, 0x04	; 4
-    197c:	e3 9f       	mul	r30, r19
-    197e:	f0 01       	movw	r30, r0
-    1980:	11 24       	eor	r1, r1
-    1982:	23 70       	andi	r18, 0x03	; 3
-    1984:	e2 2b       	or	r30, r18
-    1986:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    171c:	64 91       	lpm	r22, Z
+    171e:	eb b1       	in	r30, 0x0b	; 11
+    1720:	f4 e0       	ldi	r31, 0x04	; 4
+    1722:	6f 9f       	mul	r22, r31
+    1724:	b0 01       	movw	r22, r0
+    1726:	11 24       	eor	r1, r1
+    1728:	e3 70       	andi	r30, 0x03	; 3
+    172a:	e6 2b       	or	r30, r22
+    172c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1988:	25 b1       	in	r18, 0x05	; 5
-    198a:	2a 60       	ori	r18, 0x0A	; 10
-    198c:	25 b9       	out	0x05, r18	; 5
-    198e:	25 b1       	in	r18, 0x05	; 5
-    1990:	25 7f       	andi	r18, 0xF5	; 245
-    1992:	25 b9       	out	0x05, r18	; 5
+    172e:	65 b1       	in	r22, 0x05	; 5
+    1730:	6a 60       	ori	r22, 0x0A	; 10
+    1732:	65 b9       	out	0x05, r22	; 5
+    1734:	65 b1       	in	r22, 0x05	; 5
+    1736:	65 7f       	andi	r22, 0xF5	; 245
+    1738:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1994:	25 b1       	in	r18, 0x05	; 5
-    1996:	2a 60       	ori	r18, 0x0A	; 10
-    1998:	25 b9       	out	0x05, r18	; 5
-    199a:	25 b1       	in	r18, 0x05	; 5
-    199c:	25 7f       	andi	r18, 0xF5	; 245
-    199e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 31));
-    19a0:	9c 01       	movw	r18, r24
-    19a2:	21 5e       	subi	r18, 0xE1	; 225
-    19a4:	3f 4f       	sbci	r19, 0xFF	; 255
-    19a6:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    19aa:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    19ae:	e2 0f       	add	r30, r18
-    19b0:	f3 1f       	adc	r31, r19
-    19b2:	e4 91       	lpm	r30, Z
-    19b4:	2b b1       	in	r18, 0x0b	; 11
-    19b6:	64 e0       	ldi	r22, 0x04	; 4
-    19b8:	e6 9f       	mul	r30, r22
-    19ba:	f0 01       	movw	r30, r0
-    19bc:	11 24       	eor	r1, r1
-    19be:	23 70       	andi	r18, 0x03	; 3
-    19c0:	e2 2b       	or	r30, r18
-    19c2:	eb b9       	out	0x0b, r30	; 11
+    173a:	65 b1       	in	r22, 0x05	; 5
+    173c:	6a 60       	ori	r22, 0x0A	; 10
+    173e:	65 b9       	out	0x05, r22	; 5
+    1740:	65 b1       	in	r22, 0x05	; 5
+    1742:	65 7f       	andi	r22, 0xF5	; 245
+    1744:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    19c4:	25 b1       	in	r18, 0x05	; 5
-    19c6:	2a 60       	ori	r18, 0x0A	; 10
-    19c8:	25 b9       	out	0x05, r18	; 5
-    19ca:	25 b1       	in	r18, 0x05	; 5
-    19cc:	25 7f       	andi	r18, 0xF5	; 245
-    19ce:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    19d0:	25 b1       	in	r18, 0x05	; 5
-    19d2:	2a 60       	ori	r18, 0x0A	; 10
-    19d4:	25 b9       	out	0x05, r18	; 5
-    19d6:	25 b1       	in	r18, 0x05	; 5
-    19d8:	25 7f       	andi	r18, 0xF5	; 245
-    19da:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1746:	f9 01       	movw	r30, r18
+    1748:	7b 96       	adiw	r30, 0x1b	; 27
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    174a:	64 91       	lpm	r22, Z
+    174c:	eb b1       	in	r30, 0x0b	; 11
+    174e:	f4 e0       	ldi	r31, 0x04	; 4
+    1750:	6f 9f       	mul	r22, r31
+    1752:	b0 01       	movw	r22, r0
+    1754:	11 24       	eor	r1, r1
+    1756:	e3 70       	andi	r30, 0x03	; 3
+    1758:	e6 2b       	or	r30, r22
+    175a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    175c:	65 b1       	in	r22, 0x05	; 5
+    175e:	6a 60       	ori	r22, 0x0A	; 10
+    1760:	65 b9       	out	0x05, r22	; 5
+    1762:	65 b1       	in	r22, 0x05	; 5
+    1764:	65 7f       	andi	r22, 0xF5	; 245
+    1766:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1768:	65 b1       	in	r22, 0x05	; 5
+    176a:	6a 60       	ori	r22, 0x0A	; 10
+    176c:	65 b9       	out	0x05, r22	; 5
+    176e:	65 b1       	in	r22, 0x05	; 5
+    1770:	65 7f       	andi	r22, 0xF5	; 245
+    1772:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1774:	f9 01       	movw	r30, r18
+    1776:	7c 96       	adiw	r30, 0x1c	; 28
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1778:	64 91       	lpm	r22, Z
+    177a:	eb b1       	in	r30, 0x0b	; 11
+    177c:	f4 e0       	ldi	r31, 0x04	; 4
+    177e:	6f 9f       	mul	r22, r31
+    1780:	b0 01       	movw	r22, r0
+    1782:	11 24       	eor	r1, r1
+    1784:	e3 70       	andi	r30, 0x03	; 3
+    1786:	e6 2b       	or	r30, r22
+    1788:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    178a:	65 b1       	in	r22, 0x05	; 5
+    178c:	6a 60       	ori	r22, 0x0A	; 10
+    178e:	65 b9       	out	0x05, r22	; 5
+    1790:	65 b1       	in	r22, 0x05	; 5
+    1792:	65 7f       	andi	r22, 0xF5	; 245
+    1794:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1796:	65 b1       	in	r22, 0x05	; 5
+    1798:	6a 60       	ori	r22, 0x0A	; 10
+    179a:	65 b9       	out	0x05, r22	; 5
+    179c:	65 b1       	in	r22, 0x05	; 5
+    179e:	65 7f       	andi	r22, 0xF5	; 245
+    17a0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    17a2:	f9 01       	movw	r30, r18
+    17a4:	7d 96       	adiw	r30, 0x1d	; 29
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    17a6:	64 91       	lpm	r22, Z
+    17a8:	eb b1       	in	r30, 0x0b	; 11
+    17aa:	f4 e0       	ldi	r31, 0x04	; 4
+    17ac:	6f 9f       	mul	r22, r31
+    17ae:	b0 01       	movw	r22, r0
+    17b0:	11 24       	eor	r1, r1
+    17b2:	e3 70       	andi	r30, 0x03	; 3
+    17b4:	e6 2b       	or	r30, r22
+    17b6:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    17b8:	65 b1       	in	r22, 0x05	; 5
+    17ba:	6a 60       	ori	r22, 0x0A	; 10
+    17bc:	65 b9       	out	0x05, r22	; 5
+    17be:	65 b1       	in	r22, 0x05	; 5
+    17c0:	65 7f       	andi	r22, 0xF5	; 245
+    17c2:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    17c4:	65 b1       	in	r22, 0x05	; 5
+    17c6:	6a 60       	ori	r22, 0x0A	; 10
+    17c8:	65 b9       	out	0x05, r22	; 5
+    17ca:	65 b1       	in	r22, 0x05	; 5
+    17cc:	65 7f       	andi	r22, 0xF5	; 245
+    17ce:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    17d0:	f9 01       	movw	r30, r18
+    17d2:	7e 96       	adiw	r30, 0x1e	; 30
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    17d4:	64 91       	lpm	r22, Z
+    17d6:	eb b1       	in	r30, 0x0b	; 11
+    17d8:	f4 e0       	ldi	r31, 0x04	; 4
+    17da:	6f 9f       	mul	r22, r31
+    17dc:	b0 01       	movw	r22, r0
+    17de:	11 24       	eor	r1, r1
+    17e0:	e3 70       	andi	r30, 0x03	; 3
+    17e2:	e6 2b       	or	r30, r22
+    17e4:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    17e6:	65 b1       	in	r22, 0x05	; 5
+    17e8:	6a 60       	ori	r22, 0x0A	; 10
+    17ea:	65 b9       	out	0x05, r22	; 5
+    17ec:	65 b1       	in	r22, 0x05	; 5
+    17ee:	65 7f       	andi	r22, 0xF5	; 245
+    17f0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    17f2:	65 b1       	in	r22, 0x05	; 5
+    17f4:	6a 60       	ori	r22, 0x0A	; 10
+    17f6:	65 b9       	out	0x05, r22	; 5
+    17f8:	65 b1       	in	r22, 0x05	; 5
+    17fa:	65 7f       	andi	r22, 0xF5	; 245
+    17fc:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    17fe:	f9 01       	movw	r30, r18
+    1800:	7f 96       	adiw	r30, 0x1f	; 31
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1802:	64 91       	lpm	r22, Z
+    1804:	eb b1       	in	r30, 0x0b	; 11
+    1806:	f4 e0       	ldi	r31, 0x04	; 4
+    1808:	6f 9f       	mul	r22, r31
+    180a:	b0 01       	movw	r22, r0
+    180c:	11 24       	eor	r1, r1
+    180e:	e3 70       	andi	r30, 0x03	; 3
+    1810:	e6 2b       	or	r30, r22
+    1812:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1814:	65 b1       	in	r22, 0x05	; 5
+    1816:	6a 60       	ori	r22, 0x0A	; 10
+    1818:	65 b9       	out	0x05, r22	; 5
+    181a:	65 b1       	in	r22, 0x05	; 5
+    181c:	65 7f       	andi	r22, 0xF5	; 245
+    181e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1820:	65 b1       	in	r22, 0x05	; 5
+    1822:	6a 60       	ori	r22, 0x0A	; 10
+    1824:	65 b9       	out	0x05, r22	; 5
+    1826:	65 b1       	in	r22, 0x05	; 5
+    1828:	65 7f       	andi	r22, 0xF5	; 245
+    182a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    182c:	f9 01       	movw	r30, r18
+    182e:	b0 96       	adiw	r30, 0x20	; 32
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 4
-            SET_COLOR(pgm_read_byte(buffer + index + 32));
-    19dc:	9c 01       	movw	r18, r24
-    19de:	20 5e       	subi	r18, 0xE0	; 224
-    19e0:	3f 4f       	sbci	r19, 0xFF	; 255
-    19e2:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    19e6:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    19ea:	e2 0f       	add	r30, r18
-    19ec:	f3 1f       	adc	r31, r19
-    19ee:	e4 91       	lpm	r30, Z
-    19f0:	2b b1       	in	r18, 0x0b	; 11
-    19f2:	74 e0       	ldi	r23, 0x04	; 4
-    19f4:	e7 9f       	mul	r30, r23
-    19f6:	f0 01       	movw	r30, r0
-    19f8:	11 24       	eor	r1, r1
-    19fa:	23 70       	andi	r18, 0x03	; 3
-    19fc:	e2 2b       	or	r30, r18
-    19fe:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1830:	64 91       	lpm	r22, Z
+    1832:	eb b1       	in	r30, 0x0b	; 11
+    1834:	f4 e0       	ldi	r31, 0x04	; 4
+    1836:	6f 9f       	mul	r22, r31
+    1838:	b0 01       	movw	r22, r0
+    183a:	11 24       	eor	r1, r1
+    183c:	e3 70       	andi	r30, 0x03	; 3
+    183e:	e6 2b       	or	r30, r22
+    1840:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1a00:	25 b1       	in	r18, 0x05	; 5
-    1a02:	2a 60       	ori	r18, 0x0A	; 10
-    1a04:	25 b9       	out	0x05, r18	; 5
-    1a06:	25 b1       	in	r18, 0x05	; 5
-    1a08:	25 7f       	andi	r18, 0xF5	; 245
-    1a0a:	25 b9       	out	0x05, r18	; 5
+    1842:	65 b1       	in	r22, 0x05	; 5
+    1844:	6a 60       	ori	r22, 0x0A	; 10
+    1846:	65 b9       	out	0x05, r22	; 5
+    1848:	65 b1       	in	r22, 0x05	; 5
+    184a:	65 7f       	andi	r22, 0xF5	; 245
+    184c:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1a0c:	25 b1       	in	r18, 0x05	; 5
-    1a0e:	2a 60       	ori	r18, 0x0A	; 10
-    1a10:	25 b9       	out	0x05, r18	; 5
-    1a12:	25 b1       	in	r18, 0x05	; 5
-    1a14:	25 7f       	andi	r18, 0xF5	; 245
-    1a16:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 33));
-    1a18:	9c 01       	movw	r18, r24
-    1a1a:	2f 5d       	subi	r18, 0xDF	; 223
-    1a1c:	3f 4f       	sbci	r19, 0xFF	; 255
-    1a1e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1a22:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1a26:	e2 0f       	add	r30, r18
-    1a28:	f3 1f       	adc	r31, r19
-    1a2a:	e4 91       	lpm	r30, Z
-    1a2c:	2b b1       	in	r18, 0x0b	; 11
-    1a2e:	34 e0       	ldi	r19, 0x04	; 4
-    1a30:	e3 9f       	mul	r30, r19
-    1a32:	f0 01       	movw	r30, r0
-    1a34:	11 24       	eor	r1, r1
-    1a36:	23 70       	andi	r18, 0x03	; 3
-    1a38:	e2 2b       	or	r30, r18
-    1a3a:	eb b9       	out	0x0b, r30	; 11
+    184e:	65 b1       	in	r22, 0x05	; 5
+    1850:	6a 60       	ori	r22, 0x0A	; 10
+    1852:	65 b9       	out	0x05, r22	; 5
+    1854:	65 b1       	in	r22, 0x05	; 5
+    1856:	65 7f       	andi	r22, 0xF5	; 245
+    1858:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    1a3c:	25 b1       	in	r18, 0x05	; 5
-    1a3e:	2a 60       	ori	r18, 0x0A	; 10
-    1a40:	25 b9       	out	0x05, r18	; 5
-    1a42:	25 b1       	in	r18, 0x05	; 5
-    1a44:	25 7f       	andi	r18, 0xF5	; 245
-    1a46:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1a48:	25 b1       	in	r18, 0x05	; 5
-    1a4a:	2a 60       	ori	r18, 0x0A	; 10
-    1a4c:	25 b9       	out	0x05, r18	; 5
-    1a4e:	25 b1       	in	r18, 0x05	; 5
-    1a50:	25 7f       	andi	r18, 0xF5	; 245
-    1a52:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 34));
-    1a54:	9c 01       	movw	r18, r24
-    1a56:	2e 5d       	subi	r18, 0xDE	; 222
-    1a58:	3f 4f       	sbci	r19, 0xFF	; 255
-    1a5a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1a5e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1a62:	e2 0f       	add	r30, r18
-    1a64:	f3 1f       	adc	r31, r19
-    1a66:	e4 91       	lpm	r30, Z
-    1a68:	2b b1       	in	r18, 0x0b	; 11
-    1a6a:	64 e0       	ldi	r22, 0x04	; 4
-    1a6c:	e6 9f       	mul	r30, r22
-    1a6e:	f0 01       	movw	r30, r0
-    1a70:	11 24       	eor	r1, r1
-    1a72:	23 70       	andi	r18, 0x03	; 3
-    1a74:	e2 2b       	or	r30, r18
-    1a76:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
+    185a:	f9 01       	movw	r30, r18
+    185c:	b1 96       	adiw	r30, 0x21	; 33
             PWCLK_GCLK;
-    1a78:	25 b1       	in	r18, 0x05	; 5
-    1a7a:	2a 60       	ori	r18, 0x0A	; 10
-    1a7c:	25 b9       	out	0x05, r18	; 5
-    1a7e:	25 b1       	in	r18, 0x05	; 5
-    1a80:	25 7f       	andi	r18, 0xF5	; 245
-    1a82:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1a84:	25 b1       	in	r18, 0x05	; 5
-    1a86:	2a 60       	ori	r18, 0x0A	; 10
-    1a88:	25 b9       	out	0x05, r18	; 5
-    1a8a:	25 b1       	in	r18, 0x05	; 5
-    1a8c:	25 7f       	andi	r18, 0xF5	; 245
-    1a8e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 35));
-    1a90:	9c 01       	movw	r18, r24
-    1a92:	2d 5d       	subi	r18, 0xDD	; 221
-    1a94:	3f 4f       	sbci	r19, 0xFF	; 255
-    1a96:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1a9a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1a9e:	e2 0f       	add	r30, r18
-    1aa0:	f3 1f       	adc	r31, r19
-    1aa2:	e4 91       	lpm	r30, Z
-    1aa4:	2b b1       	in	r18, 0x0b	; 11
-    1aa6:	74 e0       	ldi	r23, 0x04	; 4
-    1aa8:	e7 9f       	mul	r30, r23
-    1aaa:	f0 01       	movw	r30, r0
-    1aac:	11 24       	eor	r1, r1
-    1aae:	23 70       	andi	r18, 0x03	; 3
-    1ab0:	e2 2b       	or	r30, r18
-    1ab2:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    185e:	64 91       	lpm	r22, Z
+    1860:	eb b1       	in	r30, 0x0b	; 11
+    1862:	f4 e0       	ldi	r31, 0x04	; 4
+    1864:	6f 9f       	mul	r22, r31
+    1866:	b0 01       	movw	r22, r0
+    1868:	11 24       	eor	r1, r1
+    186a:	e3 70       	andi	r30, 0x03	; 3
+    186c:	e6 2b       	or	r30, r22
+    186e:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1ab4:	25 b1       	in	r18, 0x05	; 5
-    1ab6:	2a 60       	ori	r18, 0x0A	; 10
-    1ab8:	25 b9       	out	0x05, r18	; 5
-    1aba:	25 b1       	in	r18, 0x05	; 5
-    1abc:	25 7f       	andi	r18, 0xF5	; 245
-    1abe:	25 b9       	out	0x05, r18	; 5
+    1870:	65 b1       	in	r22, 0x05	; 5
+    1872:	6a 60       	ori	r22, 0x0A	; 10
+    1874:	65 b9       	out	0x05, r22	; 5
+    1876:	65 b1       	in	r22, 0x05	; 5
+    1878:	65 7f       	andi	r22, 0xF5	; 245
+    187a:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1ac0:	25 b1       	in	r18, 0x05	; 5
-    1ac2:	2a 60       	ori	r18, 0x0A	; 10
-    1ac4:	25 b9       	out	0x05, r18	; 5
-    1ac6:	25 b1       	in	r18, 0x05	; 5
-    1ac8:	25 7f       	andi	r18, 0xF5	; 245
-    1aca:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 36));
-    1acc:	9c 01       	movw	r18, r24
-    1ace:	2c 5d       	subi	r18, 0xDC	; 220
-    1ad0:	3f 4f       	sbci	r19, 0xFF	; 255
-    1ad2:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1ad6:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1ada:	e2 0f       	add	r30, r18
-    1adc:	f3 1f       	adc	r31, r19
-    1ade:	e4 91       	lpm	r30, Z
-    1ae0:	2b b1       	in	r18, 0x0b	; 11
-    1ae2:	34 e0       	ldi	r19, 0x04	; 4
-    1ae4:	e3 9f       	mul	r30, r19
-    1ae6:	f0 01       	movw	r30, r0
-    1ae8:	11 24       	eor	r1, r1
-    1aea:	23 70       	andi	r18, 0x03	; 3
-    1aec:	e2 2b       	or	r30, r18
-    1aee:	eb b9       	out	0x0b, r30	; 11
+    187c:	65 b1       	in	r22, 0x05	; 5
+    187e:	6a 60       	ori	r22, 0x0A	; 10
+    1880:	65 b9       	out	0x05, r22	; 5
+    1882:	65 b1       	in	r22, 0x05	; 5
+    1884:	65 7f       	andi	r22, 0xF5	; 245
+    1886:	65 b9       	out	0x05, r22	; 5
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    1af0:	25 b1       	in	r18, 0x05	; 5
-    1af2:	2a 60       	ori	r18, 0x0A	; 10
-    1af4:	25 b9       	out	0x05, r18	; 5
-    1af6:	25 b1       	in	r18, 0x05	; 5
-    1af8:	25 7f       	andi	r18, 0xF5	; 245
-    1afa:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1afc:	25 b1       	in	r18, 0x05	; 5
-    1afe:	2a 60       	ori	r18, 0x0A	; 10
-    1b00:	25 b9       	out	0x05, r18	; 5
-    1b02:	25 b1       	in	r18, 0x05	; 5
-    1b04:	25 7f       	andi	r18, 0xF5	; 245
-    1b06:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 37));
-    1b08:	9c 01       	movw	r18, r24
-    1b0a:	2b 5d       	subi	r18, 0xDB	; 219
-    1b0c:	3f 4f       	sbci	r19, 0xFF	; 255
-    1b0e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1b12:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1b16:	e2 0f       	add	r30, r18
-    1b18:	f3 1f       	adc	r31, r19
-    1b1a:	e4 91       	lpm	r30, Z
-    1b1c:	2b b1       	in	r18, 0x0b	; 11
-    1b1e:	64 e0       	ldi	r22, 0x04	; 4
-    1b20:	e6 9f       	mul	r30, r22
-    1b22:	f0 01       	movw	r30, r0
-    1b24:	11 24       	eor	r1, r1
-    1b26:	23 70       	andi	r18, 0x03	; 3
-    1b28:	e2 2b       	or	r30, r18
-    1b2a:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1888:	f9 01       	movw	r30, r18
+    188a:	b2 96       	adiw	r30, 0x22	; 34
             PWCLK_GCLK;
-    1b2c:	25 b1       	in	r18, 0x05	; 5
-    1b2e:	2a 60       	ori	r18, 0x0A	; 10
-    1b30:	25 b9       	out	0x05, r18	; 5
-    1b32:	25 b1       	in	r18, 0x05	; 5
-    1b34:	25 7f       	andi	r18, 0xF5	; 245
-    1b36:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1b38:	25 b1       	in	r18, 0x05	; 5
-    1b3a:	2a 60       	ori	r18, 0x0A	; 10
-    1b3c:	25 b9       	out	0x05, r18	; 5
-    1b3e:	25 b1       	in	r18, 0x05	; 5
-    1b40:	25 7f       	andi	r18, 0xF5	; 245
-    1b42:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 38));
-    1b44:	9c 01       	movw	r18, r24
-    1b46:	2a 5d       	subi	r18, 0xDA	; 218
-    1b48:	3f 4f       	sbci	r19, 0xFF	; 255
-    1b4a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1b4e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1b52:	e2 0f       	add	r30, r18
-    1b54:	f3 1f       	adc	r31, r19
-    1b56:	e4 91       	lpm	r30, Z
-    1b58:	2b b1       	in	r18, 0x0b	; 11
-    1b5a:	74 e0       	ldi	r23, 0x04	; 4
-    1b5c:	e7 9f       	mul	r30, r23
-    1b5e:	f0 01       	movw	r30, r0
-    1b60:	11 24       	eor	r1, r1
-    1b62:	23 70       	andi	r18, 0x03	; 3
-    1b64:	e2 2b       	or	r30, r18
-    1b66:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    188c:	64 91       	lpm	r22, Z
+    188e:	eb b1       	in	r30, 0x0b	; 11
+    1890:	f4 e0       	ldi	r31, 0x04	; 4
+    1892:	6f 9f       	mul	r22, r31
+    1894:	b0 01       	movw	r22, r0
+    1896:	11 24       	eor	r1, r1
+    1898:	e3 70       	andi	r30, 0x03	; 3
+    189a:	e6 2b       	or	r30, r22
+    189c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1b68:	25 b1       	in	r18, 0x05	; 5
-    1b6a:	2a 60       	ori	r18, 0x0A	; 10
-    1b6c:	25 b9       	out	0x05, r18	; 5
-    1b6e:	25 b1       	in	r18, 0x05	; 5
-    1b70:	25 7f       	andi	r18, 0xF5	; 245
-    1b72:	25 b9       	out	0x05, r18	; 5
+    189e:	65 b1       	in	r22, 0x05	; 5
+    18a0:	6a 60       	ori	r22, 0x0A	; 10
+    18a2:	65 b9       	out	0x05, r22	; 5
+    18a4:	65 b1       	in	r22, 0x05	; 5
+    18a6:	65 7f       	andi	r22, 0xF5	; 245
+    18a8:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1b74:	25 b1       	in	r18, 0x05	; 5
-    1b76:	2a 60       	ori	r18, 0x0A	; 10
-    1b78:	25 b9       	out	0x05, r18	; 5
-    1b7a:	25 b1       	in	r18, 0x05	; 5
-    1b7c:	25 7f       	andi	r18, 0xF5	; 245
-    1b7e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 39));
-    1b80:	9c 01       	movw	r18, r24
-    1b82:	29 5d       	subi	r18, 0xD9	; 217
-    1b84:	3f 4f       	sbci	r19, 0xFF	; 255
-    1b86:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1b8a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1b8e:	e2 0f       	add	r30, r18
-    1b90:	f3 1f       	adc	r31, r19
-    1b92:	e4 91       	lpm	r30, Z
-    1b94:	2b b1       	in	r18, 0x0b	; 11
-    1b96:	34 e0       	ldi	r19, 0x04	; 4
-    1b98:	e3 9f       	mul	r30, r19
-    1b9a:	f0 01       	movw	r30, r0
-    1b9c:	11 24       	eor	r1, r1
-    1b9e:	23 70       	andi	r18, 0x03	; 3
-    1ba0:	e2 2b       	or	r30, r18
-    1ba2:	eb b9       	out	0x0b, r30	; 11
+    18aa:	65 b1       	in	r22, 0x05	; 5
+    18ac:	6a 60       	ori	r22, 0x0A	; 10
+    18ae:	65 b9       	out	0x05, r22	; 5
+    18b0:	65 b1       	in	r22, 0x05	; 5
+    18b2:	65 7f       	andi	r22, 0xF5	; 245
+    18b4:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1ba4:	25 b1       	in	r18, 0x05	; 5
-    1ba6:	2a 60       	ori	r18, 0x0A	; 10
-    1ba8:	25 b9       	out	0x05, r18	; 5
-    1baa:	25 b1       	in	r18, 0x05	; 5
-    1bac:	25 7f       	andi	r18, 0xF5	; 245
-    1bae:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1bb0:	25 b1       	in	r18, 0x05	; 5
-    1bb2:	2a 60       	ori	r18, 0x0A	; 10
-    1bb4:	25 b9       	out	0x05, r18	; 5
-    1bb6:	25 b1       	in	r18, 0x05	; 5
-    1bb8:	25 7f       	andi	r18, 0xF5	; 245
-    1bba:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    18b6:	f9 01       	movw	r30, r18
+    18b8:	b3 96       	adiw	r30, 0x23	; 35
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    18ba:	64 91       	lpm	r22, Z
+    18bc:	eb b1       	in	r30, 0x0b	; 11
+    18be:	f4 e0       	ldi	r31, 0x04	; 4
+    18c0:	6f 9f       	mul	r22, r31
+    18c2:	b0 01       	movw	r22, r0
+    18c4:	11 24       	eor	r1, r1
+    18c6:	e3 70       	andi	r30, 0x03	; 3
+    18c8:	e6 2b       	or	r30, r22
+    18ca:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    18cc:	65 b1       	in	r22, 0x05	; 5
+    18ce:	6a 60       	ori	r22, 0x0A	; 10
+    18d0:	65 b9       	out	0x05, r22	; 5
+    18d2:	65 b1       	in	r22, 0x05	; 5
+    18d4:	65 7f       	andi	r22, 0xF5	; 245
+    18d6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    18d8:	65 b1       	in	r22, 0x05	; 5
+    18da:	6a 60       	ori	r22, 0x0A	; 10
+    18dc:	65 b9       	out	0x05, r22	; 5
+    18de:	65 b1       	in	r22, 0x05	; 5
+    18e0:	65 7f       	andi	r22, 0xF5	; 245
+    18e2:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    18e4:	f9 01       	movw	r30, r18
+    18e6:	b4 96       	adiw	r30, 0x24	; 36
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    18e8:	64 91       	lpm	r22, Z
+    18ea:	eb b1       	in	r30, 0x0b	; 11
+    18ec:	f4 e0       	ldi	r31, 0x04	; 4
+    18ee:	6f 9f       	mul	r22, r31
+    18f0:	b0 01       	movw	r22, r0
+    18f2:	11 24       	eor	r1, r1
+    18f4:	e3 70       	andi	r30, 0x03	; 3
+    18f6:	e6 2b       	or	r30, r22
+    18f8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    18fa:	65 b1       	in	r22, 0x05	; 5
+    18fc:	6a 60       	ori	r22, 0x0A	; 10
+    18fe:	65 b9       	out	0x05, r22	; 5
+    1900:	65 b1       	in	r22, 0x05	; 5
+    1902:	65 7f       	andi	r22, 0xF5	; 245
+    1904:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1906:	65 b1       	in	r22, 0x05	; 5
+    1908:	6a 60       	ori	r22, 0x0A	; 10
+    190a:	65 b9       	out	0x05, r22	; 5
+    190c:	65 b1       	in	r22, 0x05	; 5
+    190e:	65 7f       	andi	r22, 0xF5	; 245
+    1910:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1912:	f9 01       	movw	r30, r18
+    1914:	b5 96       	adiw	r30, 0x25	; 37
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1916:	64 91       	lpm	r22, Z
+    1918:	eb b1       	in	r30, 0x0b	; 11
+    191a:	f4 e0       	ldi	r31, 0x04	; 4
+    191c:	6f 9f       	mul	r22, r31
+    191e:	b0 01       	movw	r22, r0
+    1920:	11 24       	eor	r1, r1
+    1922:	e3 70       	andi	r30, 0x03	; 3
+    1924:	e6 2b       	or	r30, r22
+    1926:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1928:	65 b1       	in	r22, 0x05	; 5
+    192a:	6a 60       	ori	r22, 0x0A	; 10
+    192c:	65 b9       	out	0x05, r22	; 5
+    192e:	65 b1       	in	r22, 0x05	; 5
+    1930:	65 7f       	andi	r22, 0xF5	; 245
+    1932:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1934:	65 b1       	in	r22, 0x05	; 5
+    1936:	6a 60       	ori	r22, 0x0A	; 10
+    1938:	65 b9       	out	0x05, r22	; 5
+    193a:	65 b1       	in	r22, 0x05	; 5
+    193c:	65 7f       	andi	r22, 0xF5	; 245
+    193e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1940:	f9 01       	movw	r30, r18
+    1942:	b6 96       	adiw	r30, 0x26	; 38
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1944:	64 91       	lpm	r22, Z
+    1946:	eb b1       	in	r30, 0x0b	; 11
+    1948:	f4 e0       	ldi	r31, 0x04	; 4
+    194a:	6f 9f       	mul	r22, r31
+    194c:	b0 01       	movw	r22, r0
+    194e:	11 24       	eor	r1, r1
+    1950:	e3 70       	andi	r30, 0x03	; 3
+    1952:	e6 2b       	or	r30, r22
+    1954:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1956:	65 b1       	in	r22, 0x05	; 5
+    1958:	6a 60       	ori	r22, 0x0A	; 10
+    195a:	65 b9       	out	0x05, r22	; 5
+    195c:	65 b1       	in	r22, 0x05	; 5
+    195e:	65 7f       	andi	r22, 0xF5	; 245
+    1960:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1962:	65 b1       	in	r22, 0x05	; 5
+    1964:	6a 60       	ori	r22, 0x0A	; 10
+    1966:	65 b9       	out	0x05, r22	; 5
+    1968:	65 b1       	in	r22, 0x05	; 5
+    196a:	65 7f       	andi	r22, 0xF5	; 245
+    196c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    196e:	f9 01       	movw	r30, r18
+    1970:	b7 96       	adiw	r30, 0x27	; 39
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1972:	64 91       	lpm	r22, Z
+    1974:	eb b1       	in	r30, 0x0b	; 11
+    1976:	f4 e0       	ldi	r31, 0x04	; 4
+    1978:	6f 9f       	mul	r22, r31
+    197a:	b0 01       	movw	r22, r0
+    197c:	11 24       	eor	r1, r1
+    197e:	e3 70       	andi	r30, 0x03	; 3
+    1980:	e6 2b       	or	r30, r22
+    1982:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1984:	65 b1       	in	r22, 0x05	; 5
+    1986:	6a 60       	ori	r22, 0x0A	; 10
+    1988:	65 b9       	out	0x05, r22	; 5
+    198a:	65 b1       	in	r22, 0x05	; 5
+    198c:	65 7f       	andi	r22, 0xF5	; 245
+    198e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1990:	65 b1       	in	r22, 0x05	; 5
+    1992:	6a 60       	ori	r22, 0x0A	; 10
+    1994:	65 b9       	out	0x05, r22	; 5
+    1996:	65 b1       	in	r22, 0x05	; 5
+    1998:	65 7f       	andi	r22, 0xF5	; 245
+    199a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    199c:	f9 01       	movw	r30, r18
+    199e:	b8 96       	adiw	r30, 0x28	; 40
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 5
-            SET_COLOR(pgm_read_byte(buffer + index + 40));
-    1bbc:	9c 01       	movw	r18, r24
-    1bbe:	28 5d       	subi	r18, 0xD8	; 216
-    1bc0:	3f 4f       	sbci	r19, 0xFF	; 255
-    1bc2:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1bc6:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1bca:	e2 0f       	add	r30, r18
-    1bcc:	f3 1f       	adc	r31, r19
-    1bce:	e4 91       	lpm	r30, Z
-    1bd0:	2b b1       	in	r18, 0x0b	; 11
-    1bd2:	64 e0       	ldi	r22, 0x04	; 4
-    1bd4:	e6 9f       	mul	r30, r22
-    1bd6:	f0 01       	movw	r30, r0
-    1bd8:	11 24       	eor	r1, r1
-    1bda:	23 70       	andi	r18, 0x03	; 3
-    1bdc:	e2 2b       	or	r30, r18
-    1bde:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    19a0:	64 91       	lpm	r22, Z
+    19a2:	eb b1       	in	r30, 0x0b	; 11
+    19a4:	f4 e0       	ldi	r31, 0x04	; 4
+    19a6:	6f 9f       	mul	r22, r31
+    19a8:	b0 01       	movw	r22, r0
+    19aa:	11 24       	eor	r1, r1
+    19ac:	e3 70       	andi	r30, 0x03	; 3
+    19ae:	e6 2b       	or	r30, r22
+    19b0:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1be0:	25 b1       	in	r18, 0x05	; 5
-    1be2:	2a 60       	ori	r18, 0x0A	; 10
-    1be4:	25 b9       	out	0x05, r18	; 5
-    1be6:	25 b1       	in	r18, 0x05	; 5
-    1be8:	25 7f       	andi	r18, 0xF5	; 245
-    1bea:	25 b9       	out	0x05, r18	; 5
+    19b2:	65 b1       	in	r22, 0x05	; 5
+    19b4:	6a 60       	ori	r22, 0x0A	; 10
+    19b6:	65 b9       	out	0x05, r22	; 5
+    19b8:	65 b1       	in	r22, 0x05	; 5
+    19ba:	65 7f       	andi	r22, 0xF5	; 245
+    19bc:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1bec:	25 b1       	in	r18, 0x05	; 5
-    1bee:	2a 60       	ori	r18, 0x0A	; 10
-    1bf0:	25 b9       	out	0x05, r18	; 5
-    1bf2:	25 b1       	in	r18, 0x05	; 5
-    1bf4:	25 7f       	andi	r18, 0xF5	; 245
-    1bf6:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 41));
-    1bf8:	9c 01       	movw	r18, r24
-    1bfa:	27 5d       	subi	r18, 0xD7	; 215
-    1bfc:	3f 4f       	sbci	r19, 0xFF	; 255
-    1bfe:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1c02:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1c06:	e2 0f       	add	r30, r18
-    1c08:	f3 1f       	adc	r31, r19
-    1c0a:	e4 91       	lpm	r30, Z
-    1c0c:	2b b1       	in	r18, 0x0b	; 11
-    1c0e:	74 e0       	ldi	r23, 0x04	; 4
-    1c10:	e7 9f       	mul	r30, r23
-    1c12:	f0 01       	movw	r30, r0
-    1c14:	11 24       	eor	r1, r1
-    1c16:	23 70       	andi	r18, 0x03	; 3
-    1c18:	e2 2b       	or	r30, r18
-    1c1a:	eb b9       	out	0x0b, r30	; 11
+    19be:	65 b1       	in	r22, 0x05	; 5
+    19c0:	6a 60       	ori	r22, 0x0A	; 10
+    19c2:	65 b9       	out	0x05, r22	; 5
+    19c4:	65 b1       	in	r22, 0x05	; 5
+    19c6:	65 7f       	andi	r22, 0xF5	; 245
+    19c8:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    1c1c:	25 b1       	in	r18, 0x05	; 5
-    1c1e:	2a 60       	ori	r18, 0x0A	; 10
-    1c20:	25 b9       	out	0x05, r18	; 5
-    1c22:	25 b1       	in	r18, 0x05	; 5
-    1c24:	25 7f       	andi	r18, 0xF5	; 245
-    1c26:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1c28:	25 b1       	in	r18, 0x05	; 5
-    1c2a:	2a 60       	ori	r18, 0x0A	; 10
-    1c2c:	25 b9       	out	0x05, r18	; 5
-    1c2e:	25 b1       	in	r18, 0x05	; 5
-    1c30:	25 7f       	andi	r18, 0xF5	; 245
-    1c32:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 42));
-    1c34:	9c 01       	movw	r18, r24
-    1c36:	26 5d       	subi	r18, 0xD6	; 214
-    1c38:	3f 4f       	sbci	r19, 0xFF	; 255
-    1c3a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1c3e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1c42:	e2 0f       	add	r30, r18
-    1c44:	f3 1f       	adc	r31, r19
-    1c46:	e4 91       	lpm	r30, Z
-    1c48:	2b b1       	in	r18, 0x0b	; 11
-    1c4a:	34 e0       	ldi	r19, 0x04	; 4
-    1c4c:	e3 9f       	mul	r30, r19
-    1c4e:	f0 01       	movw	r30, r0
-    1c50:	11 24       	eor	r1, r1
-    1c52:	23 70       	andi	r18, 0x03	; 3
-    1c54:	e2 2b       	or	r30, r18
-    1c56:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
+    19ca:	f9 01       	movw	r30, r18
+    19cc:	b9 96       	adiw	r30, 0x29	; 41
             PWCLK_GCLK;
-    1c58:	25 b1       	in	r18, 0x05	; 5
-    1c5a:	2a 60       	ori	r18, 0x0A	; 10
-    1c5c:	25 b9       	out	0x05, r18	; 5
-    1c5e:	25 b1       	in	r18, 0x05	; 5
-    1c60:	25 7f       	andi	r18, 0xF5	; 245
-    1c62:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1c64:	25 b1       	in	r18, 0x05	; 5
-    1c66:	2a 60       	ori	r18, 0x0A	; 10
-    1c68:	25 b9       	out	0x05, r18	; 5
-    1c6a:	25 b1       	in	r18, 0x05	; 5
-    1c6c:	25 7f       	andi	r18, 0xF5	; 245
-    1c6e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 43));
-    1c70:	9c 01       	movw	r18, r24
-    1c72:	25 5d       	subi	r18, 0xD5	; 213
-    1c74:	3f 4f       	sbci	r19, 0xFF	; 255
-    1c76:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1c7a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1c7e:	e2 0f       	add	r30, r18
-    1c80:	f3 1f       	adc	r31, r19
-    1c82:	e4 91       	lpm	r30, Z
-    1c84:	2b b1       	in	r18, 0x0b	; 11
-    1c86:	64 e0       	ldi	r22, 0x04	; 4
-    1c88:	e6 9f       	mul	r30, r22
-    1c8a:	f0 01       	movw	r30, r0
-    1c8c:	11 24       	eor	r1, r1
-    1c8e:	23 70       	andi	r18, 0x03	; 3
-    1c90:	e2 2b       	or	r30, r18
-    1c92:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    19ce:	64 91       	lpm	r22, Z
+    19d0:	eb b1       	in	r30, 0x0b	; 11
+    19d2:	f4 e0       	ldi	r31, 0x04	; 4
+    19d4:	6f 9f       	mul	r22, r31
+    19d6:	b0 01       	movw	r22, r0
+    19d8:	11 24       	eor	r1, r1
+    19da:	e3 70       	andi	r30, 0x03	; 3
+    19dc:	e6 2b       	or	r30, r22
+    19de:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1c94:	25 b1       	in	r18, 0x05	; 5
-    1c96:	2a 60       	ori	r18, 0x0A	; 10
-    1c98:	25 b9       	out	0x05, r18	; 5
-    1c9a:	25 b1       	in	r18, 0x05	; 5
-    1c9c:	25 7f       	andi	r18, 0xF5	; 245
-    1c9e:	25 b9       	out	0x05, r18	; 5
+    19e0:	65 b1       	in	r22, 0x05	; 5
+    19e2:	6a 60       	ori	r22, 0x0A	; 10
+    19e4:	65 b9       	out	0x05, r22	; 5
+    19e6:	65 b1       	in	r22, 0x05	; 5
+    19e8:	65 7f       	andi	r22, 0xF5	; 245
+    19ea:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1ca0:	25 b1       	in	r18, 0x05	; 5
-    1ca2:	2a 60       	ori	r18, 0x0A	; 10
-    1ca4:	25 b9       	out	0x05, r18	; 5
-    1ca6:	25 b1       	in	r18, 0x05	; 5
-    1ca8:	25 7f       	andi	r18, 0xF5	; 245
-    1caa:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 44));
-    1cac:	9c 01       	movw	r18, r24
-    1cae:	24 5d       	subi	r18, 0xD4	; 212
-    1cb0:	3f 4f       	sbci	r19, 0xFF	; 255
-    1cb2:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1cb6:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1cba:	e2 0f       	add	r30, r18
-    1cbc:	f3 1f       	adc	r31, r19
-    1cbe:	e4 91       	lpm	r30, Z
-    1cc0:	2b b1       	in	r18, 0x0b	; 11
-    1cc2:	74 e0       	ldi	r23, 0x04	; 4
-    1cc4:	e7 9f       	mul	r30, r23
-    1cc6:	f0 01       	movw	r30, r0
-    1cc8:	11 24       	eor	r1, r1
-    1cca:	23 70       	andi	r18, 0x03	; 3
-    1ccc:	e2 2b       	or	r30, r18
-    1cce:	eb b9       	out	0x0b, r30	; 11
+    19ec:	65 b1       	in	r22, 0x05	; 5
+    19ee:	6a 60       	ori	r22, 0x0A	; 10
+    19f0:	65 b9       	out	0x05, r22	; 5
+    19f2:	65 b1       	in	r22, 0x05	; 5
+    19f4:	65 7f       	andi	r22, 0xF5	; 245
+    19f6:	65 b9       	out	0x05, r22	; 5
+
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    1cd0:	25 b1       	in	r18, 0x05	; 5
-    1cd2:	2a 60       	ori	r18, 0x0A	; 10
-    1cd4:	25 b9       	out	0x05, r18	; 5
-    1cd6:	25 b1       	in	r18, 0x05	; 5
-    1cd8:	25 7f       	andi	r18, 0xF5	; 245
-    1cda:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1cdc:	25 b1       	in	r18, 0x05	; 5
-    1cde:	2a 60       	ori	r18, 0x0A	; 10
-    1ce0:	25 b9       	out	0x05, r18	; 5
-    1ce2:	25 b1       	in	r18, 0x05	; 5
-    1ce4:	25 7f       	andi	r18, 0xF5	; 245
-    1ce6:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 45));
-    1ce8:	9c 01       	movw	r18, r24
-    1cea:	23 5d       	subi	r18, 0xD3	; 211
-    1cec:	3f 4f       	sbci	r19, 0xFF	; 255
-    1cee:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1cf2:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1cf6:	e2 0f       	add	r30, r18
-    1cf8:	f3 1f       	adc	r31, r19
-    1cfa:	e4 91       	lpm	r30, Z
-    1cfc:	2b b1       	in	r18, 0x0b	; 11
-    1cfe:	34 e0       	ldi	r19, 0x04	; 4
-    1d00:	e3 9f       	mul	r30, r19
-    1d02:	f0 01       	movw	r30, r0
-    1d04:	11 24       	eor	r1, r1
-    1d06:	23 70       	andi	r18, 0x03	; 3
-    1d08:	e2 2b       	or	r30, r18
-    1d0a:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    19f8:	f9 01       	movw	r30, r18
+    19fa:	ba 96       	adiw	r30, 0x2a	; 42
             PWCLK_GCLK;
-    1d0c:	25 b1       	in	r18, 0x05	; 5
-    1d0e:	2a 60       	ori	r18, 0x0A	; 10
-    1d10:	25 b9       	out	0x05, r18	; 5
-    1d12:	25 b1       	in	r18, 0x05	; 5
-    1d14:	25 7f       	andi	r18, 0xF5	; 245
-    1d16:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1d18:	25 b1       	in	r18, 0x05	; 5
-    1d1a:	2a 60       	ori	r18, 0x0A	; 10
-    1d1c:	25 b9       	out	0x05, r18	; 5
-    1d1e:	25 b1       	in	r18, 0x05	; 5
-    1d20:	25 7f       	andi	r18, 0xF5	; 245
-    1d22:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 46));
-    1d24:	9c 01       	movw	r18, r24
-    1d26:	22 5d       	subi	r18, 0xD2	; 210
-    1d28:	3f 4f       	sbci	r19, 0xFF	; 255
-    1d2a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1d2e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1d32:	e2 0f       	add	r30, r18
-    1d34:	f3 1f       	adc	r31, r19
-    1d36:	e4 91       	lpm	r30, Z
-    1d38:	2b b1       	in	r18, 0x0b	; 11
-    1d3a:	64 e0       	ldi	r22, 0x04	; 4
-    1d3c:	e6 9f       	mul	r30, r22
-    1d3e:	f0 01       	movw	r30, r0
-    1d40:	11 24       	eor	r1, r1
-    1d42:	23 70       	andi	r18, 0x03	; 3
-    1d44:	e2 2b       	or	r30, r18
-    1d46:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    19fc:	64 91       	lpm	r22, Z
+    19fe:	eb b1       	in	r30, 0x0b	; 11
+    1a00:	f4 e0       	ldi	r31, 0x04	; 4
+    1a02:	6f 9f       	mul	r22, r31
+    1a04:	b0 01       	movw	r22, r0
+    1a06:	11 24       	eor	r1, r1
+    1a08:	e3 70       	andi	r30, 0x03	; 3
+    1a0a:	e6 2b       	or	r30, r22
+    1a0c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1d48:	25 b1       	in	r18, 0x05	; 5
-    1d4a:	2a 60       	ori	r18, 0x0A	; 10
-    1d4c:	25 b9       	out	0x05, r18	; 5
-    1d4e:	25 b1       	in	r18, 0x05	; 5
-    1d50:	25 7f       	andi	r18, 0xF5	; 245
-    1d52:	25 b9       	out	0x05, r18	; 5
+    1a0e:	65 b1       	in	r22, 0x05	; 5
+    1a10:	6a 60       	ori	r22, 0x0A	; 10
+    1a12:	65 b9       	out	0x05, r22	; 5
+    1a14:	65 b1       	in	r22, 0x05	; 5
+    1a16:	65 7f       	andi	r22, 0xF5	; 245
+    1a18:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1d54:	25 b1       	in	r18, 0x05	; 5
-    1d56:	2a 60       	ori	r18, 0x0A	; 10
-    1d58:	25 b9       	out	0x05, r18	; 5
-    1d5a:	25 b1       	in	r18, 0x05	; 5
-    1d5c:	25 7f       	andi	r18, 0xF5	; 245
-    1d5e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 47));
-    1d60:	9c 01       	movw	r18, r24
-    1d62:	21 5d       	subi	r18, 0xD1	; 209
-    1d64:	3f 4f       	sbci	r19, 0xFF	; 255
-    1d66:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1d6a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1d6e:	e2 0f       	add	r30, r18
-    1d70:	f3 1f       	adc	r31, r19
-    1d72:	e4 91       	lpm	r30, Z
-    1d74:	2b b1       	in	r18, 0x0b	; 11
-    1d76:	74 e0       	ldi	r23, 0x04	; 4
-    1d78:	e7 9f       	mul	r30, r23
-    1d7a:	f0 01       	movw	r30, r0
-    1d7c:	11 24       	eor	r1, r1
-    1d7e:	23 70       	andi	r18, 0x03	; 3
-    1d80:	e2 2b       	or	r30, r18
-    1d82:	eb b9       	out	0x0b, r30	; 11
+    1a1a:	65 b1       	in	r22, 0x05	; 5
+    1a1c:	6a 60       	ori	r22, 0x0A	; 10
+    1a1e:	65 b9       	out	0x05, r22	; 5
+    1a20:	65 b1       	in	r22, 0x05	; 5
+    1a22:	65 7f       	andi	r22, 0xF5	; 245
+    1a24:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1d84:	25 b1       	in	r18, 0x05	; 5
-    1d86:	2a 60       	ori	r18, 0x0A	; 10
-    1d88:	25 b9       	out	0x05, r18	; 5
-    1d8a:	25 b1       	in	r18, 0x05	; 5
-    1d8c:	25 7f       	andi	r18, 0xF5	; 245
-    1d8e:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1d90:	25 b1       	in	r18, 0x05	; 5
-    1d92:	2a 60       	ori	r18, 0x0A	; 10
-    1d94:	25 b9       	out	0x05, r18	; 5
-    1d96:	25 b1       	in	r18, 0x05	; 5
-    1d98:	25 7f       	andi	r18, 0xF5	; 245
-    1d9a:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1a26:	f9 01       	movw	r30, r18
+    1a28:	bb 96       	adiw	r30, 0x2b	; 43
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1a2a:	64 91       	lpm	r22, Z
+    1a2c:	eb b1       	in	r30, 0x0b	; 11
+    1a2e:	f4 e0       	ldi	r31, 0x04	; 4
+    1a30:	6f 9f       	mul	r22, r31
+    1a32:	b0 01       	movw	r22, r0
+    1a34:	11 24       	eor	r1, r1
+    1a36:	e3 70       	andi	r30, 0x03	; 3
+    1a38:	e6 2b       	or	r30, r22
+    1a3a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1a3c:	65 b1       	in	r22, 0x05	; 5
+    1a3e:	6a 60       	ori	r22, 0x0A	; 10
+    1a40:	65 b9       	out	0x05, r22	; 5
+    1a42:	65 b1       	in	r22, 0x05	; 5
+    1a44:	65 7f       	andi	r22, 0xF5	; 245
+    1a46:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1a48:	65 b1       	in	r22, 0x05	; 5
+    1a4a:	6a 60       	ori	r22, 0x0A	; 10
+    1a4c:	65 b9       	out	0x05, r22	; 5
+    1a4e:	65 b1       	in	r22, 0x05	; 5
+    1a50:	65 7f       	andi	r22, 0xF5	; 245
+    1a52:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1a54:	f9 01       	movw	r30, r18
+    1a56:	bc 96       	adiw	r30, 0x2c	; 44
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1a58:	64 91       	lpm	r22, Z
+    1a5a:	eb b1       	in	r30, 0x0b	; 11
+    1a5c:	f4 e0       	ldi	r31, 0x04	; 4
+    1a5e:	6f 9f       	mul	r22, r31
+    1a60:	b0 01       	movw	r22, r0
+    1a62:	11 24       	eor	r1, r1
+    1a64:	e3 70       	andi	r30, 0x03	; 3
+    1a66:	e6 2b       	or	r30, r22
+    1a68:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1a6a:	65 b1       	in	r22, 0x05	; 5
+    1a6c:	6a 60       	ori	r22, 0x0A	; 10
+    1a6e:	65 b9       	out	0x05, r22	; 5
+    1a70:	65 b1       	in	r22, 0x05	; 5
+    1a72:	65 7f       	andi	r22, 0xF5	; 245
+    1a74:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1a76:	65 b1       	in	r22, 0x05	; 5
+    1a78:	6a 60       	ori	r22, 0x0A	; 10
+    1a7a:	65 b9       	out	0x05, r22	; 5
+    1a7c:	65 b1       	in	r22, 0x05	; 5
+    1a7e:	65 7f       	andi	r22, 0xF5	; 245
+    1a80:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1a82:	f9 01       	movw	r30, r18
+    1a84:	bd 96       	adiw	r30, 0x2d	; 45
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1a86:	64 91       	lpm	r22, Z
+    1a88:	eb b1       	in	r30, 0x0b	; 11
+    1a8a:	f4 e0       	ldi	r31, 0x04	; 4
+    1a8c:	6f 9f       	mul	r22, r31
+    1a8e:	b0 01       	movw	r22, r0
+    1a90:	11 24       	eor	r1, r1
+    1a92:	e3 70       	andi	r30, 0x03	; 3
+    1a94:	e6 2b       	or	r30, r22
+    1a96:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1a98:	65 b1       	in	r22, 0x05	; 5
+    1a9a:	6a 60       	ori	r22, 0x0A	; 10
+    1a9c:	65 b9       	out	0x05, r22	; 5
+    1a9e:	65 b1       	in	r22, 0x05	; 5
+    1aa0:	65 7f       	andi	r22, 0xF5	; 245
+    1aa2:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1aa4:	65 b1       	in	r22, 0x05	; 5
+    1aa6:	6a 60       	ori	r22, 0x0A	; 10
+    1aa8:	65 b9       	out	0x05, r22	; 5
+    1aaa:	65 b1       	in	r22, 0x05	; 5
+    1aac:	65 7f       	andi	r22, 0xF5	; 245
+    1aae:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1ab0:	f9 01       	movw	r30, r18
+    1ab2:	be 96       	adiw	r30, 0x2e	; 46
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1ab4:	64 91       	lpm	r22, Z
+    1ab6:	eb b1       	in	r30, 0x0b	; 11
+    1ab8:	f4 e0       	ldi	r31, 0x04	; 4
+    1aba:	6f 9f       	mul	r22, r31
+    1abc:	b0 01       	movw	r22, r0
+    1abe:	11 24       	eor	r1, r1
+    1ac0:	e3 70       	andi	r30, 0x03	; 3
+    1ac2:	e6 2b       	or	r30, r22
+    1ac4:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1ac6:	65 b1       	in	r22, 0x05	; 5
+    1ac8:	6a 60       	ori	r22, 0x0A	; 10
+    1aca:	65 b9       	out	0x05, r22	; 5
+    1acc:	65 b1       	in	r22, 0x05	; 5
+    1ace:	65 7f       	andi	r22, 0xF5	; 245
+    1ad0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1ad2:	65 b1       	in	r22, 0x05	; 5
+    1ad4:	6a 60       	ori	r22, 0x0A	; 10
+    1ad6:	65 b9       	out	0x05, r22	; 5
+    1ad8:	65 b1       	in	r22, 0x05	; 5
+    1ada:	65 7f       	andi	r22, 0xF5	; 245
+    1adc:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1ade:	f9 01       	movw	r30, r18
+    1ae0:	bf 96       	adiw	r30, 0x2f	; 47
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1ae2:	64 91       	lpm	r22, Z
+    1ae4:	eb b1       	in	r30, 0x0b	; 11
+    1ae6:	f4 e0       	ldi	r31, 0x04	; 4
+    1ae8:	6f 9f       	mul	r22, r31
+    1aea:	b0 01       	movw	r22, r0
+    1aec:	11 24       	eor	r1, r1
+    1aee:	e3 70       	andi	r30, 0x03	; 3
+    1af0:	e6 2b       	or	r30, r22
+    1af2:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1af4:	65 b1       	in	r22, 0x05	; 5
+    1af6:	6a 60       	ori	r22, 0x0A	; 10
+    1af8:	65 b9       	out	0x05, r22	; 5
+    1afa:	65 b1       	in	r22, 0x05	; 5
+    1afc:	65 7f       	andi	r22, 0xF5	; 245
+    1afe:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1b00:	65 b1       	in	r22, 0x05	; 5
+    1b02:	6a 60       	ori	r22, 0x0A	; 10
+    1b04:	65 b9       	out	0x05, r22	; 5
+    1b06:	65 b1       	in	r22, 0x05	; 5
+    1b08:	65 7f       	andi	r22, 0xF5	; 245
+    1b0a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1b0c:	f9 01       	movw	r30, r18
+    1b0e:	f0 96       	adiw	r30, 0x30	; 48
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 6
-            SET_COLOR(pgm_read_byte(buffer + index + 48));
-    1d9c:	9c 01       	movw	r18, r24
-    1d9e:	20 5d       	subi	r18, 0xD0	; 208
-    1da0:	3f 4f       	sbci	r19, 0xFF	; 255
-    1da2:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1da6:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1daa:	e2 0f       	add	r30, r18
-    1dac:	f3 1f       	adc	r31, r19
-    1dae:	e4 91       	lpm	r30, Z
-    1db0:	2b b1       	in	r18, 0x0b	; 11
-    1db2:	34 e0       	ldi	r19, 0x04	; 4
-    1db4:	e3 9f       	mul	r30, r19
-    1db6:	f0 01       	movw	r30, r0
-    1db8:	11 24       	eor	r1, r1
-    1dba:	23 70       	andi	r18, 0x03	; 3
-    1dbc:	e2 2b       	or	r30, r18
-    1dbe:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1b10:	64 91       	lpm	r22, Z
+    1b12:	eb b1       	in	r30, 0x0b	; 11
+    1b14:	f4 e0       	ldi	r31, 0x04	; 4
+    1b16:	6f 9f       	mul	r22, r31
+    1b18:	b0 01       	movw	r22, r0
+    1b1a:	11 24       	eor	r1, r1
+    1b1c:	e3 70       	andi	r30, 0x03	; 3
+    1b1e:	e6 2b       	or	r30, r22
+    1b20:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1dc0:	25 b1       	in	r18, 0x05	; 5
-    1dc2:	2a 60       	ori	r18, 0x0A	; 10
-    1dc4:	25 b9       	out	0x05, r18	; 5
-    1dc6:	25 b1       	in	r18, 0x05	; 5
-    1dc8:	25 7f       	andi	r18, 0xF5	; 245
-    1dca:	25 b9       	out	0x05, r18	; 5
+    1b22:	65 b1       	in	r22, 0x05	; 5
+    1b24:	6a 60       	ori	r22, 0x0A	; 10
+    1b26:	65 b9       	out	0x05, r22	; 5
+    1b28:	65 b1       	in	r22, 0x05	; 5
+    1b2a:	65 7f       	andi	r22, 0xF5	; 245
+    1b2c:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1dcc:	25 b1       	in	r18, 0x05	; 5
-    1dce:	2a 60       	ori	r18, 0x0A	; 10
-    1dd0:	25 b9       	out	0x05, r18	; 5
-    1dd2:	25 b1       	in	r18, 0x05	; 5
-    1dd4:	25 7f       	andi	r18, 0xF5	; 245
-    1dd6:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 49));
-    1dd8:	9c 01       	movw	r18, r24
-    1dda:	2f 5c       	subi	r18, 0xCF	; 207
-    1ddc:	3f 4f       	sbci	r19, 0xFF	; 255
-    1dde:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1de2:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1de6:	e2 0f       	add	r30, r18
-    1de8:	f3 1f       	adc	r31, r19
-    1dea:	e4 91       	lpm	r30, Z
-    1dec:	2b b1       	in	r18, 0x0b	; 11
-    1dee:	64 e0       	ldi	r22, 0x04	; 4
-    1df0:	e6 9f       	mul	r30, r22
-    1df2:	f0 01       	movw	r30, r0
-    1df4:	11 24       	eor	r1, r1
-    1df6:	23 70       	andi	r18, 0x03	; 3
-    1df8:	e2 2b       	or	r30, r18
-    1dfa:	eb b9       	out	0x0b, r30	; 11
+    1b2e:	65 b1       	in	r22, 0x05	; 5
+    1b30:	6a 60       	ori	r22, 0x0A	; 10
+    1b32:	65 b9       	out	0x05, r22	; 5
+    1b34:	65 b1       	in	r22, 0x05	; 5
+    1b36:	65 7f       	andi	r22, 0xF5	; 245
+    1b38:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    1dfc:	25 b1       	in	r18, 0x05	; 5
-    1dfe:	2a 60       	ori	r18, 0x0A	; 10
-    1e00:	25 b9       	out	0x05, r18	; 5
-    1e02:	25 b1       	in	r18, 0x05	; 5
-    1e04:	25 7f       	andi	r18, 0xF5	; 245
-    1e06:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1e08:	25 b1       	in	r18, 0x05	; 5
-    1e0a:	2a 60       	ori	r18, 0x0A	; 10
-    1e0c:	25 b9       	out	0x05, r18	; 5
-    1e0e:	25 b1       	in	r18, 0x05	; 5
-    1e10:	25 7f       	andi	r18, 0xF5	; 245
-    1e12:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 50));
-    1e14:	9c 01       	movw	r18, r24
-    1e16:	2e 5c       	subi	r18, 0xCE	; 206
-    1e18:	3f 4f       	sbci	r19, 0xFF	; 255
-    1e1a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1e1e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1e22:	e2 0f       	add	r30, r18
-    1e24:	f3 1f       	adc	r31, r19
-    1e26:	e4 91       	lpm	r30, Z
-    1e28:	2b b1       	in	r18, 0x0b	; 11
-    1e2a:	74 e0       	ldi	r23, 0x04	; 4
-    1e2c:	e7 9f       	mul	r30, r23
-    1e2e:	f0 01       	movw	r30, r0
-    1e30:	11 24       	eor	r1, r1
-    1e32:	23 70       	andi	r18, 0x03	; 3
-    1e34:	e2 2b       	or	r30, r18
-    1e36:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 6
+            SET_COLOR(pgm_read_byte(index++));
+    1b3a:	f9 01       	movw	r30, r18
+    1b3c:	f1 96       	adiw	r30, 0x31	; 49
             PWCLK_GCLK;
-    1e38:	25 b1       	in	r18, 0x05	; 5
-    1e3a:	2a 60       	ori	r18, 0x0A	; 10
-    1e3c:	25 b9       	out	0x05, r18	; 5
-    1e3e:	25 b1       	in	r18, 0x05	; 5
-    1e40:	25 7f       	andi	r18, 0xF5	; 245
-    1e42:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1e44:	25 b1       	in	r18, 0x05	; 5
-    1e46:	2a 60       	ori	r18, 0x0A	; 10
-    1e48:	25 b9       	out	0x05, r18	; 5
-    1e4a:	25 b1       	in	r18, 0x05	; 5
-    1e4c:	25 7f       	andi	r18, 0xF5	; 245
-    1e4e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 51));
-    1e50:	9c 01       	movw	r18, r24
-    1e52:	2d 5c       	subi	r18, 0xCD	; 205
-    1e54:	3f 4f       	sbci	r19, 0xFF	; 255
-    1e56:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1e5a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1e5e:	e2 0f       	add	r30, r18
-    1e60:	f3 1f       	adc	r31, r19
-    1e62:	e4 91       	lpm	r30, Z
-    1e64:	2b b1       	in	r18, 0x0b	; 11
-    1e66:	34 e0       	ldi	r19, 0x04	; 4
-    1e68:	e3 9f       	mul	r30, r19
-    1e6a:	f0 01       	movw	r30, r0
-    1e6c:	11 24       	eor	r1, r1
-    1e6e:	23 70       	andi	r18, 0x03	; 3
-    1e70:	e2 2b       	or	r30, r18
-    1e72:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1b3e:	64 91       	lpm	r22, Z
+    1b40:	eb b1       	in	r30, 0x0b	; 11
+    1b42:	f4 e0       	ldi	r31, 0x04	; 4
+    1b44:	6f 9f       	mul	r22, r31
+    1b46:	b0 01       	movw	r22, r0
+    1b48:	11 24       	eor	r1, r1
+    1b4a:	e3 70       	andi	r30, 0x03	; 3
+    1b4c:	e6 2b       	or	r30, r22
+    1b4e:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1e74:	25 b1       	in	r18, 0x05	; 5
-    1e76:	2a 60       	ori	r18, 0x0A	; 10
-    1e78:	25 b9       	out	0x05, r18	; 5
-    1e7a:	25 b1       	in	r18, 0x05	; 5
-    1e7c:	25 7f       	andi	r18, 0xF5	; 245
-    1e7e:	25 b9       	out	0x05, r18	; 5
+    1b50:	65 b1       	in	r22, 0x05	; 5
+    1b52:	6a 60       	ori	r22, 0x0A	; 10
+    1b54:	65 b9       	out	0x05, r22	; 5
+    1b56:	65 b1       	in	r22, 0x05	; 5
+    1b58:	65 7f       	andi	r22, 0xF5	; 245
+    1b5a:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1e80:	25 b1       	in	r18, 0x05	; 5
-    1e82:	2a 60       	ori	r18, 0x0A	; 10
-    1e84:	25 b9       	out	0x05, r18	; 5
-    1e86:	25 b1       	in	r18, 0x05	; 5
-    1e88:	25 7f       	andi	r18, 0xF5	; 245
-    1e8a:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 52));
-    1e8c:	9c 01       	movw	r18, r24
-    1e8e:	2c 5c       	subi	r18, 0xCC	; 204
-    1e90:	3f 4f       	sbci	r19, 0xFF	; 255
-    1e92:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1e96:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1e9a:	e2 0f       	add	r30, r18
-    1e9c:	f3 1f       	adc	r31, r19
-    1e9e:	e4 91       	lpm	r30, Z
-    1ea0:	2b b1       	in	r18, 0x0b	; 11
-    1ea2:	64 e0       	ldi	r22, 0x04	; 4
-    1ea4:	e6 9f       	mul	r30, r22
-    1ea6:	f0 01       	movw	r30, r0
-    1ea8:	11 24       	eor	r1, r1
-    1eaa:	23 70       	andi	r18, 0x03	; 3
-    1eac:	e2 2b       	or	r30, r18
-    1eae:	eb b9       	out	0x0b, r30	; 11
+    1b5c:	65 b1       	in	r22, 0x05	; 5
+    1b5e:	6a 60       	ori	r22, 0x0A	; 10
+    1b60:	65 b9       	out	0x05, r22	; 5
+    1b62:	65 b1       	in	r22, 0x05	; 5
+    1b64:	65 7f       	andi	r22, 0xF5	; 245
+    1b66:	65 b9       	out	0x05, r22	; 5
+
+            // chip 6
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    1eb0:	25 b1       	in	r18, 0x05	; 5
-    1eb2:	2a 60       	ori	r18, 0x0A	; 10
-    1eb4:	25 b9       	out	0x05, r18	; 5
-    1eb6:	25 b1       	in	r18, 0x05	; 5
-    1eb8:	25 7f       	andi	r18, 0xF5	; 245
-    1eba:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1ebc:	25 b1       	in	r18, 0x05	; 5
-    1ebe:	2a 60       	ori	r18, 0x0A	; 10
-    1ec0:	25 b9       	out	0x05, r18	; 5
-    1ec2:	25 b1       	in	r18, 0x05	; 5
-    1ec4:	25 7f       	andi	r18, 0xF5	; 245
-    1ec6:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 53));
-    1ec8:	9c 01       	movw	r18, r24
-    1eca:	2b 5c       	subi	r18, 0xCB	; 203
-    1ecc:	3f 4f       	sbci	r19, 0xFF	; 255
-    1ece:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1ed2:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1ed6:	e2 0f       	add	r30, r18
-    1ed8:	f3 1f       	adc	r31, r19
-    1eda:	e4 91       	lpm	r30, Z
-    1edc:	2b b1       	in	r18, 0x0b	; 11
-    1ede:	74 e0       	ldi	r23, 0x04	; 4
-    1ee0:	e7 9f       	mul	r30, r23
-    1ee2:	f0 01       	movw	r30, r0
-    1ee4:	11 24       	eor	r1, r1
-    1ee6:	23 70       	andi	r18, 0x03	; 3
-    1ee8:	e2 2b       	or	r30, r18
-    1eea:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1b68:	f9 01       	movw	r30, r18
+    1b6a:	f2 96       	adiw	r30, 0x32	; 50
             PWCLK_GCLK;
-    1eec:	25 b1       	in	r18, 0x05	; 5
-    1eee:	2a 60       	ori	r18, 0x0A	; 10
-    1ef0:	25 b9       	out	0x05, r18	; 5
-    1ef2:	25 b1       	in	r18, 0x05	; 5
-    1ef4:	25 7f       	andi	r18, 0xF5	; 245
-    1ef6:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1ef8:	25 b1       	in	r18, 0x05	; 5
-    1efa:	2a 60       	ori	r18, 0x0A	; 10
-    1efc:	25 b9       	out	0x05, r18	; 5
-    1efe:	25 b1       	in	r18, 0x05	; 5
-    1f00:	25 7f       	andi	r18, 0xF5	; 245
-    1f02:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 54));
-    1f04:	9c 01       	movw	r18, r24
-    1f06:	2a 5c       	subi	r18, 0xCA	; 202
-    1f08:	3f 4f       	sbci	r19, 0xFF	; 255
-    1f0a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1f0e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1f12:	e2 0f       	add	r30, r18
-    1f14:	f3 1f       	adc	r31, r19
-    1f16:	e4 91       	lpm	r30, Z
-    1f18:	2b b1       	in	r18, 0x0b	; 11
-    1f1a:	34 e0       	ldi	r19, 0x04	; 4
-    1f1c:	e3 9f       	mul	r30, r19
-    1f1e:	f0 01       	movw	r30, r0
-    1f20:	11 24       	eor	r1, r1
-    1f22:	23 70       	andi	r18, 0x03	; 3
-    1f24:	e2 2b       	or	r30, r18
-    1f26:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1b6c:	64 91       	lpm	r22, Z
+    1b6e:	eb b1       	in	r30, 0x0b	; 11
+    1b70:	f4 e0       	ldi	r31, 0x04	; 4
+    1b72:	6f 9f       	mul	r22, r31
+    1b74:	b0 01       	movw	r22, r0
+    1b76:	11 24       	eor	r1, r1
+    1b78:	e3 70       	andi	r30, 0x03	; 3
+    1b7a:	e6 2b       	or	r30, r22
+    1b7c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1f28:	25 b1       	in	r18, 0x05	; 5
-    1f2a:	2a 60       	ori	r18, 0x0A	; 10
-    1f2c:	25 b9       	out	0x05, r18	; 5
-    1f2e:	25 b1       	in	r18, 0x05	; 5
-    1f30:	25 7f       	andi	r18, 0xF5	; 245
-    1f32:	25 b9       	out	0x05, r18	; 5
+    1b7e:	65 b1       	in	r22, 0x05	; 5
+    1b80:	6a 60       	ori	r22, 0x0A	; 10
+    1b82:	65 b9       	out	0x05, r22	; 5
+    1b84:	65 b1       	in	r22, 0x05	; 5
+    1b86:	65 7f       	andi	r22, 0xF5	; 245
+    1b88:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1f34:	25 b1       	in	r18, 0x05	; 5
-    1f36:	2a 60       	ori	r18, 0x0A	; 10
-    1f38:	25 b9       	out	0x05, r18	; 5
-    1f3a:	25 b1       	in	r18, 0x05	; 5
-    1f3c:	25 7f       	andi	r18, 0xF5	; 245
-    1f3e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 55));
-    1f40:	9c 01       	movw	r18, r24
-    1f42:	29 5c       	subi	r18, 0xC9	; 201
-    1f44:	3f 4f       	sbci	r19, 0xFF	; 255
-    1f46:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1f4a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1f4e:	e2 0f       	add	r30, r18
-    1f50:	f3 1f       	adc	r31, r19
-    1f52:	e4 91       	lpm	r30, Z
-    1f54:	2b b1       	in	r18, 0x0b	; 11
-    1f56:	64 e0       	ldi	r22, 0x04	; 4
-    1f58:	e6 9f       	mul	r30, r22
-    1f5a:	f0 01       	movw	r30, r0
-    1f5c:	11 24       	eor	r1, r1
-    1f5e:	23 70       	andi	r18, 0x03	; 3
-    1f60:	e2 2b       	or	r30, r18
-    1f62:	eb b9       	out	0x0b, r30	; 11
+    1b8a:	65 b1       	in	r22, 0x05	; 5
+    1b8c:	6a 60       	ori	r22, 0x0A	; 10
+    1b8e:	65 b9       	out	0x05, r22	; 5
+    1b90:	65 b1       	in	r22, 0x05	; 5
+    1b92:	65 7f       	andi	r22, 0xF5	; 245
+    1b94:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1f64:	25 b1       	in	r18, 0x05	; 5
-    1f66:	2a 60       	ori	r18, 0x0A	; 10
-    1f68:	25 b9       	out	0x05, r18	; 5
-    1f6a:	25 b1       	in	r18, 0x05	; 5
-    1f6c:	25 7f       	andi	r18, 0xF5	; 245
-    1f6e:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1f70:	25 b1       	in	r18, 0x05	; 5
-    1f72:	2a 60       	ori	r18, 0x0A	; 10
-    1f74:	25 b9       	out	0x05, r18	; 5
-    1f76:	25 b1       	in	r18, 0x05	; 5
-    1f78:	25 7f       	andi	r18, 0xF5	; 245
-    1f7a:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1b96:	f9 01       	movw	r30, r18
+    1b98:	f3 96       	adiw	r30, 0x33	; 51
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1b9a:	64 91       	lpm	r22, Z
+    1b9c:	eb b1       	in	r30, 0x0b	; 11
+    1b9e:	f4 e0       	ldi	r31, 0x04	; 4
+    1ba0:	6f 9f       	mul	r22, r31
+    1ba2:	b0 01       	movw	r22, r0
+    1ba4:	11 24       	eor	r1, r1
+    1ba6:	e3 70       	andi	r30, 0x03	; 3
+    1ba8:	e6 2b       	or	r30, r22
+    1baa:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1bac:	65 b1       	in	r22, 0x05	; 5
+    1bae:	6a 60       	ori	r22, 0x0A	; 10
+    1bb0:	65 b9       	out	0x05, r22	; 5
+    1bb2:	65 b1       	in	r22, 0x05	; 5
+    1bb4:	65 7f       	andi	r22, 0xF5	; 245
+    1bb6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1bb8:	65 b1       	in	r22, 0x05	; 5
+    1bba:	6a 60       	ori	r22, 0x0A	; 10
+    1bbc:	65 b9       	out	0x05, r22	; 5
+    1bbe:	65 b1       	in	r22, 0x05	; 5
+    1bc0:	65 7f       	andi	r22, 0xF5	; 245
+    1bc2:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1bc4:	f9 01       	movw	r30, r18
+    1bc6:	f4 96       	adiw	r30, 0x34	; 52
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1bc8:	64 91       	lpm	r22, Z
+    1bca:	eb b1       	in	r30, 0x0b	; 11
+    1bcc:	f4 e0       	ldi	r31, 0x04	; 4
+    1bce:	6f 9f       	mul	r22, r31
+    1bd0:	b0 01       	movw	r22, r0
+    1bd2:	11 24       	eor	r1, r1
+    1bd4:	e3 70       	andi	r30, 0x03	; 3
+    1bd6:	e6 2b       	or	r30, r22
+    1bd8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1bda:	65 b1       	in	r22, 0x05	; 5
+    1bdc:	6a 60       	ori	r22, 0x0A	; 10
+    1bde:	65 b9       	out	0x05, r22	; 5
+    1be0:	65 b1       	in	r22, 0x05	; 5
+    1be2:	65 7f       	andi	r22, 0xF5	; 245
+    1be4:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1be6:	65 b1       	in	r22, 0x05	; 5
+    1be8:	6a 60       	ori	r22, 0x0A	; 10
+    1bea:	65 b9       	out	0x05, r22	; 5
+    1bec:	65 b1       	in	r22, 0x05	; 5
+    1bee:	65 7f       	andi	r22, 0xF5	; 245
+    1bf0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1bf2:	f9 01       	movw	r30, r18
+    1bf4:	f5 96       	adiw	r30, 0x35	; 53
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1bf6:	64 91       	lpm	r22, Z
+    1bf8:	eb b1       	in	r30, 0x0b	; 11
+    1bfa:	f4 e0       	ldi	r31, 0x04	; 4
+    1bfc:	6f 9f       	mul	r22, r31
+    1bfe:	b0 01       	movw	r22, r0
+    1c00:	11 24       	eor	r1, r1
+    1c02:	e3 70       	andi	r30, 0x03	; 3
+    1c04:	e6 2b       	or	r30, r22
+    1c06:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1c08:	65 b1       	in	r22, 0x05	; 5
+    1c0a:	6a 60       	ori	r22, 0x0A	; 10
+    1c0c:	65 b9       	out	0x05, r22	; 5
+    1c0e:	65 b1       	in	r22, 0x05	; 5
+    1c10:	65 7f       	andi	r22, 0xF5	; 245
+    1c12:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1c14:	65 b1       	in	r22, 0x05	; 5
+    1c16:	6a 60       	ori	r22, 0x0A	; 10
+    1c18:	65 b9       	out	0x05, r22	; 5
+    1c1a:	65 b1       	in	r22, 0x05	; 5
+    1c1c:	65 7f       	andi	r22, 0xF5	; 245
+    1c1e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1c20:	f9 01       	movw	r30, r18
+    1c22:	f6 96       	adiw	r30, 0x36	; 54
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1c24:	64 91       	lpm	r22, Z
+    1c26:	eb b1       	in	r30, 0x0b	; 11
+    1c28:	f4 e0       	ldi	r31, 0x04	; 4
+    1c2a:	6f 9f       	mul	r22, r31
+    1c2c:	b0 01       	movw	r22, r0
+    1c2e:	11 24       	eor	r1, r1
+    1c30:	e3 70       	andi	r30, 0x03	; 3
+    1c32:	e6 2b       	or	r30, r22
+    1c34:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1c36:	65 b1       	in	r22, 0x05	; 5
+    1c38:	6a 60       	ori	r22, 0x0A	; 10
+    1c3a:	65 b9       	out	0x05, r22	; 5
+    1c3c:	65 b1       	in	r22, 0x05	; 5
+    1c3e:	65 7f       	andi	r22, 0xF5	; 245
+    1c40:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1c42:	65 b1       	in	r22, 0x05	; 5
+    1c44:	6a 60       	ori	r22, 0x0A	; 10
+    1c46:	65 b9       	out	0x05, r22	; 5
+    1c48:	65 b1       	in	r22, 0x05	; 5
+    1c4a:	65 7f       	andi	r22, 0xF5	; 245
+    1c4c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1c4e:	f9 01       	movw	r30, r18
+    1c50:	f7 96       	adiw	r30, 0x37	; 55
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1c52:	64 91       	lpm	r22, Z
+    1c54:	eb b1       	in	r30, 0x0b	; 11
+    1c56:	f4 e0       	ldi	r31, 0x04	; 4
+    1c58:	6f 9f       	mul	r22, r31
+    1c5a:	b0 01       	movw	r22, r0
+    1c5c:	11 24       	eor	r1, r1
+    1c5e:	e3 70       	andi	r30, 0x03	; 3
+    1c60:	e6 2b       	or	r30, r22
+    1c62:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1c64:	65 b1       	in	r22, 0x05	; 5
+    1c66:	6a 60       	ori	r22, 0x0A	; 10
+    1c68:	65 b9       	out	0x05, r22	; 5
+    1c6a:	65 b1       	in	r22, 0x05	; 5
+    1c6c:	65 7f       	andi	r22, 0xF5	; 245
+    1c6e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1c70:	65 b1       	in	r22, 0x05	; 5
+    1c72:	6a 60       	ori	r22, 0x0A	; 10
+    1c74:	65 b9       	out	0x05, r22	; 5
+    1c76:	65 b1       	in	r22, 0x05	; 5
+    1c78:	65 7f       	andi	r22, 0xF5	; 245
+    1c7a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1c7c:	f9 01       	movw	r30, r18
+    1c7e:	f8 96       	adiw	r30, 0x38	; 56
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 7
-            SET_COLOR(pgm_read_byte(buffer + index + 56));
-    1f7c:	9c 01       	movw	r18, r24
-    1f7e:	28 5c       	subi	r18, 0xC8	; 200
-    1f80:	3f 4f       	sbci	r19, 0xFF	; 255
-    1f82:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1f86:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1f8a:	e2 0f       	add	r30, r18
-    1f8c:	f3 1f       	adc	r31, r19
-    1f8e:	e4 91       	lpm	r30, Z
-    1f90:	2b b1       	in	r18, 0x0b	; 11
-    1f92:	74 e0       	ldi	r23, 0x04	; 4
-    1f94:	e7 9f       	mul	r30, r23
-    1f96:	f0 01       	movw	r30, r0
-    1f98:	11 24       	eor	r1, r1
-    1f9a:	23 70       	andi	r18, 0x03	; 3
-    1f9c:	e2 2b       	or	r30, r18
-    1f9e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1c80:	64 91       	lpm	r22, Z
+    1c82:	eb b1       	in	r30, 0x0b	; 11
+    1c84:	f4 e0       	ldi	r31, 0x04	; 4
+    1c86:	6f 9f       	mul	r22, r31
+    1c88:	b0 01       	movw	r22, r0
+    1c8a:	11 24       	eor	r1, r1
+    1c8c:	e3 70       	andi	r30, 0x03	; 3
+    1c8e:	e6 2b       	or	r30, r22
+    1c90:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    1fa0:	25 b1       	in	r18, 0x05	; 5
-    1fa2:	2a 60       	ori	r18, 0x0A	; 10
-    1fa4:	25 b9       	out	0x05, r18	; 5
-    1fa6:	25 b1       	in	r18, 0x05	; 5
-    1fa8:	25 7f       	andi	r18, 0xF5	; 245
-    1faa:	25 b9       	out	0x05, r18	; 5
+    1c92:	65 b1       	in	r22, 0x05	; 5
+    1c94:	6a 60       	ori	r22, 0x0A	; 10
+    1c96:	65 b9       	out	0x05, r22	; 5
+    1c98:	65 b1       	in	r22, 0x05	; 5
+    1c9a:	65 7f       	andi	r22, 0xF5	; 245
+    1c9c:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    1fac:	25 b1       	in	r18, 0x05	; 5
-    1fae:	2a 60       	ori	r18, 0x0A	; 10
-    1fb0:	25 b9       	out	0x05, r18	; 5
-    1fb2:	25 b1       	in	r18, 0x05	; 5
-    1fb4:	25 7f       	andi	r18, 0xF5	; 245
-    1fb6:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 57));
-    1fb8:	9c 01       	movw	r18, r24
-    1fba:	27 5c       	subi	r18, 0xC7	; 199
-    1fbc:	3f 4f       	sbci	r19, 0xFF	; 255
-    1fbe:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1fc2:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    1fc6:	e2 0f       	add	r30, r18
-    1fc8:	f3 1f       	adc	r31, r19
-    1fca:	e4 91       	lpm	r30, Z
-    1fcc:	2b b1       	in	r18, 0x0b	; 11
-    1fce:	34 e0       	ldi	r19, 0x04	; 4
-    1fd0:	e3 9f       	mul	r30, r19
-    1fd2:	f0 01       	movw	r30, r0
-    1fd4:	11 24       	eor	r1, r1
-    1fd6:	23 70       	andi	r18, 0x03	; 3
-    1fd8:	e2 2b       	or	r30, r18
-    1fda:	eb b9       	out	0x0b, r30	; 11
+    1c9e:	65 b1       	in	r22, 0x05	; 5
+    1ca0:	6a 60       	ori	r22, 0x0A	; 10
+    1ca2:	65 b9       	out	0x05, r22	; 5
+    1ca4:	65 b1       	in	r22, 0x05	; 5
+    1ca6:	65 7f       	andi	r22, 0xF5	; 245
+    1ca8:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    1fdc:	25 b1       	in	r18, 0x05	; 5
-    1fde:	2a 60       	ori	r18, 0x0A	; 10
-    1fe0:	25 b9       	out	0x05, r18	; 5
-    1fe2:	25 b1       	in	r18, 0x05	; 5
-    1fe4:	25 7f       	andi	r18, 0xF5	; 245
-    1fe6:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    1fe8:	25 b1       	in	r18, 0x05	; 5
-    1fea:	2a 60       	ori	r18, 0x0A	; 10
-    1fec:	25 b9       	out	0x05, r18	; 5
-    1fee:	25 b1       	in	r18, 0x05	; 5
-    1ff0:	25 7f       	andi	r18, 0xF5	; 245
-    1ff2:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 58));
-    1ff4:	9c 01       	movw	r18, r24
-    1ff6:	26 5c       	subi	r18, 0xC6	; 198
-    1ff8:	3f 4f       	sbci	r19, 0xFF	; 255
-    1ffa:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    1ffe:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2002:	e2 0f       	add	r30, r18
-    2004:	f3 1f       	adc	r31, r19
-    2006:	e4 91       	lpm	r30, Z
-    2008:	2b b1       	in	r18, 0x0b	; 11
-    200a:	64 e0       	ldi	r22, 0x04	; 4
-    200c:	e6 9f       	mul	r30, r22
-    200e:	f0 01       	movw	r30, r0
-    2010:	11 24       	eor	r1, r1
-    2012:	23 70       	andi	r18, 0x03	; 3
-    2014:	e2 2b       	or	r30, r18
-    2016:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 7
+            SET_COLOR(pgm_read_byte(index++));
+    1caa:	f9 01       	movw	r30, r18
+    1cac:	f9 96       	adiw	r30, 0x39	; 57
             PWCLK_GCLK;
-    2018:	25 b1       	in	r18, 0x05	; 5
-    201a:	2a 60       	ori	r18, 0x0A	; 10
-    201c:	25 b9       	out	0x05, r18	; 5
-    201e:	25 b1       	in	r18, 0x05	; 5
-    2020:	25 7f       	andi	r18, 0xF5	; 245
-    2022:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    2024:	25 b1       	in	r18, 0x05	; 5
-    2026:	2a 60       	ori	r18, 0x0A	; 10
-    2028:	25 b9       	out	0x05, r18	; 5
-    202a:	25 b1       	in	r18, 0x05	; 5
-    202c:	25 7f       	andi	r18, 0xF5	; 245
-    202e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 59));
-    2030:	9c 01       	movw	r18, r24
-    2032:	25 5c       	subi	r18, 0xC5	; 197
-    2034:	3f 4f       	sbci	r19, 0xFF	; 255
-    2036:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    203a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    203e:	e2 0f       	add	r30, r18
-    2040:	f3 1f       	adc	r31, r19
-    2042:	e4 91       	lpm	r30, Z
-    2044:	2b b1       	in	r18, 0x0b	; 11
-    2046:	74 e0       	ldi	r23, 0x04	; 4
-    2048:	e7 9f       	mul	r30, r23
-    204a:	f0 01       	movw	r30, r0
-    204c:	11 24       	eor	r1, r1
-    204e:	23 70       	andi	r18, 0x03	; 3
-    2050:	e2 2b       	or	r30, r18
-    2052:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1cae:	64 91       	lpm	r22, Z
+    1cb0:	eb b1       	in	r30, 0x0b	; 11
+    1cb2:	f4 e0       	ldi	r31, 0x04	; 4
+    1cb4:	6f 9f       	mul	r22, r31
+    1cb6:	b0 01       	movw	r22, r0
+    1cb8:	11 24       	eor	r1, r1
+    1cba:	e3 70       	andi	r30, 0x03	; 3
+    1cbc:	e6 2b       	or	r30, r22
+    1cbe:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2054:	25 b1       	in	r18, 0x05	; 5
-    2056:	2a 60       	ori	r18, 0x0A	; 10
-    2058:	25 b9       	out	0x05, r18	; 5
-    205a:	25 b1       	in	r18, 0x05	; 5
-    205c:	25 7f       	andi	r18, 0xF5	; 245
-    205e:	25 b9       	out	0x05, r18	; 5
+    1cc0:	65 b1       	in	r22, 0x05	; 5
+    1cc2:	6a 60       	ori	r22, 0x0A	; 10
+    1cc4:	65 b9       	out	0x05, r22	; 5
+    1cc6:	65 b1       	in	r22, 0x05	; 5
+    1cc8:	65 7f       	andi	r22, 0xF5	; 245
+    1cca:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2060:	25 b1       	in	r18, 0x05	; 5
-    2062:	2a 60       	ori	r18, 0x0A	; 10
-    2064:	25 b9       	out	0x05, r18	; 5
-    2066:	25 b1       	in	r18, 0x05	; 5
-    2068:	25 7f       	andi	r18, 0xF5	; 245
-    206a:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 60));
-    206c:	9c 01       	movw	r18, r24
-    206e:	24 5c       	subi	r18, 0xC4	; 196
-    2070:	3f 4f       	sbci	r19, 0xFF	; 255
-    2072:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2076:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    207a:	e2 0f       	add	r30, r18
-    207c:	f3 1f       	adc	r31, r19
-    207e:	e4 91       	lpm	r30, Z
-    2080:	2b b1       	in	r18, 0x0b	; 11
-    2082:	34 e0       	ldi	r19, 0x04	; 4
-    2084:	e3 9f       	mul	r30, r19
-    2086:	f0 01       	movw	r30, r0
-    2088:	11 24       	eor	r1, r1
-    208a:	23 70       	andi	r18, 0x03	; 3
-    208c:	e2 2b       	or	r30, r18
-    208e:	eb b9       	out	0x0b, r30	; 11
+    1ccc:	65 b1       	in	r22, 0x05	; 5
+    1cce:	6a 60       	ori	r22, 0x0A	; 10
+    1cd0:	65 b9       	out	0x05, r22	; 5
+    1cd2:	65 b1       	in	r22, 0x05	; 5
+    1cd4:	65 7f       	andi	r22, 0xF5	; 245
+    1cd6:	65 b9       	out	0x05, r22	; 5
+
+            // chip 7
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    2090:	25 b1       	in	r18, 0x05	; 5
-    2092:	2a 60       	ori	r18, 0x0A	; 10
-    2094:	25 b9       	out	0x05, r18	; 5
-    2096:	25 b1       	in	r18, 0x05	; 5
-    2098:	25 7f       	andi	r18, 0xF5	; 245
-    209a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    209c:	25 b1       	in	r18, 0x05	; 5
-    209e:	2a 60       	ori	r18, 0x0A	; 10
-    20a0:	25 b9       	out	0x05, r18	; 5
-    20a2:	25 b1       	in	r18, 0x05	; 5
-    20a4:	25 7f       	andi	r18, 0xF5	; 245
-    20a6:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 61));
-    20a8:	9c 01       	movw	r18, r24
-    20aa:	23 5c       	subi	r18, 0xC3	; 195
-    20ac:	3f 4f       	sbci	r19, 0xFF	; 255
-    20ae:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    20b2:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    20b6:	e2 0f       	add	r30, r18
-    20b8:	f3 1f       	adc	r31, r19
-    20ba:	e4 91       	lpm	r30, Z
-    20bc:	2b b1       	in	r18, 0x0b	; 11
-    20be:	64 e0       	ldi	r22, 0x04	; 4
-    20c0:	e6 9f       	mul	r30, r22
-    20c2:	f0 01       	movw	r30, r0
-    20c4:	11 24       	eor	r1, r1
-    20c6:	23 70       	andi	r18, 0x03	; 3
-    20c8:	e2 2b       	or	r30, r18
-    20ca:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1cd8:	f9 01       	movw	r30, r18
+    1cda:	fa 96       	adiw	r30, 0x3a	; 58
             PWCLK_GCLK;
-    20cc:	25 b1       	in	r18, 0x05	; 5
-    20ce:	2a 60       	ori	r18, 0x0A	; 10
-    20d0:	25 b9       	out	0x05, r18	; 5
-    20d2:	25 b1       	in	r18, 0x05	; 5
-    20d4:	25 7f       	andi	r18, 0xF5	; 245
-    20d6:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    20d8:	25 b1       	in	r18, 0x05	; 5
-    20da:	2a 60       	ori	r18, 0x0A	; 10
-    20dc:	25 b9       	out	0x05, r18	; 5
-    20de:	25 b1       	in	r18, 0x05	; 5
-    20e0:	25 7f       	andi	r18, 0xF5	; 245
-    20e2:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 62));
-    20e4:	9c 01       	movw	r18, r24
-    20e6:	22 5c       	subi	r18, 0xC2	; 194
-    20e8:	3f 4f       	sbci	r19, 0xFF	; 255
-    20ea:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    20ee:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    20f2:	e2 0f       	add	r30, r18
-    20f4:	f3 1f       	adc	r31, r19
-    20f6:	e4 91       	lpm	r30, Z
-    20f8:	2b b1       	in	r18, 0x0b	; 11
-    20fa:	74 e0       	ldi	r23, 0x04	; 4
-    20fc:	e7 9f       	mul	r30, r23
-    20fe:	f0 01       	movw	r30, r0
-    2100:	11 24       	eor	r1, r1
-    2102:	23 70       	andi	r18, 0x03	; 3
-    2104:	e2 2b       	or	r30, r18
-    2106:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1cdc:	64 91       	lpm	r22, Z
+    1cde:	eb b1       	in	r30, 0x0b	; 11
+    1ce0:	f4 e0       	ldi	r31, 0x04	; 4
+    1ce2:	6f 9f       	mul	r22, r31
+    1ce4:	b0 01       	movw	r22, r0
+    1ce6:	11 24       	eor	r1, r1
+    1ce8:	e3 70       	andi	r30, 0x03	; 3
+    1cea:	e6 2b       	or	r30, r22
+    1cec:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2108:	25 b1       	in	r18, 0x05	; 5
-    210a:	2a 60       	ori	r18, 0x0A	; 10
-    210c:	25 b9       	out	0x05, r18	; 5
-    210e:	25 b1       	in	r18, 0x05	; 5
-    2110:	25 7f       	andi	r18, 0xF5	; 245
-    2112:	25 b9       	out	0x05, r18	; 5
+    1cee:	65 b1       	in	r22, 0x05	; 5
+    1cf0:	6a 60       	ori	r22, 0x0A	; 10
+    1cf2:	65 b9       	out	0x05, r22	; 5
+    1cf4:	65 b1       	in	r22, 0x05	; 5
+    1cf6:	65 7f       	andi	r22, 0xF5	; 245
+    1cf8:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2114:	25 b1       	in	r18, 0x05	; 5
-    2116:	2a 60       	ori	r18, 0x0A	; 10
-    2118:	25 b9       	out	0x05, r18	; 5
-    211a:	25 b1       	in	r18, 0x05	; 5
-    211c:	25 7f       	andi	r18, 0xF5	; 245
-    211e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 63));
-    2120:	9c 01       	movw	r18, r24
-    2122:	21 5c       	subi	r18, 0xC1	; 193
-    2124:	3f 4f       	sbci	r19, 0xFF	; 255
-    2126:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    212a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    212e:	e2 0f       	add	r30, r18
-    2130:	f3 1f       	adc	r31, r19
-    2132:	e4 91       	lpm	r30, Z
-    2134:	2b b1       	in	r18, 0x0b	; 11
-    2136:	34 e0       	ldi	r19, 0x04	; 4
-    2138:	e3 9f       	mul	r30, r19
-    213a:	f0 01       	movw	r30, r0
-    213c:	11 24       	eor	r1, r1
-    213e:	23 70       	andi	r18, 0x03	; 3
-    2140:	e2 2b       	or	r30, r18
-    2142:	eb b9       	out	0x0b, r30	; 11
+    1cfa:	65 b1       	in	r22, 0x05	; 5
+    1cfc:	6a 60       	ori	r22, 0x0A	; 10
+    1cfe:	65 b9       	out	0x05, r22	; 5
+    1d00:	65 b1       	in	r22, 0x05	; 5
+    1d02:	65 7f       	andi	r22, 0xF5	; 245
+    1d04:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2144:	25 b1       	in	r18, 0x05	; 5
-    2146:	2a 60       	ori	r18, 0x0A	; 10
-    2148:	25 b9       	out	0x05, r18	; 5
-    214a:	25 b1       	in	r18, 0x05	; 5
-    214c:	25 7f       	andi	r18, 0xF5	; 245
-    214e:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1d06:	f9 01       	movw	r30, r18
+    1d08:	fb 96       	adiw	r30, 0x3b	; 59
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1d0a:	64 91       	lpm	r22, Z
+    1d0c:	eb b1       	in	r30, 0x0b	; 11
+    1d0e:	f4 e0       	ldi	r31, 0x04	; 4
+    1d10:	6f 9f       	mul	r22, r31
+    1d12:	b0 01       	movw	r22, r0
+    1d14:	11 24       	eor	r1, r1
+    1d16:	e3 70       	andi	r30, 0x03	; 3
+    1d18:	e6 2b       	or	r30, r22
+    1d1a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1d1c:	65 b1       	in	r22, 0x05	; 5
+    1d1e:	6a 60       	ori	r22, 0x0A	; 10
+    1d20:	65 b9       	out	0x05, r22	; 5
+    1d22:	65 b1       	in	r22, 0x05	; 5
+    1d24:	65 7f       	andi	r22, 0xF5	; 245
+    1d26:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1d28:	65 b1       	in	r22, 0x05	; 5
+    1d2a:	6a 60       	ori	r22, 0x0A	; 10
+    1d2c:	65 b9       	out	0x05, r22	; 5
+    1d2e:	65 b1       	in	r22, 0x05	; 5
+    1d30:	65 7f       	andi	r22, 0xF5	; 245
+    1d32:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1d34:	f9 01       	movw	r30, r18
+    1d36:	fc 96       	adiw	r30, 0x3c	; 60
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1d38:	64 91       	lpm	r22, Z
+    1d3a:	eb b1       	in	r30, 0x0b	; 11
+    1d3c:	f4 e0       	ldi	r31, 0x04	; 4
+    1d3e:	6f 9f       	mul	r22, r31
+    1d40:	b0 01       	movw	r22, r0
+    1d42:	11 24       	eor	r1, r1
+    1d44:	e3 70       	andi	r30, 0x03	; 3
+    1d46:	e6 2b       	or	r30, r22
+    1d48:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1d4a:	65 b1       	in	r22, 0x05	; 5
+    1d4c:	6a 60       	ori	r22, 0x0A	; 10
+    1d4e:	65 b9       	out	0x05, r22	; 5
+    1d50:	65 b1       	in	r22, 0x05	; 5
+    1d52:	65 7f       	andi	r22, 0xF5	; 245
+    1d54:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1d56:	65 b1       	in	r22, 0x05	; 5
+    1d58:	6a 60       	ori	r22, 0x0A	; 10
+    1d5a:	65 b9       	out	0x05, r22	; 5
+    1d5c:	65 b1       	in	r22, 0x05	; 5
+    1d5e:	65 7f       	andi	r22, 0xF5	; 245
+    1d60:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1d62:	f9 01       	movw	r30, r18
+    1d64:	fd 96       	adiw	r30, 0x3d	; 61
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1d66:	64 91       	lpm	r22, Z
+    1d68:	eb b1       	in	r30, 0x0b	; 11
+    1d6a:	f4 e0       	ldi	r31, 0x04	; 4
+    1d6c:	6f 9f       	mul	r22, r31
+    1d6e:	b0 01       	movw	r22, r0
+    1d70:	11 24       	eor	r1, r1
+    1d72:	e3 70       	andi	r30, 0x03	; 3
+    1d74:	e6 2b       	or	r30, r22
+    1d76:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1d78:	65 b1       	in	r22, 0x05	; 5
+    1d7a:	6a 60       	ori	r22, 0x0A	; 10
+    1d7c:	65 b9       	out	0x05, r22	; 5
+    1d7e:	65 b1       	in	r22, 0x05	; 5
+    1d80:	65 7f       	andi	r22, 0xF5	; 245
+    1d82:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1d84:	65 b1       	in	r22, 0x05	; 5
+    1d86:	6a 60       	ori	r22, 0x0A	; 10
+    1d88:	65 b9       	out	0x05, r22	; 5
+    1d8a:	65 b1       	in	r22, 0x05	; 5
+    1d8c:	65 7f       	andi	r22, 0xF5	; 245
+    1d8e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1d90:	f9 01       	movw	r30, r18
+    1d92:	fe 96       	adiw	r30, 0x3e	; 62
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1d94:	64 91       	lpm	r22, Z
+    1d96:	eb b1       	in	r30, 0x0b	; 11
+    1d98:	f4 e0       	ldi	r31, 0x04	; 4
+    1d9a:	6f 9f       	mul	r22, r31
+    1d9c:	b0 01       	movw	r22, r0
+    1d9e:	11 24       	eor	r1, r1
+    1da0:	e3 70       	andi	r30, 0x03	; 3
+    1da2:	e6 2b       	or	r30, r22
+    1da4:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1da6:	65 b1       	in	r22, 0x05	; 5
+    1da8:	6a 60       	ori	r22, 0x0A	; 10
+    1daa:	65 b9       	out	0x05, r22	; 5
+    1dac:	65 b1       	in	r22, 0x05	; 5
+    1dae:	65 7f       	andi	r22, 0xF5	; 245
+    1db0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1db2:	65 b1       	in	r22, 0x05	; 5
+    1db4:	6a 60       	ori	r22, 0x0A	; 10
+    1db6:	65 b9       	out	0x05, r22	; 5
+    1db8:	65 b1       	in	r22, 0x05	; 5
+    1dba:	65 7f       	andi	r22, 0xF5	; 245
+    1dbc:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1dbe:	f9 01       	movw	r30, r18
+    1dc0:	ff 96       	adiw	r30, 0x3f	; 63
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1dc2:	e4 91       	lpm	r30, Z
+    1dc4:	2b b1       	in	r18, 0x0b	; 11
+    1dc6:	34 e0       	ldi	r19, 0x04	; 4
+    1dc8:	e3 9f       	mul	r30, r19
+    1dca:	f0 01       	movw	r30, r0
+    1dcc:	11 24       	eor	r1, r1
+    1dce:	23 70       	andi	r18, 0x03	; 3
+    1dd0:	e2 2b       	or	r30, r18
+    1dd2:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1dd4:	25 b1       	in	r18, 0x05	; 5
+    1dd6:	2a 60       	ori	r18, 0x0A	; 10
+    1dd8:	25 b9       	out	0x05, r18	; 5
+    1dda:	25 b1       	in	r18, 0x05	; 5
+    1ddc:	25 7f       	andi	r18, 0xF5	; 245
+    1dde:	25 b9       	out	0x05, r18	; 5
 
             // shift data into buffers
             HIGH_LAT;
-    2150:	2a 9a       	sbi	0x05, 2	; 5
+    1de0:	2a 9a       	sbi	0x05, 2	; 5
             PWCLK_GCLK;
-    2152:	25 b1       	in	r18, 0x05	; 5
-    2154:	2a 60       	ori	r18, 0x0A	; 10
-    2156:	25 b9       	out	0x05, r18	; 5
-    2158:	25 b1       	in	r18, 0x05	; 5
-    215a:	25 7f       	andi	r18, 0xF5	; 245
-    215c:	25 b9       	out	0x05, r18	; 5
+    1de2:	25 b1       	in	r18, 0x05	; 5
+    1de4:	2a 60       	ori	r18, 0x0A	; 10
+    1de6:	25 b9       	out	0x05, r18	; 5
+    1de8:	25 b1       	in	r18, 0x05	; 5
+    1dea:	25 7f       	andi	r18, 0xF5	; 245
+    1dec:	25 b9       	out	0x05, r18	; 5
             CLEAR_LAT;
-    215e:	2a 98       	cbi	0x05, 2	; 5
+    1dee:	2a 98       	cbi	0x05, 2	; 5
 
 #pragma endregion // MMSB
 
             index = ((y & ~1) << 5) + (PANEL_BUFFERSIZE / 4);
-    2160:	9c 01       	movw	r18, r24
-    2162:	3c 5f       	subi	r19, 0xFC	; 252
+    1df0:	9c 01       	movw	r18, r24
+    1df2:	3c 5f       	subi	r19, 0xFC	; 252
 
 #pragma region MSB
             // chip 0
-            SET_COLOR(pgm_read_byte(buffer + index + 0));
-    2164:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2168:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    216c:	e2 0f       	add	r30, r18
-    216e:	f3 1f       	adc	r31, r19
-    2170:	e4 91       	lpm	r30, Z
-    2172:	6b b1       	in	r22, 0x0b	; 11
-    2174:	74 e0       	ldi	r23, 0x04	; 4
-    2176:	e7 9f       	mul	r30, r23
-    2178:	f0 01       	movw	r30, r0
-    217a:	11 24       	eor	r1, r1
-    217c:	63 70       	andi	r22, 0x03	; 3
-    217e:	e6 2b       	or	r30, r22
-    2180:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1df4:	f9 01       	movw	r30, r18
+    1df6:	a4 91       	lpm	r26, Z
+    1df8:	6b b1       	in	r22, 0x0b	; 11
+    1dfa:	74 e0       	ldi	r23, 0x04	; 4
+    1dfc:	a7 9f       	mul	r26, r23
+    1dfe:	f0 01       	movw	r30, r0
+    1e00:	11 24       	eor	r1, r1
+    1e02:	63 70       	andi	r22, 0x03	; 3
+    1e04:	6e 2b       	or	r22, r30
+    1e06:	6b b9       	out	0x0b, r22	; 11
             PWCLK_GCLK;
-    2182:	65 b1       	in	r22, 0x05	; 5
-    2184:	6a 60       	ori	r22, 0x0A	; 10
-    2186:	65 b9       	out	0x05, r22	; 5
-    2188:	65 b1       	in	r22, 0x05	; 5
-    218a:	65 7f       	andi	r22, 0xF5	; 245
-    218c:	65 b9       	out	0x05, r22	; 5
+    1e08:	65 b1       	in	r22, 0x05	; 5
+    1e0a:	6a 60       	ori	r22, 0x0A	; 10
+    1e0c:	65 b9       	out	0x05, r22	; 5
+    1e0e:	65 b1       	in	r22, 0x05	; 5
+    1e10:	65 7f       	andi	r22, 0xF5	; 245
+    1e12:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    218e:	65 b1       	in	r22, 0x05	; 5
-    2190:	6a 60       	ori	r22, 0x0A	; 10
-    2192:	65 b9       	out	0x05, r22	; 5
-    2194:	65 b1       	in	r22, 0x05	; 5
-    2196:	65 7f       	andi	r22, 0xF5	; 245
-    2198:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 1));
-    219a:	b9 01       	movw	r22, r18
-    219c:	6f 5f       	subi	r22, 0xFF	; 255
-    219e:	7f 4f       	sbci	r23, 0xFF	; 255
-    21a0:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    21a4:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    21a8:	e6 0f       	add	r30, r22
-    21aa:	f7 1f       	adc	r31, r23
-    21ac:	e4 91       	lpm	r30, Z
-    21ae:	6b b1       	in	r22, 0x0b	; 11
-    21b0:	74 e0       	ldi	r23, 0x04	; 4
-    21b2:	e7 9f       	mul	r30, r23
-    21b4:	f0 01       	movw	r30, r0
-    21b6:	11 24       	eor	r1, r1
-    21b8:	63 70       	andi	r22, 0x03	; 3
-    21ba:	e6 2b       	or	r30, r22
-    21bc:	eb b9       	out	0x0b, r30	; 11
+    1e14:	65 b1       	in	r22, 0x05	; 5
+    1e16:	6a 60       	ori	r22, 0x0A	; 10
+    1e18:	65 b9       	out	0x05, r22	; 5
+    1e1a:	65 b1       	in	r22, 0x05	; 5
+    1e1c:	65 7f       	andi	r22, 0xF5	; 245
+    1e1e:	65 b9       	out	0x05, r22	; 5
+
+            index = ((y & ~1) << 5) + (PANEL_BUFFERSIZE / 4);
+
+#pragma region MSB
+            // chip 0
+            SET_COLOR(pgm_read_byte(index++));
+    1e20:	f9 01       	movw	r30, r18
+    1e22:	31 96       	adiw	r30, 0x01	; 1
             PWCLK_GCLK;
-    21be:	65 b1       	in	r22, 0x05	; 5
-    21c0:	6a 60       	ori	r22, 0x0A	; 10
-    21c2:	65 b9       	out	0x05, r22	; 5
-    21c4:	65 b1       	in	r22, 0x05	; 5
-    21c6:	65 7f       	andi	r22, 0xF5	; 245
-    21c8:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    21ca:	65 b1       	in	r22, 0x05	; 5
-    21cc:	6a 60       	ori	r22, 0x0A	; 10
-    21ce:	65 b9       	out	0x05, r22	; 5
-    21d0:	65 b1       	in	r22, 0x05	; 5
-    21d2:	65 7f       	andi	r22, 0xF5	; 245
-    21d4:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 2));
-    21d6:	b9 01       	movw	r22, r18
-    21d8:	6e 5f       	subi	r22, 0xFE	; 254
-    21da:	7f 4f       	sbci	r23, 0xFF	; 255
-    21dc:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    21e0:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    21e4:	e6 0f       	add	r30, r22
-    21e6:	f7 1f       	adc	r31, r23
-    21e8:	e4 91       	lpm	r30, Z
-    21ea:	6b b1       	in	r22, 0x0b	; 11
-    21ec:	74 e0       	ldi	r23, 0x04	; 4
-    21ee:	e7 9f       	mul	r30, r23
-    21f0:	f0 01       	movw	r30, r0
-    21f2:	11 24       	eor	r1, r1
-    21f4:	63 70       	andi	r22, 0x03	; 3
-    21f6:	e6 2b       	or	r30, r22
-    21f8:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    1e24:	64 91       	lpm	r22, Z
+    1e26:	eb b1       	in	r30, 0x0b	; 11
+    1e28:	f4 e0       	ldi	r31, 0x04	; 4
+    1e2a:	6f 9f       	mul	r22, r31
+    1e2c:	b0 01       	movw	r22, r0
+    1e2e:	11 24       	eor	r1, r1
+    1e30:	e3 70       	andi	r30, 0x03	; 3
+    1e32:	e6 2b       	or	r30, r22
+    1e34:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    21fa:	65 b1       	in	r22, 0x05	; 5
-    21fc:	6a 60       	ori	r22, 0x0A	; 10
-    21fe:	65 b9       	out	0x05, r22	; 5
-    2200:	65 b1       	in	r22, 0x05	; 5
-    2202:	65 7f       	andi	r22, 0xF5	; 245
-    2204:	65 b9       	out	0x05, r22	; 5
+    1e36:	65 b1       	in	r22, 0x05	; 5
+    1e38:	6a 60       	ori	r22, 0x0A	; 10
+    1e3a:	65 b9       	out	0x05, r22	; 5
+    1e3c:	65 b1       	in	r22, 0x05	; 5
+    1e3e:	65 7f       	andi	r22, 0xF5	; 245
+    1e40:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2206:	65 b1       	in	r22, 0x05	; 5
-    2208:	6a 60       	ori	r22, 0x0A	; 10
-    220a:	65 b9       	out	0x05, r22	; 5
-    220c:	65 b1       	in	r22, 0x05	; 5
-    220e:	65 7f       	andi	r22, 0xF5	; 245
-    2210:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 3));
-    2212:	b9 01       	movw	r22, r18
-    2214:	6d 5f       	subi	r22, 0xFD	; 253
-    2216:	7f 4f       	sbci	r23, 0xFF	; 255
-    2218:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    221c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2220:	e6 0f       	add	r30, r22
-    2222:	f7 1f       	adc	r31, r23
-    2224:	e4 91       	lpm	r30, Z
-    2226:	6b b1       	in	r22, 0x0b	; 11
-    2228:	74 e0       	ldi	r23, 0x04	; 4
-    222a:	e7 9f       	mul	r30, r23
-    222c:	f0 01       	movw	r30, r0
-    222e:	11 24       	eor	r1, r1
-    2230:	63 70       	andi	r22, 0x03	; 3
-    2232:	e6 2b       	or	r30, r22
-    2234:	eb b9       	out	0x0b, r30	; 11
+    1e42:	65 b1       	in	r22, 0x05	; 5
+    1e44:	6a 60       	ori	r22, 0x0A	; 10
+    1e46:	65 b9       	out	0x05, r22	; 5
+    1e48:	65 b1       	in	r22, 0x05	; 5
+    1e4a:	65 7f       	andi	r22, 0xF5	; 245
+    1e4c:	65 b9       	out	0x05, r22	; 5
+#pragma region MSB
+            // chip 0
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1e4e:	f9 01       	movw	r30, r18
+    1e50:	32 96       	adiw	r30, 0x02	; 2
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1e52:	64 91       	lpm	r22, Z
+    1e54:	eb b1       	in	r30, 0x0b	; 11
+    1e56:	f4 e0       	ldi	r31, 0x04	; 4
+    1e58:	6f 9f       	mul	r22, r31
+    1e5a:	b0 01       	movw	r22, r0
+    1e5c:	11 24       	eor	r1, r1
+    1e5e:	e3 70       	andi	r30, 0x03	; 3
+    1e60:	e6 2b       	or	r30, r22
+    1e62:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1e64:	65 b1       	in	r22, 0x05	; 5
+    1e66:	6a 60       	ori	r22, 0x0A	; 10
+    1e68:	65 b9       	out	0x05, r22	; 5
+    1e6a:	65 b1       	in	r22, 0x05	; 5
+    1e6c:	65 7f       	andi	r22, 0xF5	; 245
+    1e6e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1e70:	65 b1       	in	r22, 0x05	; 5
+    1e72:	6a 60       	ori	r22, 0x0A	; 10
+    1e74:	65 b9       	out	0x05, r22	; 5
+    1e76:	65 b1       	in	r22, 0x05	; 5
+    1e78:	65 7f       	andi	r22, 0xF5	; 245
+    1e7a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1e7c:	f9 01       	movw	r30, r18
+    1e7e:	33 96       	adiw	r30, 0x03	; 3
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1e80:	64 91       	lpm	r22, Z
+    1e82:	eb b1       	in	r30, 0x0b	; 11
+    1e84:	f4 e0       	ldi	r31, 0x04	; 4
+    1e86:	6f 9f       	mul	r22, r31
+    1e88:	b0 01       	movw	r22, r0
+    1e8a:	11 24       	eor	r1, r1
+    1e8c:	e3 70       	andi	r30, 0x03	; 3
+    1e8e:	e6 2b       	or	r30, r22
+    1e90:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1e92:	65 b1       	in	r22, 0x05	; 5
+    1e94:	6a 60       	ori	r22, 0x0A	; 10
+    1e96:	65 b9       	out	0x05, r22	; 5
+    1e98:	65 b1       	in	r22, 0x05	; 5
+    1e9a:	65 7f       	andi	r22, 0xF5	; 245
+    1e9c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1e9e:	65 b1       	in	r22, 0x05	; 5
+    1ea0:	6a 60       	ori	r22, 0x0A	; 10
+    1ea2:	65 b9       	out	0x05, r22	; 5
+    1ea4:	65 b1       	in	r22, 0x05	; 5
+    1ea6:	65 7f       	andi	r22, 0xF5	; 245
+    1ea8:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1eaa:	f9 01       	movw	r30, r18
+    1eac:	34 96       	adiw	r30, 0x04	; 4
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1eae:	64 91       	lpm	r22, Z
+    1eb0:	eb b1       	in	r30, 0x0b	; 11
+    1eb2:	f4 e0       	ldi	r31, 0x04	; 4
+    1eb4:	6f 9f       	mul	r22, r31
+    1eb6:	b0 01       	movw	r22, r0
+    1eb8:	11 24       	eor	r1, r1
+    1eba:	e3 70       	andi	r30, 0x03	; 3
+    1ebc:	e6 2b       	or	r30, r22
+    1ebe:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1ec0:	65 b1       	in	r22, 0x05	; 5
+    1ec2:	6a 60       	ori	r22, 0x0A	; 10
+    1ec4:	65 b9       	out	0x05, r22	; 5
+    1ec6:	65 b1       	in	r22, 0x05	; 5
+    1ec8:	65 7f       	andi	r22, 0xF5	; 245
+    1eca:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1ecc:	65 b1       	in	r22, 0x05	; 5
+    1ece:	6a 60       	ori	r22, 0x0A	; 10
+    1ed0:	65 b9       	out	0x05, r22	; 5
+    1ed2:	65 b1       	in	r22, 0x05	; 5
+    1ed4:	65 7f       	andi	r22, 0xF5	; 245
+    1ed6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1ed8:	f9 01       	movw	r30, r18
+    1eda:	35 96       	adiw	r30, 0x05	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1edc:	64 91       	lpm	r22, Z
+    1ede:	eb b1       	in	r30, 0x0b	; 11
+    1ee0:	f4 e0       	ldi	r31, 0x04	; 4
+    1ee2:	6f 9f       	mul	r22, r31
+    1ee4:	b0 01       	movw	r22, r0
+    1ee6:	11 24       	eor	r1, r1
+    1ee8:	e3 70       	andi	r30, 0x03	; 3
+    1eea:	e6 2b       	or	r30, r22
+    1eec:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1eee:	65 b1       	in	r22, 0x05	; 5
+    1ef0:	6a 60       	ori	r22, 0x0A	; 10
+    1ef2:	65 b9       	out	0x05, r22	; 5
+    1ef4:	65 b1       	in	r22, 0x05	; 5
+    1ef6:	65 7f       	andi	r22, 0xF5	; 245
+    1ef8:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1efa:	65 b1       	in	r22, 0x05	; 5
+    1efc:	6a 60       	ori	r22, 0x0A	; 10
+    1efe:	65 b9       	out	0x05, r22	; 5
+    1f00:	65 b1       	in	r22, 0x05	; 5
+    1f02:	65 7f       	andi	r22, 0xF5	; 245
+    1f04:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1f06:	f9 01       	movw	r30, r18
+    1f08:	36 96       	adiw	r30, 0x06	; 6
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1f0a:	64 91       	lpm	r22, Z
+    1f0c:	eb b1       	in	r30, 0x0b	; 11
+    1f0e:	f4 e0       	ldi	r31, 0x04	; 4
+    1f10:	6f 9f       	mul	r22, r31
+    1f12:	b0 01       	movw	r22, r0
+    1f14:	11 24       	eor	r1, r1
+    1f16:	e3 70       	andi	r30, 0x03	; 3
+    1f18:	e6 2b       	or	r30, r22
+    1f1a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1f1c:	65 b1       	in	r22, 0x05	; 5
+    1f1e:	6a 60       	ori	r22, 0x0A	; 10
+    1f20:	65 b9       	out	0x05, r22	; 5
+    1f22:	65 b1       	in	r22, 0x05	; 5
+    1f24:	65 7f       	andi	r22, 0xF5	; 245
+    1f26:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1f28:	65 b1       	in	r22, 0x05	; 5
+    1f2a:	6a 60       	ori	r22, 0x0A	; 10
+    1f2c:	65 b9       	out	0x05, r22	; 5
+    1f2e:	65 b1       	in	r22, 0x05	; 5
+    1f30:	65 7f       	andi	r22, 0xF5	; 245
+    1f32:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1f34:	f9 01       	movw	r30, r18
+    1f36:	37 96       	adiw	r30, 0x07	; 7
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1f38:	64 91       	lpm	r22, Z
+    1f3a:	eb b1       	in	r30, 0x0b	; 11
+    1f3c:	f4 e0       	ldi	r31, 0x04	; 4
+    1f3e:	6f 9f       	mul	r22, r31
+    1f40:	b0 01       	movw	r22, r0
+    1f42:	11 24       	eor	r1, r1
+    1f44:	e3 70       	andi	r30, 0x03	; 3
+    1f46:	e6 2b       	or	r30, r22
+    1f48:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1f4a:	65 b1       	in	r22, 0x05	; 5
+    1f4c:	6a 60       	ori	r22, 0x0A	; 10
+    1f4e:	65 b9       	out	0x05, r22	; 5
+    1f50:	65 b1       	in	r22, 0x05	; 5
+    1f52:	65 7f       	andi	r22, 0xF5	; 245
+    1f54:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1f56:	65 b1       	in	r22, 0x05	; 5
+    1f58:	6a 60       	ori	r22, 0x0A	; 10
+    1f5a:	65 b9       	out	0x05, r22	; 5
+    1f5c:	65 b1       	in	r22, 0x05	; 5
+    1f5e:	65 7f       	andi	r22, 0xF5	; 245
+    1f60:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1f62:	f9 01       	movw	r30, r18
+    1f64:	38 96       	adiw	r30, 0x08	; 8
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 1
+            SET_COLOR(pgm_read_byte(index++));
+    1f66:	64 91       	lpm	r22, Z
+    1f68:	eb b1       	in	r30, 0x0b	; 11
+    1f6a:	f4 e0       	ldi	r31, 0x04	; 4
+    1f6c:	6f 9f       	mul	r22, r31
+    1f6e:	b0 01       	movw	r22, r0
+    1f70:	11 24       	eor	r1, r1
+    1f72:	e3 70       	andi	r30, 0x03	; 3
+    1f74:	e6 2b       	or	r30, r22
+    1f76:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1f78:	65 b1       	in	r22, 0x05	; 5
+    1f7a:	6a 60       	ori	r22, 0x0A	; 10
+    1f7c:	65 b9       	out	0x05, r22	; 5
+    1f7e:	65 b1       	in	r22, 0x05	; 5
+    1f80:	65 7f       	andi	r22, 0xF5	; 245
+    1f82:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1f84:	65 b1       	in	r22, 0x05	; 5
+    1f86:	6a 60       	ori	r22, 0x0A	; 10
+    1f88:	65 b9       	out	0x05, r22	; 5
+    1f8a:	65 b1       	in	r22, 0x05	; 5
+    1f8c:	65 7f       	andi	r22, 0xF5	; 245
+    1f8e:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 1
+            SET_COLOR(pgm_read_byte(index++));
+    1f90:	f9 01       	movw	r30, r18
+    1f92:	39 96       	adiw	r30, 0x09	; 9
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1f94:	64 91       	lpm	r22, Z
+    1f96:	eb b1       	in	r30, 0x0b	; 11
+    1f98:	f4 e0       	ldi	r31, 0x04	; 4
+    1f9a:	6f 9f       	mul	r22, r31
+    1f9c:	b0 01       	movw	r22, r0
+    1f9e:	11 24       	eor	r1, r1
+    1fa0:	e3 70       	andi	r30, 0x03	; 3
+    1fa2:	e6 2b       	or	r30, r22
+    1fa4:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1fa6:	65 b1       	in	r22, 0x05	; 5
+    1fa8:	6a 60       	ori	r22, 0x0A	; 10
+    1faa:	65 b9       	out	0x05, r22	; 5
+    1fac:	65 b1       	in	r22, 0x05	; 5
+    1fae:	65 7f       	andi	r22, 0xF5	; 245
+    1fb0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1fb2:	65 b1       	in	r22, 0x05	; 5
+    1fb4:	6a 60       	ori	r22, 0x0A	; 10
+    1fb6:	65 b9       	out	0x05, r22	; 5
+    1fb8:	65 b1       	in	r22, 0x05	; 5
+    1fba:	65 7f       	andi	r22, 0xF5	; 245
+    1fbc:	65 b9       	out	0x05, r22	; 5
+
+            // chip 1
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1fbe:	f9 01       	movw	r30, r18
+    1fc0:	3a 96       	adiw	r30, 0x0a	; 10
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1fc2:	64 91       	lpm	r22, Z
+    1fc4:	eb b1       	in	r30, 0x0b	; 11
+    1fc6:	f4 e0       	ldi	r31, 0x04	; 4
+    1fc8:	6f 9f       	mul	r22, r31
+    1fca:	b0 01       	movw	r22, r0
+    1fcc:	11 24       	eor	r1, r1
+    1fce:	e3 70       	andi	r30, 0x03	; 3
+    1fd0:	e6 2b       	or	r30, r22
+    1fd2:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    1fd4:	65 b1       	in	r22, 0x05	; 5
+    1fd6:	6a 60       	ori	r22, 0x0A	; 10
+    1fd8:	65 b9       	out	0x05, r22	; 5
+    1fda:	65 b1       	in	r22, 0x05	; 5
+    1fdc:	65 7f       	andi	r22, 0xF5	; 245
+    1fde:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    1fe0:	65 b1       	in	r22, 0x05	; 5
+    1fe2:	6a 60       	ori	r22, 0x0A	; 10
+    1fe4:	65 b9       	out	0x05, r22	; 5
+    1fe6:	65 b1       	in	r22, 0x05	; 5
+    1fe8:	65 7f       	andi	r22, 0xF5	; 245
+    1fea:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1fec:	f9 01       	movw	r30, r18
+    1fee:	3b 96       	adiw	r30, 0x0b	; 11
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    1ff0:	64 91       	lpm	r22, Z
+    1ff2:	eb b1       	in	r30, 0x0b	; 11
+    1ff4:	f4 e0       	ldi	r31, 0x04	; 4
+    1ff6:	6f 9f       	mul	r22, r31
+    1ff8:	b0 01       	movw	r22, r0
+    1ffa:	11 24       	eor	r1, r1
+    1ffc:	e3 70       	andi	r30, 0x03	; 3
+    1ffe:	e6 2b       	or	r30, r22
+    2000:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2002:	65 b1       	in	r22, 0x05	; 5
+    2004:	6a 60       	ori	r22, 0x0A	; 10
+    2006:	65 b9       	out	0x05, r22	; 5
+    2008:	65 b1       	in	r22, 0x05	; 5
+    200a:	65 7f       	andi	r22, 0xF5	; 245
+    200c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    200e:	65 b1       	in	r22, 0x05	; 5
+    2010:	6a 60       	ori	r22, 0x0A	; 10
+    2012:	65 b9       	out	0x05, r22	; 5
+    2014:	65 b1       	in	r22, 0x05	; 5
+    2016:	65 7f       	andi	r22, 0xF5	; 245
+    2018:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    201a:	f9 01       	movw	r30, r18
+    201c:	3c 96       	adiw	r30, 0x0c	; 12
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    201e:	64 91       	lpm	r22, Z
+    2020:	eb b1       	in	r30, 0x0b	; 11
+    2022:	f4 e0       	ldi	r31, 0x04	; 4
+    2024:	6f 9f       	mul	r22, r31
+    2026:	b0 01       	movw	r22, r0
+    2028:	11 24       	eor	r1, r1
+    202a:	e3 70       	andi	r30, 0x03	; 3
+    202c:	e6 2b       	or	r30, r22
+    202e:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2030:	65 b1       	in	r22, 0x05	; 5
+    2032:	6a 60       	ori	r22, 0x0A	; 10
+    2034:	65 b9       	out	0x05, r22	; 5
+    2036:	65 b1       	in	r22, 0x05	; 5
+    2038:	65 7f       	andi	r22, 0xF5	; 245
+    203a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    203c:	65 b1       	in	r22, 0x05	; 5
+    203e:	6a 60       	ori	r22, 0x0A	; 10
+    2040:	65 b9       	out	0x05, r22	; 5
+    2042:	65 b1       	in	r22, 0x05	; 5
+    2044:	65 7f       	andi	r22, 0xF5	; 245
+    2046:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2048:	f9 01       	movw	r30, r18
+    204a:	3d 96       	adiw	r30, 0x0d	; 13
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    204c:	64 91       	lpm	r22, Z
+    204e:	eb b1       	in	r30, 0x0b	; 11
+    2050:	f4 e0       	ldi	r31, 0x04	; 4
+    2052:	6f 9f       	mul	r22, r31
+    2054:	b0 01       	movw	r22, r0
+    2056:	11 24       	eor	r1, r1
+    2058:	e3 70       	andi	r30, 0x03	; 3
+    205a:	e6 2b       	or	r30, r22
+    205c:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    205e:	65 b1       	in	r22, 0x05	; 5
+    2060:	6a 60       	ori	r22, 0x0A	; 10
+    2062:	65 b9       	out	0x05, r22	; 5
+    2064:	65 b1       	in	r22, 0x05	; 5
+    2066:	65 7f       	andi	r22, 0xF5	; 245
+    2068:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    206a:	65 b1       	in	r22, 0x05	; 5
+    206c:	6a 60       	ori	r22, 0x0A	; 10
+    206e:	65 b9       	out	0x05, r22	; 5
+    2070:	65 b1       	in	r22, 0x05	; 5
+    2072:	65 7f       	andi	r22, 0xF5	; 245
+    2074:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2076:	f9 01       	movw	r30, r18
+    2078:	3e 96       	adiw	r30, 0x0e	; 14
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    207a:	64 91       	lpm	r22, Z
+    207c:	eb b1       	in	r30, 0x0b	; 11
+    207e:	f4 e0       	ldi	r31, 0x04	; 4
+    2080:	6f 9f       	mul	r22, r31
+    2082:	b0 01       	movw	r22, r0
+    2084:	11 24       	eor	r1, r1
+    2086:	e3 70       	andi	r30, 0x03	; 3
+    2088:	e6 2b       	or	r30, r22
+    208a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    208c:	65 b1       	in	r22, 0x05	; 5
+    208e:	6a 60       	ori	r22, 0x0A	; 10
+    2090:	65 b9       	out	0x05, r22	; 5
+    2092:	65 b1       	in	r22, 0x05	; 5
+    2094:	65 7f       	andi	r22, 0xF5	; 245
+    2096:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2098:	65 b1       	in	r22, 0x05	; 5
+    209a:	6a 60       	ori	r22, 0x0A	; 10
+    209c:	65 b9       	out	0x05, r22	; 5
+    209e:	65 b1       	in	r22, 0x05	; 5
+    20a0:	65 7f       	andi	r22, 0xF5	; 245
+    20a2:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    20a4:	f9 01       	movw	r30, r18
+    20a6:	3f 96       	adiw	r30, 0x0f	; 15
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    20a8:	64 91       	lpm	r22, Z
+    20aa:	eb b1       	in	r30, 0x0b	; 11
+    20ac:	f4 e0       	ldi	r31, 0x04	; 4
+    20ae:	6f 9f       	mul	r22, r31
+    20b0:	b0 01       	movw	r22, r0
+    20b2:	11 24       	eor	r1, r1
+    20b4:	e3 70       	andi	r30, 0x03	; 3
+    20b6:	e6 2b       	or	r30, r22
+    20b8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    20ba:	65 b1       	in	r22, 0x05	; 5
+    20bc:	6a 60       	ori	r22, 0x0A	; 10
+    20be:	65 b9       	out	0x05, r22	; 5
+    20c0:	65 b1       	in	r22, 0x05	; 5
+    20c2:	65 7f       	andi	r22, 0xF5	; 245
+    20c4:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    20c6:	65 b1       	in	r22, 0x05	; 5
+    20c8:	6a 60       	ori	r22, 0x0A	; 10
+    20ca:	65 b9       	out	0x05, r22	; 5
+    20cc:	65 b1       	in	r22, 0x05	; 5
+    20ce:	65 7f       	andi	r22, 0xF5	; 245
+    20d0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    20d2:	f9 01       	movw	r30, r18
+    20d4:	70 96       	adiw	r30, 0x10	; 16
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
+    20d6:	64 91       	lpm	r22, Z
+    20d8:	eb b1       	in	r30, 0x0b	; 11
+    20da:	f4 e0       	ldi	r31, 0x04	; 4
+    20dc:	6f 9f       	mul	r22, r31
+    20de:	b0 01       	movw	r22, r0
+    20e0:	11 24       	eor	r1, r1
+    20e2:	e3 70       	andi	r30, 0x03	; 3
+    20e4:	e6 2b       	or	r30, r22
+    20e6:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    20e8:	65 b1       	in	r22, 0x05	; 5
+    20ea:	6a 60       	ori	r22, 0x0A	; 10
+    20ec:	65 b9       	out	0x05, r22	; 5
+    20ee:	65 b1       	in	r22, 0x05	; 5
+    20f0:	65 7f       	andi	r22, 0xF5	; 245
+    20f2:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    20f4:	65 b1       	in	r22, 0x05	; 5
+    20f6:	6a 60       	ori	r22, 0x0A	; 10
+    20f8:	65 b9       	out	0x05, r22	; 5
+    20fa:	65 b1       	in	r22, 0x05	; 5
+    20fc:	65 7f       	andi	r22, 0xF5	; 245
+    20fe:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
+    2100:	f9 01       	movw	r30, r18
+    2102:	71 96       	adiw	r30, 0x11	; 17
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2104:	64 91       	lpm	r22, Z
+    2106:	eb b1       	in	r30, 0x0b	; 11
+    2108:	f4 e0       	ldi	r31, 0x04	; 4
+    210a:	6f 9f       	mul	r22, r31
+    210c:	b0 01       	movw	r22, r0
+    210e:	11 24       	eor	r1, r1
+    2110:	e3 70       	andi	r30, 0x03	; 3
+    2112:	e6 2b       	or	r30, r22
+    2114:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2116:	65 b1       	in	r22, 0x05	; 5
+    2118:	6a 60       	ori	r22, 0x0A	; 10
+    211a:	65 b9       	out	0x05, r22	; 5
+    211c:	65 b1       	in	r22, 0x05	; 5
+    211e:	65 7f       	andi	r22, 0xF5	; 245
+    2120:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2122:	65 b1       	in	r22, 0x05	; 5
+    2124:	6a 60       	ori	r22, 0x0A	; 10
+    2126:	65 b9       	out	0x05, r22	; 5
+    2128:	65 b1       	in	r22, 0x05	; 5
+    212a:	65 7f       	andi	r22, 0xF5	; 245
+    212c:	65 b9       	out	0x05, r22	; 5
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    212e:	f9 01       	movw	r30, r18
+    2130:	72 96       	adiw	r30, 0x12	; 18
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2132:	64 91       	lpm	r22, Z
+    2134:	eb b1       	in	r30, 0x0b	; 11
+    2136:	f4 e0       	ldi	r31, 0x04	; 4
+    2138:	6f 9f       	mul	r22, r31
+    213a:	b0 01       	movw	r22, r0
+    213c:	11 24       	eor	r1, r1
+    213e:	e3 70       	andi	r30, 0x03	; 3
+    2140:	e6 2b       	or	r30, r22
+    2142:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2144:	65 b1       	in	r22, 0x05	; 5
+    2146:	6a 60       	ori	r22, 0x0A	; 10
+    2148:	65 b9       	out	0x05, r22	; 5
+    214a:	65 b1       	in	r22, 0x05	; 5
+    214c:	65 7f       	andi	r22, 0xF5	; 245
+    214e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2150:	65 b1       	in	r22, 0x05	; 5
+    2152:	6a 60       	ori	r22, 0x0A	; 10
+    2154:	65 b9       	out	0x05, r22	; 5
+    2156:	65 b1       	in	r22, 0x05	; 5
+    2158:	65 7f       	andi	r22, 0xF5	; 245
+    215a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    215c:	f9 01       	movw	r30, r18
+    215e:	73 96       	adiw	r30, 0x13	; 19
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2160:	64 91       	lpm	r22, Z
+    2162:	eb b1       	in	r30, 0x0b	; 11
+    2164:	f4 e0       	ldi	r31, 0x04	; 4
+    2166:	6f 9f       	mul	r22, r31
+    2168:	b0 01       	movw	r22, r0
+    216a:	11 24       	eor	r1, r1
+    216c:	e3 70       	andi	r30, 0x03	; 3
+    216e:	e6 2b       	or	r30, r22
+    2170:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2172:	65 b1       	in	r22, 0x05	; 5
+    2174:	6a 60       	ori	r22, 0x0A	; 10
+    2176:	65 b9       	out	0x05, r22	; 5
+    2178:	65 b1       	in	r22, 0x05	; 5
+    217a:	65 7f       	andi	r22, 0xF5	; 245
+    217c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    217e:	65 b1       	in	r22, 0x05	; 5
+    2180:	6a 60       	ori	r22, 0x0A	; 10
+    2182:	65 b9       	out	0x05, r22	; 5
+    2184:	65 b1       	in	r22, 0x05	; 5
+    2186:	65 7f       	andi	r22, 0xF5	; 245
+    2188:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    218a:	f9 01       	movw	r30, r18
+    218c:	74 96       	adiw	r30, 0x14	; 20
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    218e:	64 91       	lpm	r22, Z
+    2190:	eb b1       	in	r30, 0x0b	; 11
+    2192:	f4 e0       	ldi	r31, 0x04	; 4
+    2194:	6f 9f       	mul	r22, r31
+    2196:	b0 01       	movw	r22, r0
+    2198:	11 24       	eor	r1, r1
+    219a:	e3 70       	andi	r30, 0x03	; 3
+    219c:	e6 2b       	or	r30, r22
+    219e:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    21a0:	65 b1       	in	r22, 0x05	; 5
+    21a2:	6a 60       	ori	r22, 0x0A	; 10
+    21a4:	65 b9       	out	0x05, r22	; 5
+    21a6:	65 b1       	in	r22, 0x05	; 5
+    21a8:	65 7f       	andi	r22, 0xF5	; 245
+    21aa:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    21ac:	65 b1       	in	r22, 0x05	; 5
+    21ae:	6a 60       	ori	r22, 0x0A	; 10
+    21b0:	65 b9       	out	0x05, r22	; 5
+    21b2:	65 b1       	in	r22, 0x05	; 5
+    21b4:	65 7f       	andi	r22, 0xF5	; 245
+    21b6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    21b8:	f9 01       	movw	r30, r18
+    21ba:	75 96       	adiw	r30, 0x15	; 21
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    21bc:	64 91       	lpm	r22, Z
+    21be:	eb b1       	in	r30, 0x0b	; 11
+    21c0:	f4 e0       	ldi	r31, 0x04	; 4
+    21c2:	6f 9f       	mul	r22, r31
+    21c4:	b0 01       	movw	r22, r0
+    21c6:	11 24       	eor	r1, r1
+    21c8:	e3 70       	andi	r30, 0x03	; 3
+    21ca:	e6 2b       	or	r30, r22
+    21cc:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    21ce:	65 b1       	in	r22, 0x05	; 5
+    21d0:	6a 60       	ori	r22, 0x0A	; 10
+    21d2:	65 b9       	out	0x05, r22	; 5
+    21d4:	65 b1       	in	r22, 0x05	; 5
+    21d6:	65 7f       	andi	r22, 0xF5	; 245
+    21d8:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    21da:	65 b1       	in	r22, 0x05	; 5
+    21dc:	6a 60       	ori	r22, 0x0A	; 10
+    21de:	65 b9       	out	0x05, r22	; 5
+    21e0:	65 b1       	in	r22, 0x05	; 5
+    21e2:	65 7f       	andi	r22, 0xF5	; 245
+    21e4:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    21e6:	f9 01       	movw	r30, r18
+    21e8:	76 96       	adiw	r30, 0x16	; 22
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    21ea:	64 91       	lpm	r22, Z
+    21ec:	eb b1       	in	r30, 0x0b	; 11
+    21ee:	f4 e0       	ldi	r31, 0x04	; 4
+    21f0:	6f 9f       	mul	r22, r31
+    21f2:	b0 01       	movw	r22, r0
+    21f4:	11 24       	eor	r1, r1
+    21f6:	e3 70       	andi	r30, 0x03	; 3
+    21f8:	e6 2b       	or	r30, r22
+    21fa:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    21fc:	65 b1       	in	r22, 0x05	; 5
+    21fe:	6a 60       	ori	r22, 0x0A	; 10
+    2200:	65 b9       	out	0x05, r22	; 5
+    2202:	65 b1       	in	r22, 0x05	; 5
+    2204:	65 7f       	andi	r22, 0xF5	; 245
+    2206:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2208:	65 b1       	in	r22, 0x05	; 5
+    220a:	6a 60       	ori	r22, 0x0A	; 10
+    220c:	65 b9       	out	0x05, r22	; 5
+    220e:	65 b1       	in	r22, 0x05	; 5
+    2210:	65 7f       	andi	r22, 0xF5	; 245
+    2212:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2214:	f9 01       	movw	r30, r18
+    2216:	77 96       	adiw	r30, 0x17	; 23
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2218:	64 91       	lpm	r22, Z
+    221a:	eb b1       	in	r30, 0x0b	; 11
+    221c:	f4 e0       	ldi	r31, 0x04	; 4
+    221e:	6f 9f       	mul	r22, r31
+    2220:	b0 01       	movw	r22, r0
+    2222:	11 24       	eor	r1, r1
+    2224:	e3 70       	andi	r30, 0x03	; 3
+    2226:	e6 2b       	or	r30, r22
+    2228:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    222a:	65 b1       	in	r22, 0x05	; 5
+    222c:	6a 60       	ori	r22, 0x0A	; 10
+    222e:	65 b9       	out	0x05, r22	; 5
+    2230:	65 b1       	in	r22, 0x05	; 5
+    2232:	65 7f       	andi	r22, 0xF5	; 245
+    2234:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
     2236:	65 b1       	in	r22, 0x05	; 5
     2238:	6a 60       	ori	r22, 0x0A	; 10
@@ -4555,277 +5442,401 @@ private:
     223e:	65 7f       	andi	r22, 0xF5	; 245
     2240:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2242:	65 b1       	in	r22, 0x05	; 5
-    2244:	6a 60       	ori	r22, 0x0A	; 10
-    2246:	65 b9       	out	0x05, r22	; 5
-    2248:	65 b1       	in	r22, 0x05	; 5
-    224a:	65 7f       	andi	r22, 0xF5	; 245
-    224c:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 4));
-    224e:	b9 01       	movw	r22, r18
-    2250:	6c 5f       	subi	r22, 0xFC	; 252
-    2252:	7f 4f       	sbci	r23, 0xFF	; 255
-    2254:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2258:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    225c:	e6 0f       	add	r30, r22
-    225e:	f7 1f       	adc	r31, r23
-    2260:	e4 91       	lpm	r30, Z
-    2262:	6b b1       	in	r22, 0x0b	; 11
-    2264:	74 e0       	ldi	r23, 0x04	; 4
-    2266:	e7 9f       	mul	r30, r23
-    2268:	f0 01       	movw	r30, r0
-    226a:	11 24       	eor	r1, r1
-    226c:	63 70       	andi	r22, 0x03	; 3
-    226e:	e6 2b       	or	r30, r22
-    2270:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2272:	65 b1       	in	r22, 0x05	; 5
-    2274:	6a 60       	ori	r22, 0x0A	; 10
-    2276:	65 b9       	out	0x05, r22	; 5
-    2278:	65 b1       	in	r22, 0x05	; 5
-    227a:	65 7f       	andi	r22, 0xF5	; 245
-    227c:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    227e:	65 b1       	in	r22, 0x05	; 5
-    2280:	6a 60       	ori	r22, 0x0A	; 10
-    2282:	65 b9       	out	0x05, r22	; 5
-    2284:	65 b1       	in	r22, 0x05	; 5
-    2286:	65 7f       	andi	r22, 0xF5	; 245
-    2288:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 5));
-    228a:	b9 01       	movw	r22, r18
-    228c:	6b 5f       	subi	r22, 0xFB	; 251
-    228e:	7f 4f       	sbci	r23, 0xFF	; 255
-    2290:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2294:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2298:	e6 0f       	add	r30, r22
-    229a:	f7 1f       	adc	r31, r23
-    229c:	e4 91       	lpm	r30, Z
-    229e:	6b b1       	in	r22, 0x0b	; 11
-    22a0:	74 e0       	ldi	r23, 0x04	; 4
-    22a2:	e7 9f       	mul	r30, r23
-    22a4:	f0 01       	movw	r30, r0
-    22a6:	11 24       	eor	r1, r1
-    22a8:	63 70       	andi	r22, 0x03	; 3
-    22aa:	e6 2b       	or	r30, r22
-    22ac:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    22ae:	65 b1       	in	r22, 0x05	; 5
-    22b0:	6a 60       	ori	r22, 0x0A	; 10
-    22b2:	65 b9       	out	0x05, r22	; 5
-    22b4:	65 b1       	in	r22, 0x05	; 5
-    22b6:	65 7f       	andi	r22, 0xF5	; 245
-    22b8:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    2242:	f9 01       	movw	r30, r18
+    2244:	78 96       	adiw	r30, 0x18	; 24
             PWCLK_GCLK;
-    22ba:	65 b1       	in	r22, 0x05	; 5
-    22bc:	6a 60       	ori	r22, 0x0A	; 10
-    22be:	65 b9       	out	0x05, r22	; 5
-    22c0:	65 b1       	in	r22, 0x05	; 5
-    22c2:	65 7f       	andi	r22, 0xF5	; 245
-    22c4:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 6));
-    22c6:	b9 01       	movw	r22, r18
-    22c8:	6a 5f       	subi	r22, 0xFA	; 250
-    22ca:	7f 4f       	sbci	r23, 0xFF	; 255
-    22cc:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    22d0:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    22d4:	e6 0f       	add	r30, r22
-    22d6:	f7 1f       	adc	r31, r23
-    22d8:	e4 91       	lpm	r30, Z
-    22da:	6b b1       	in	r22, 0x0b	; 11
-    22dc:	74 e0       	ldi	r23, 0x04	; 4
-    22de:	e7 9f       	mul	r30, r23
-    22e0:	f0 01       	movw	r30, r0
-    22e2:	11 24       	eor	r1, r1
-    22e4:	63 70       	andi	r22, 0x03	; 3
-    22e6:	e6 2b       	or	r30, r22
-    22e8:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    22ea:	65 b1       	in	r22, 0x05	; 5
-    22ec:	6a 60       	ori	r22, 0x0A	; 10
-    22ee:	65 b9       	out	0x05, r22	; 5
-    22f0:	65 b1       	in	r22, 0x05	; 5
-    22f2:	65 7f       	andi	r22, 0xF5	; 245
-    22f4:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    22f6:	65 b1       	in	r22, 0x05	; 5
-    22f8:	6a 60       	ori	r22, 0x0A	; 10
-    22fa:	65 b9       	out	0x05, r22	; 5
-    22fc:	65 b1       	in	r22, 0x05	; 5
-    22fe:	65 7f       	andi	r22, 0xF5	; 245
-    2300:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 7));
-    2302:	b9 01       	movw	r22, r18
-    2304:	69 5f       	subi	r22, 0xF9	; 249
-    2306:	7f 4f       	sbci	r23, 0xFF	; 255
-    2308:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    230c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2310:	e6 0f       	add	r30, r22
-    2312:	f7 1f       	adc	r31, r23
-    2314:	e4 91       	lpm	r30, Z
-    2316:	6b b1       	in	r22, 0x0b	; 11
-    2318:	74 e0       	ldi	r23, 0x04	; 4
-    231a:	e7 9f       	mul	r30, r23
-    231c:	f0 01       	movw	r30, r0
-    231e:	11 24       	eor	r1, r1
-    2320:	63 70       	andi	r22, 0x03	; 3
-    2322:	e6 2b       	or	r30, r22
-    2324:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    2326:	65 b1       	in	r22, 0x05	; 5
-    2328:	6a 60       	ori	r22, 0x0A	; 10
-    232a:	65 b9       	out	0x05, r22	; 5
-    232c:	65 b1       	in	r22, 0x05	; 5
-    232e:	65 7f       	andi	r22, 0xF5	; 245
-    2330:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    2332:	65 b1       	in	r22, 0x05	; 5
-    2334:	6a 60       	ori	r22, 0x0A	; 10
-    2336:	65 b9       	out	0x05, r22	; 5
-    2338:	65 b1       	in	r22, 0x05	; 5
-    233a:	65 7f       	andi	r22, 0xF5	; 245
-    233c:	65 b9       	out	0x05, r22	; 5
 
-            // chip 1
-            SET_COLOR(pgm_read_byte(buffer + index + 8));
-    233e:	b9 01       	movw	r22, r18
-    2340:	68 5f       	subi	r22, 0xF8	; 248
-    2342:	7f 4f       	sbci	r23, 0xFF	; 255
-    2344:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2348:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    234c:	e6 0f       	add	r30, r22
-    234e:	f7 1f       	adc	r31, r23
-    2350:	e4 91       	lpm	r30, Z
-    2352:	6b b1       	in	r22, 0x0b	; 11
-    2354:	74 e0       	ldi	r23, 0x04	; 4
-    2356:	e7 9f       	mul	r30, r23
-    2358:	f0 01       	movw	r30, r0
-    235a:	11 24       	eor	r1, r1
-    235c:	63 70       	andi	r22, 0x03	; 3
-    235e:	e6 2b       	or	r30, r22
-    2360:	eb b9       	out	0x0b, r30	; 11
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
+    2246:	64 91       	lpm	r22, Z
+    2248:	eb b1       	in	r30, 0x0b	; 11
+    224a:	f4 e0       	ldi	r31, 0x04	; 4
+    224c:	6f 9f       	mul	r22, r31
+    224e:	b0 01       	movw	r22, r0
+    2250:	11 24       	eor	r1, r1
+    2252:	e3 70       	andi	r30, 0x03	; 3
+    2254:	e6 2b       	or	r30, r22
+    2256:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2362:	65 b1       	in	r22, 0x05	; 5
-    2364:	6a 60       	ori	r22, 0x0A	; 10
-    2366:	65 b9       	out	0x05, r22	; 5
-    2368:	65 b1       	in	r22, 0x05	; 5
-    236a:	65 7f       	andi	r22, 0xF5	; 245
-    236c:	65 b9       	out	0x05, r22	; 5
+    2258:	65 b1       	in	r22, 0x05	; 5
+    225a:	6a 60       	ori	r22, 0x0A	; 10
+    225c:	65 b9       	out	0x05, r22	; 5
+    225e:	65 b1       	in	r22, 0x05	; 5
+    2260:	65 7f       	andi	r22, 0xF5	; 245
+    2262:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    236e:	65 b1       	in	r22, 0x05	; 5
-    2370:	6a 60       	ori	r22, 0x0A	; 10
-    2372:	65 b9       	out	0x05, r22	; 5
-    2374:	65 b1       	in	r22, 0x05	; 5
-    2376:	65 7f       	andi	r22, 0xF5	; 245
-    2378:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 9));
-    237a:	b9 01       	movw	r22, r18
-    237c:	67 5f       	subi	r22, 0xF7	; 247
-    237e:	7f 4f       	sbci	r23, 0xFF	; 255
-    2380:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2384:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2388:	e6 0f       	add	r30, r22
-    238a:	f7 1f       	adc	r31, r23
-    238c:	e4 91       	lpm	r30, Z
-    238e:	6b b1       	in	r22, 0x0b	; 11
-    2390:	74 e0       	ldi	r23, 0x04	; 4
-    2392:	e7 9f       	mul	r30, r23
-    2394:	f0 01       	movw	r30, r0
-    2396:	11 24       	eor	r1, r1
-    2398:	63 70       	andi	r22, 0x03	; 3
-    239a:	e6 2b       	or	r30, r22
-    239c:	eb b9       	out	0x0b, r30	; 11
+    2264:	65 b1       	in	r22, 0x05	; 5
+    2266:	6a 60       	ori	r22, 0x0A	; 10
+    2268:	65 b9       	out	0x05, r22	; 5
+    226a:	65 b1       	in	r22, 0x05	; 5
+    226c:	65 7f       	andi	r22, 0xF5	; 245
+    226e:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    239e:	65 b1       	in	r22, 0x05	; 5
-    23a0:	6a 60       	ori	r22, 0x0A	; 10
-    23a2:	65 b9       	out	0x05, r22	; 5
-    23a4:	65 b1       	in	r22, 0x05	; 5
-    23a6:	65 7f       	andi	r22, 0xF5	; 245
-    23a8:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    23aa:	65 b1       	in	r22, 0x05	; 5
-    23ac:	6a 60       	ori	r22, 0x0A	; 10
-    23ae:	65 b9       	out	0x05, r22	; 5
-    23b0:	65 b1       	in	r22, 0x05	; 5
-    23b2:	65 7f       	andi	r22, 0xF5	; 245
-    23b4:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 10));
-    23b6:	b9 01       	movw	r22, r18
-    23b8:	66 5f       	subi	r22, 0xF6	; 246
-    23ba:	7f 4f       	sbci	r23, 0xFF	; 255
-    23bc:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    23c0:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    23c4:	e6 0f       	add	r30, r22
-    23c6:	f7 1f       	adc	r31, r23
-    23c8:	e4 91       	lpm	r30, Z
-    23ca:	6b b1       	in	r22, 0x0b	; 11
-    23cc:	74 e0       	ldi	r23, 0x04	; 4
-    23ce:	e7 9f       	mul	r30, r23
-    23d0:	f0 01       	movw	r30, r0
-    23d2:	11 24       	eor	r1, r1
-    23d4:	63 70       	andi	r22, 0x03	; 3
-    23d6:	e6 2b       	or	r30, r22
-    23d8:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
+    2270:	f9 01       	movw	r30, r18
+    2272:	79 96       	adiw	r30, 0x19	; 25
             PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2274:	64 91       	lpm	r22, Z
+    2276:	eb b1       	in	r30, 0x0b	; 11
+    2278:	f4 e0       	ldi	r31, 0x04	; 4
+    227a:	6f 9f       	mul	r22, r31
+    227c:	b0 01       	movw	r22, r0
+    227e:	11 24       	eor	r1, r1
+    2280:	e3 70       	andi	r30, 0x03	; 3
+    2282:	e6 2b       	or	r30, r22
+    2284:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2286:	65 b1       	in	r22, 0x05	; 5
+    2288:	6a 60       	ori	r22, 0x0A	; 10
+    228a:	65 b9       	out	0x05, r22	; 5
+    228c:	65 b1       	in	r22, 0x05	; 5
+    228e:	65 7f       	andi	r22, 0xF5	; 245
+    2290:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2292:	65 b1       	in	r22, 0x05	; 5
+    2294:	6a 60       	ori	r22, 0x0A	; 10
+    2296:	65 b9       	out	0x05, r22	; 5
+    2298:	65 b1       	in	r22, 0x05	; 5
+    229a:	65 7f       	andi	r22, 0xF5	; 245
+    229c:	65 b9       	out	0x05, r22	; 5
+
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    229e:	f9 01       	movw	r30, r18
+    22a0:	7a 96       	adiw	r30, 0x1a	; 26
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    22a2:	64 91       	lpm	r22, Z
+    22a4:	eb b1       	in	r30, 0x0b	; 11
+    22a6:	f4 e0       	ldi	r31, 0x04	; 4
+    22a8:	6f 9f       	mul	r22, r31
+    22aa:	b0 01       	movw	r22, r0
+    22ac:	11 24       	eor	r1, r1
+    22ae:	e3 70       	andi	r30, 0x03	; 3
+    22b0:	e6 2b       	or	r30, r22
+    22b2:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    22b4:	65 b1       	in	r22, 0x05	; 5
+    22b6:	6a 60       	ori	r22, 0x0A	; 10
+    22b8:	65 b9       	out	0x05, r22	; 5
+    22ba:	65 b1       	in	r22, 0x05	; 5
+    22bc:	65 7f       	andi	r22, 0xF5	; 245
+    22be:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    22c0:	65 b1       	in	r22, 0x05	; 5
+    22c2:	6a 60       	ori	r22, 0x0A	; 10
+    22c4:	65 b9       	out	0x05, r22	; 5
+    22c6:	65 b1       	in	r22, 0x05	; 5
+    22c8:	65 7f       	andi	r22, 0xF5	; 245
+    22ca:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    22cc:	f9 01       	movw	r30, r18
+    22ce:	7b 96       	adiw	r30, 0x1b	; 27
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    22d0:	64 91       	lpm	r22, Z
+    22d2:	eb b1       	in	r30, 0x0b	; 11
+    22d4:	f4 e0       	ldi	r31, 0x04	; 4
+    22d6:	6f 9f       	mul	r22, r31
+    22d8:	b0 01       	movw	r22, r0
+    22da:	11 24       	eor	r1, r1
+    22dc:	e3 70       	andi	r30, 0x03	; 3
+    22de:	e6 2b       	or	r30, r22
+    22e0:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    22e2:	65 b1       	in	r22, 0x05	; 5
+    22e4:	6a 60       	ori	r22, 0x0A	; 10
+    22e6:	65 b9       	out	0x05, r22	; 5
+    22e8:	65 b1       	in	r22, 0x05	; 5
+    22ea:	65 7f       	andi	r22, 0xF5	; 245
+    22ec:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    22ee:	65 b1       	in	r22, 0x05	; 5
+    22f0:	6a 60       	ori	r22, 0x0A	; 10
+    22f2:	65 b9       	out	0x05, r22	; 5
+    22f4:	65 b1       	in	r22, 0x05	; 5
+    22f6:	65 7f       	andi	r22, 0xF5	; 245
+    22f8:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    22fa:	f9 01       	movw	r30, r18
+    22fc:	7c 96       	adiw	r30, 0x1c	; 28
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    22fe:	64 91       	lpm	r22, Z
+    2300:	eb b1       	in	r30, 0x0b	; 11
+    2302:	f4 e0       	ldi	r31, 0x04	; 4
+    2304:	6f 9f       	mul	r22, r31
+    2306:	b0 01       	movw	r22, r0
+    2308:	11 24       	eor	r1, r1
+    230a:	e3 70       	andi	r30, 0x03	; 3
+    230c:	e6 2b       	or	r30, r22
+    230e:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2310:	65 b1       	in	r22, 0x05	; 5
+    2312:	6a 60       	ori	r22, 0x0A	; 10
+    2314:	65 b9       	out	0x05, r22	; 5
+    2316:	65 b1       	in	r22, 0x05	; 5
+    2318:	65 7f       	andi	r22, 0xF5	; 245
+    231a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    231c:	65 b1       	in	r22, 0x05	; 5
+    231e:	6a 60       	ori	r22, 0x0A	; 10
+    2320:	65 b9       	out	0x05, r22	; 5
+    2322:	65 b1       	in	r22, 0x05	; 5
+    2324:	65 7f       	andi	r22, 0xF5	; 245
+    2326:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2328:	f9 01       	movw	r30, r18
+    232a:	7d 96       	adiw	r30, 0x1d	; 29
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    232c:	64 91       	lpm	r22, Z
+    232e:	eb b1       	in	r30, 0x0b	; 11
+    2330:	f4 e0       	ldi	r31, 0x04	; 4
+    2332:	6f 9f       	mul	r22, r31
+    2334:	b0 01       	movw	r22, r0
+    2336:	11 24       	eor	r1, r1
+    2338:	e3 70       	andi	r30, 0x03	; 3
+    233a:	e6 2b       	or	r30, r22
+    233c:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    233e:	65 b1       	in	r22, 0x05	; 5
+    2340:	6a 60       	ori	r22, 0x0A	; 10
+    2342:	65 b9       	out	0x05, r22	; 5
+    2344:	65 b1       	in	r22, 0x05	; 5
+    2346:	65 7f       	andi	r22, 0xF5	; 245
+    2348:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    234a:	65 b1       	in	r22, 0x05	; 5
+    234c:	6a 60       	ori	r22, 0x0A	; 10
+    234e:	65 b9       	out	0x05, r22	; 5
+    2350:	65 b1       	in	r22, 0x05	; 5
+    2352:	65 7f       	andi	r22, 0xF5	; 245
+    2354:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2356:	f9 01       	movw	r30, r18
+    2358:	7e 96       	adiw	r30, 0x1e	; 30
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    235a:	64 91       	lpm	r22, Z
+    235c:	eb b1       	in	r30, 0x0b	; 11
+    235e:	f4 e0       	ldi	r31, 0x04	; 4
+    2360:	6f 9f       	mul	r22, r31
+    2362:	b0 01       	movw	r22, r0
+    2364:	11 24       	eor	r1, r1
+    2366:	e3 70       	andi	r30, 0x03	; 3
+    2368:	e6 2b       	or	r30, r22
+    236a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    236c:	65 b1       	in	r22, 0x05	; 5
+    236e:	6a 60       	ori	r22, 0x0A	; 10
+    2370:	65 b9       	out	0x05, r22	; 5
+    2372:	65 b1       	in	r22, 0x05	; 5
+    2374:	65 7f       	andi	r22, 0xF5	; 245
+    2376:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2378:	65 b1       	in	r22, 0x05	; 5
+    237a:	6a 60       	ori	r22, 0x0A	; 10
+    237c:	65 b9       	out	0x05, r22	; 5
+    237e:	65 b1       	in	r22, 0x05	; 5
+    2380:	65 7f       	andi	r22, 0xF5	; 245
+    2382:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2384:	f9 01       	movw	r30, r18
+    2386:	7f 96       	adiw	r30, 0x1f	; 31
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2388:	64 91       	lpm	r22, Z
+    238a:	eb b1       	in	r30, 0x0b	; 11
+    238c:	f4 e0       	ldi	r31, 0x04	; 4
+    238e:	6f 9f       	mul	r22, r31
+    2390:	b0 01       	movw	r22, r0
+    2392:	11 24       	eor	r1, r1
+    2394:	e3 70       	andi	r30, 0x03	; 3
+    2396:	e6 2b       	or	r30, r22
+    2398:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    239a:	65 b1       	in	r22, 0x05	; 5
+    239c:	6a 60       	ori	r22, 0x0A	; 10
+    239e:	65 b9       	out	0x05, r22	; 5
+    23a0:	65 b1       	in	r22, 0x05	; 5
+    23a2:	65 7f       	andi	r22, 0xF5	; 245
+    23a4:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    23a6:	65 b1       	in	r22, 0x05	; 5
+    23a8:	6a 60       	ori	r22, 0x0A	; 10
+    23aa:	65 b9       	out	0x05, r22	; 5
+    23ac:	65 b1       	in	r22, 0x05	; 5
+    23ae:	65 7f       	andi	r22, 0xF5	; 245
+    23b0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    23b2:	f9 01       	movw	r30, r18
+    23b4:	b0 96       	adiw	r30, 0x20	; 32
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
+    23b6:	64 91       	lpm	r22, Z
+    23b8:	eb b1       	in	r30, 0x0b	; 11
+    23ba:	f4 e0       	ldi	r31, 0x04	; 4
+    23bc:	6f 9f       	mul	r22, r31
+    23be:	b0 01       	movw	r22, r0
+    23c0:	11 24       	eor	r1, r1
+    23c2:	e3 70       	andi	r30, 0x03	; 3
+    23c4:	e6 2b       	or	r30, r22
+    23c6:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    23c8:	65 b1       	in	r22, 0x05	; 5
+    23ca:	6a 60       	ori	r22, 0x0A	; 10
+    23cc:	65 b9       	out	0x05, r22	; 5
+    23ce:	65 b1       	in	r22, 0x05	; 5
+    23d0:	65 7f       	andi	r22, 0xF5	; 245
+    23d2:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    23d4:	65 b1       	in	r22, 0x05	; 5
+    23d6:	6a 60       	ori	r22, 0x0A	; 10
+    23d8:	65 b9       	out	0x05, r22	; 5
     23da:	65 b1       	in	r22, 0x05	; 5
-    23dc:	6a 60       	ori	r22, 0x0A	; 10
+    23dc:	65 7f       	andi	r22, 0xF5	; 245
     23de:	65 b9       	out	0x05, r22	; 5
-    23e0:	65 b1       	in	r22, 0x05	; 5
-    23e2:	65 7f       	andi	r22, 0xF5	; 245
-    23e4:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    23e6:	65 b1       	in	r22, 0x05	; 5
-    23e8:	6a 60       	ori	r22, 0x0A	; 10
-    23ea:	65 b9       	out	0x05, r22	; 5
-    23ec:	65 b1       	in	r22, 0x05	; 5
-    23ee:	65 7f       	andi	r22, 0xF5	; 245
-    23f0:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 11));
-    23f2:	b9 01       	movw	r22, r18
-    23f4:	65 5f       	subi	r22, 0xF5	; 245
-    23f6:	7f 4f       	sbci	r23, 0xFF	; 255
-    23f8:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    23fc:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2400:	e6 0f       	add	r30, r22
-    2402:	f7 1f       	adc	r31, r23
-    2404:	e4 91       	lpm	r30, Z
-    2406:	6b b1       	in	r22, 0x0b	; 11
-    2408:	74 e0       	ldi	r23, 0x04	; 4
-    240a:	e7 9f       	mul	r30, r23
-    240c:	f0 01       	movw	r30, r0
-    240e:	11 24       	eor	r1, r1
-    2410:	63 70       	andi	r22, 0x03	; 3
-    2412:	e6 2b       	or	r30, r22
-    2414:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2416:	65 b1       	in	r22, 0x05	; 5
-    2418:	6a 60       	ori	r22, 0x0A	; 10
-    241a:	65 b9       	out	0x05, r22	; 5
-    241c:	65 b1       	in	r22, 0x05	; 5
-    241e:	65 7f       	andi	r22, 0xF5	; 245
-    2420:	65 b9       	out	0x05, r22	; 5
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
+    23e0:	f9 01       	movw	r30, r18
+    23e2:	b1 96       	adiw	r30, 0x21	; 33
             PWCLK_GCLK;
-    2422:	65 b1       	in	r22, 0x05	; 5
-    2424:	6a 60       	ori	r22, 0x0A	; 10
-    2426:	65 b9       	out	0x05, r22	; 5
-    2428:	65 b1       	in	r22, 0x05	; 5
-    242a:	65 7f       	andi	r22, 0xF5	; 245
-    242c:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 12));
-    242e:	b9 01       	movw	r22, r18
-    2430:	64 5f       	subi	r22, 0xF4	; 244
-    2432:	7f 4f       	sbci	r23, 0xFF	; 255
-    2434:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2438:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    243c:	e6 0f       	add	r30, r22
-    243e:	f7 1f       	adc	r31, r23
-    2440:	e4 91       	lpm	r30, Z
-    2442:	6b b1       	in	r22, 0x0b	; 11
-    2444:	74 e0       	ldi	r23, 0x04	; 4
-    2446:	e7 9f       	mul	r30, r23
-    2448:	f0 01       	movw	r30, r0
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    23e4:	64 91       	lpm	r22, Z
+    23e6:	eb b1       	in	r30, 0x0b	; 11
+    23e8:	f4 e0       	ldi	r31, 0x04	; 4
+    23ea:	6f 9f       	mul	r22, r31
+    23ec:	b0 01       	movw	r22, r0
+    23ee:	11 24       	eor	r1, r1
+    23f0:	e3 70       	andi	r30, 0x03	; 3
+    23f2:	e6 2b       	or	r30, r22
+    23f4:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    23f6:	65 b1       	in	r22, 0x05	; 5
+    23f8:	6a 60       	ori	r22, 0x0A	; 10
+    23fa:	65 b9       	out	0x05, r22	; 5
+    23fc:	65 b1       	in	r22, 0x05	; 5
+    23fe:	65 7f       	andi	r22, 0xF5	; 245
+    2400:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2402:	65 b1       	in	r22, 0x05	; 5
+    2404:	6a 60       	ori	r22, 0x0A	; 10
+    2406:	65 b9       	out	0x05, r22	; 5
+    2408:	65 b1       	in	r22, 0x05	; 5
+    240a:	65 7f       	andi	r22, 0xF5	; 245
+    240c:	65 b9       	out	0x05, r22	; 5
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    240e:	f9 01       	movw	r30, r18
+    2410:	b2 96       	adiw	r30, 0x22	; 34
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2412:	64 91       	lpm	r22, Z
+    2414:	eb b1       	in	r30, 0x0b	; 11
+    2416:	f4 e0       	ldi	r31, 0x04	; 4
+    2418:	6f 9f       	mul	r22, r31
+    241a:	b0 01       	movw	r22, r0
+    241c:	11 24       	eor	r1, r1
+    241e:	e3 70       	andi	r30, 0x03	; 3
+    2420:	e6 2b       	or	r30, r22
+    2422:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2424:	65 b1       	in	r22, 0x05	; 5
+    2426:	6a 60       	ori	r22, 0x0A	; 10
+    2428:	65 b9       	out	0x05, r22	; 5
+    242a:	65 b1       	in	r22, 0x05	; 5
+    242c:	65 7f       	andi	r22, 0xF5	; 245
+    242e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2430:	65 b1       	in	r22, 0x05	; 5
+    2432:	6a 60       	ori	r22, 0x0A	; 10
+    2434:	65 b9       	out	0x05, r22	; 5
+    2436:	65 b1       	in	r22, 0x05	; 5
+    2438:	65 7f       	andi	r22, 0xF5	; 245
+    243a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    243c:	f9 01       	movw	r30, r18
+    243e:	b3 96       	adiw	r30, 0x23	; 35
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2440:	64 91       	lpm	r22, Z
+    2442:	eb b1       	in	r30, 0x0b	; 11
+    2444:	f4 e0       	ldi	r31, 0x04	; 4
+    2446:	6f 9f       	mul	r22, r31
+    2448:	b0 01       	movw	r22, r0
     244a:	11 24       	eor	r1, r1
-    244c:	63 70       	andi	r22, 0x03	; 3
+    244c:	e3 70       	andi	r30, 0x03	; 3
     244e:	e6 2b       	or	r30, r22
     2450:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
@@ -4842,280 +5853,402 @@ private:
     2464:	65 b1       	in	r22, 0x05	; 5
     2466:	65 7f       	andi	r22, 0xF5	; 245
     2468:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 13));
-    246a:	b9 01       	movw	r22, r18
-    246c:	63 5f       	subi	r22, 0xF3	; 243
-    246e:	7f 4f       	sbci	r23, 0xFF	; 255
-    2470:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2474:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2478:	e6 0f       	add	r30, r22
-    247a:	f7 1f       	adc	r31, r23
-    247c:	e4 91       	lpm	r30, Z
-    247e:	6b b1       	in	r22, 0x0b	; 11
-    2480:	74 e0       	ldi	r23, 0x04	; 4
-    2482:	e7 9f       	mul	r30, r23
-    2484:	f0 01       	movw	r30, r0
-    2486:	11 24       	eor	r1, r1
-    2488:	63 70       	andi	r22, 0x03	; 3
-    248a:	e6 2b       	or	r30, r22
-    248c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    248e:	65 b1       	in	r22, 0x05	; 5
-    2490:	6a 60       	ori	r22, 0x0A	; 10
-    2492:	65 b9       	out	0x05, r22	; 5
-    2494:	65 b1       	in	r22, 0x05	; 5
-    2496:	65 7f       	andi	r22, 0xF5	; 245
-    2498:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    249a:	65 b1       	in	r22, 0x05	; 5
-    249c:	6a 60       	ori	r22, 0x0A	; 10
-    249e:	65 b9       	out	0x05, r22	; 5
-    24a0:	65 b1       	in	r22, 0x05	; 5
-    24a2:	65 7f       	andi	r22, 0xF5	; 245
-    24a4:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 14));
-    24a6:	b9 01       	movw	r22, r18
-    24a8:	62 5f       	subi	r22, 0xF2	; 242
-    24aa:	7f 4f       	sbci	r23, 0xFF	; 255
-    24ac:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    24b0:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    24b4:	e6 0f       	add	r30, r22
-    24b6:	f7 1f       	adc	r31, r23
-    24b8:	e4 91       	lpm	r30, Z
-    24ba:	6b b1       	in	r22, 0x0b	; 11
-    24bc:	74 e0       	ldi	r23, 0x04	; 4
-    24be:	e7 9f       	mul	r30, r23
-    24c0:	f0 01       	movw	r30, r0
-    24c2:	11 24       	eor	r1, r1
-    24c4:	63 70       	andi	r22, 0x03	; 3
-    24c6:	e6 2b       	or	r30, r22
-    24c8:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    24ca:	65 b1       	in	r22, 0x05	; 5
-    24cc:	6a 60       	ori	r22, 0x0A	; 10
-    24ce:	65 b9       	out	0x05, r22	; 5
-    24d0:	65 b1       	in	r22, 0x05	; 5
-    24d2:	65 7f       	andi	r22, 0xF5	; 245
-    24d4:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    24d6:	65 b1       	in	r22, 0x05	; 5
-    24d8:	6a 60       	ori	r22, 0x0A	; 10
-    24da:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    246a:	f9 01       	movw	r30, r18
+    246c:	b4 96       	adiw	r30, 0x24	; 36
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    246e:	64 91       	lpm	r22, Z
+    2470:	eb b1       	in	r30, 0x0b	; 11
+    2472:	f4 e0       	ldi	r31, 0x04	; 4
+    2474:	6f 9f       	mul	r22, r31
+    2476:	b0 01       	movw	r22, r0
+    2478:	11 24       	eor	r1, r1
+    247a:	e3 70       	andi	r30, 0x03	; 3
+    247c:	e6 2b       	or	r30, r22
+    247e:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2480:	65 b1       	in	r22, 0x05	; 5
+    2482:	6a 60       	ori	r22, 0x0A	; 10
+    2484:	65 b9       	out	0x05, r22	; 5
+    2486:	65 b1       	in	r22, 0x05	; 5
+    2488:	65 7f       	andi	r22, 0xF5	; 245
+    248a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    248c:	65 b1       	in	r22, 0x05	; 5
+    248e:	6a 60       	ori	r22, 0x0A	; 10
+    2490:	65 b9       	out	0x05, r22	; 5
+    2492:	65 b1       	in	r22, 0x05	; 5
+    2494:	65 7f       	andi	r22, 0xF5	; 245
+    2496:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2498:	f9 01       	movw	r30, r18
+    249a:	b5 96       	adiw	r30, 0x25	; 37
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    249c:	64 91       	lpm	r22, Z
+    249e:	eb b1       	in	r30, 0x0b	; 11
+    24a0:	f4 e0       	ldi	r31, 0x04	; 4
+    24a2:	6f 9f       	mul	r22, r31
+    24a4:	b0 01       	movw	r22, r0
+    24a6:	11 24       	eor	r1, r1
+    24a8:	e3 70       	andi	r30, 0x03	; 3
+    24aa:	e6 2b       	or	r30, r22
+    24ac:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    24ae:	65 b1       	in	r22, 0x05	; 5
+    24b0:	6a 60       	ori	r22, 0x0A	; 10
+    24b2:	65 b9       	out	0x05, r22	; 5
+    24b4:	65 b1       	in	r22, 0x05	; 5
+    24b6:	65 7f       	andi	r22, 0xF5	; 245
+    24b8:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    24ba:	65 b1       	in	r22, 0x05	; 5
+    24bc:	6a 60       	ori	r22, 0x0A	; 10
+    24be:	65 b9       	out	0x05, r22	; 5
+    24c0:	65 b1       	in	r22, 0x05	; 5
+    24c2:	65 7f       	andi	r22, 0xF5	; 245
+    24c4:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    24c6:	f9 01       	movw	r30, r18
+    24c8:	b6 96       	adiw	r30, 0x26	; 38
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    24ca:	64 91       	lpm	r22, Z
+    24cc:	eb b1       	in	r30, 0x0b	; 11
+    24ce:	f4 e0       	ldi	r31, 0x04	; 4
+    24d0:	6f 9f       	mul	r22, r31
+    24d2:	b0 01       	movw	r22, r0
+    24d4:	11 24       	eor	r1, r1
+    24d6:	e3 70       	andi	r30, 0x03	; 3
+    24d8:	e6 2b       	or	r30, r22
+    24da:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
     24dc:	65 b1       	in	r22, 0x05	; 5
-    24de:	65 7f       	andi	r22, 0xF5	; 245
+    24de:	6a 60       	ori	r22, 0x0A	; 10
     24e0:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 15));
-    24e2:	b9 01       	movw	r22, r18
-    24e4:	61 5f       	subi	r22, 0xF1	; 241
-    24e6:	7f 4f       	sbci	r23, 0xFF	; 255
-    24e8:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    24ec:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    24f0:	e6 0f       	add	r30, r22
-    24f2:	f7 1f       	adc	r31, r23
-    24f4:	e4 91       	lpm	r30, Z
-    24f6:	6b b1       	in	r22, 0x0b	; 11
-    24f8:	74 e0       	ldi	r23, 0x04	; 4
-    24fa:	e7 9f       	mul	r30, r23
-    24fc:	f0 01       	movw	r30, r0
-    24fe:	11 24       	eor	r1, r1
-    2500:	63 70       	andi	r22, 0x03	; 3
-    2502:	e6 2b       	or	r30, r22
-    2504:	eb b9       	out	0x0b, r30	; 11
+    24e2:	65 b1       	in	r22, 0x05	; 5
+    24e4:	65 7f       	andi	r22, 0xF5	; 245
+    24e6:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2506:	65 b1       	in	r22, 0x05	; 5
-    2508:	6a 60       	ori	r22, 0x0A	; 10
-    250a:	65 b9       	out	0x05, r22	; 5
-    250c:	65 b1       	in	r22, 0x05	; 5
-    250e:	65 7f       	andi	r22, 0xF5	; 245
-    2510:	65 b9       	out	0x05, r22	; 5
+    24e8:	65 b1       	in	r22, 0x05	; 5
+    24ea:	6a 60       	ori	r22, 0x0A	; 10
+    24ec:	65 b9       	out	0x05, r22	; 5
+    24ee:	65 b1       	in	r22, 0x05	; 5
+    24f0:	65 7f       	andi	r22, 0xF5	; 245
+    24f2:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2512:	65 b1       	in	r22, 0x05	; 5
-    2514:	6a 60       	ori	r22, 0x0A	; 10
-    2516:	65 b9       	out	0x05, r22	; 5
-    2518:	65 b1       	in	r22, 0x05	; 5
-    251a:	65 7f       	andi	r22, 0xF5	; 245
-    251c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    24f4:	f9 01       	movw	r30, r18
+    24f6:	b7 96       	adiw	r30, 0x27	; 39
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    24f8:	64 91       	lpm	r22, Z
+    24fa:	eb b1       	in	r30, 0x0b	; 11
+    24fc:	f4 e0       	ldi	r31, 0x04	; 4
+    24fe:	6f 9f       	mul	r22, r31
+    2500:	b0 01       	movw	r22, r0
+    2502:	11 24       	eor	r1, r1
+    2504:	e3 70       	andi	r30, 0x03	; 3
+    2506:	e6 2b       	or	r30, r22
+    2508:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    250a:	65 b1       	in	r22, 0x05	; 5
+    250c:	6a 60       	ori	r22, 0x0A	; 10
+    250e:	65 b9       	out	0x05, r22	; 5
+    2510:	65 b1       	in	r22, 0x05	; 5
+    2512:	65 7f       	andi	r22, 0xF5	; 245
+    2514:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2516:	65 b1       	in	r22, 0x05	; 5
+    2518:	6a 60       	ori	r22, 0x0A	; 10
+    251a:	65 b9       	out	0x05, r22	; 5
+    251c:	65 b1       	in	r22, 0x05	; 5
+    251e:	65 7f       	andi	r22, 0xF5	; 245
+    2520:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2522:	f9 01       	movw	r30, r18
+    2524:	b8 96       	adiw	r30, 0x28	; 40
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
-            // chip 2
-            SET_COLOR(pgm_read_byte(buffer + index + 16));
-    251e:	b9 01       	movw	r22, r18
-    2520:	60 5f       	subi	r22, 0xF0	; 240
-    2522:	7f 4f       	sbci	r23, 0xFF	; 255
-    2524:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2528:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    252c:	e6 0f       	add	r30, r22
-    252e:	f7 1f       	adc	r31, r23
-    2530:	e4 91       	lpm	r30, Z
-    2532:	6b b1       	in	r22, 0x0b	; 11
-    2534:	74 e0       	ldi	r23, 0x04	; 4
-    2536:	e7 9f       	mul	r30, r23
-    2538:	f0 01       	movw	r30, r0
-    253a:	11 24       	eor	r1, r1
-    253c:	63 70       	andi	r22, 0x03	; 3
-    253e:	e6 2b       	or	r30, r22
-    2540:	eb b9       	out	0x0b, r30	; 11
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
+    2526:	64 91       	lpm	r22, Z
+    2528:	eb b1       	in	r30, 0x0b	; 11
+    252a:	f4 e0       	ldi	r31, 0x04	; 4
+    252c:	6f 9f       	mul	r22, r31
+    252e:	b0 01       	movw	r22, r0
+    2530:	11 24       	eor	r1, r1
+    2532:	e3 70       	andi	r30, 0x03	; 3
+    2534:	e6 2b       	or	r30, r22
+    2536:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2542:	65 b1       	in	r22, 0x05	; 5
-    2544:	6a 60       	ori	r22, 0x0A	; 10
-    2546:	65 b9       	out	0x05, r22	; 5
-    2548:	65 b1       	in	r22, 0x05	; 5
-    254a:	65 7f       	andi	r22, 0xF5	; 245
-    254c:	65 b9       	out	0x05, r22	; 5
+    2538:	65 b1       	in	r22, 0x05	; 5
+    253a:	6a 60       	ori	r22, 0x0A	; 10
+    253c:	65 b9       	out	0x05, r22	; 5
+    253e:	65 b1       	in	r22, 0x05	; 5
+    2540:	65 7f       	andi	r22, 0xF5	; 245
+    2542:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    254e:	65 b1       	in	r22, 0x05	; 5
-    2550:	6a 60       	ori	r22, 0x0A	; 10
-    2552:	65 b9       	out	0x05, r22	; 5
-    2554:	65 b1       	in	r22, 0x05	; 5
-    2556:	65 7f       	andi	r22, 0xF5	; 245
-    2558:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 17));
-    255a:	b9 01       	movw	r22, r18
-    255c:	6f 5e       	subi	r22, 0xEF	; 239
-    255e:	7f 4f       	sbci	r23, 0xFF	; 255
-    2560:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2564:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2568:	e6 0f       	add	r30, r22
-    256a:	f7 1f       	adc	r31, r23
-    256c:	e4 91       	lpm	r30, Z
-    256e:	6b b1       	in	r22, 0x0b	; 11
-    2570:	74 e0       	ldi	r23, 0x04	; 4
-    2572:	e7 9f       	mul	r30, r23
-    2574:	f0 01       	movw	r30, r0
-    2576:	11 24       	eor	r1, r1
-    2578:	63 70       	andi	r22, 0x03	; 3
-    257a:	e6 2b       	or	r30, r22
-    257c:	eb b9       	out	0x0b, r30	; 11
+    2544:	65 b1       	in	r22, 0x05	; 5
+    2546:	6a 60       	ori	r22, 0x0A	; 10
+    2548:	65 b9       	out	0x05, r22	; 5
+    254a:	65 b1       	in	r22, 0x05	; 5
+    254c:	65 7f       	andi	r22, 0xF5	; 245
+    254e:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    257e:	65 b1       	in	r22, 0x05	; 5
-    2580:	6a 60       	ori	r22, 0x0A	; 10
-    2582:	65 b9       	out	0x05, r22	; 5
-    2584:	65 b1       	in	r22, 0x05	; 5
-    2586:	65 7f       	andi	r22, 0xF5	; 245
-    2588:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    258a:	65 b1       	in	r22, 0x05	; 5
-    258c:	6a 60       	ori	r22, 0x0A	; 10
-    258e:	65 b9       	out	0x05, r22	; 5
-    2590:	65 b1       	in	r22, 0x05	; 5
-    2592:	65 7f       	andi	r22, 0xF5	; 245
-    2594:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 18));
-    2596:	b9 01       	movw	r22, r18
-    2598:	6e 5e       	subi	r22, 0xEE	; 238
-    259a:	7f 4f       	sbci	r23, 0xFF	; 255
-    259c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    25a0:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    25a4:	e6 0f       	add	r30, r22
-    25a6:	f7 1f       	adc	r31, r23
-    25a8:	e4 91       	lpm	r30, Z
-    25aa:	6b b1       	in	r22, 0x0b	; 11
-    25ac:	74 e0       	ldi	r23, 0x04	; 4
-    25ae:	e7 9f       	mul	r30, r23
-    25b0:	f0 01       	movw	r30, r0
-    25b2:	11 24       	eor	r1, r1
-    25b4:	63 70       	andi	r22, 0x03	; 3
-    25b6:	e6 2b       	or	r30, r22
-    25b8:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
+    2550:	f9 01       	movw	r30, r18
+    2552:	b9 96       	adiw	r30, 0x29	; 41
             PWCLK_GCLK;
-    25ba:	65 b1       	in	r22, 0x05	; 5
-    25bc:	6a 60       	ori	r22, 0x0A	; 10
-    25be:	65 b9       	out	0x05, r22	; 5
-    25c0:	65 b1       	in	r22, 0x05	; 5
-    25c2:	65 7f       	andi	r22, 0xF5	; 245
-    25c4:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    25c6:	65 b1       	in	r22, 0x05	; 5
-    25c8:	6a 60       	ori	r22, 0x0A	; 10
-    25ca:	65 b9       	out	0x05, r22	; 5
-    25cc:	65 b1       	in	r22, 0x05	; 5
-    25ce:	65 7f       	andi	r22, 0xF5	; 245
-    25d0:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 19));
-    25d2:	b9 01       	movw	r22, r18
-    25d4:	6d 5e       	subi	r22, 0xED	; 237
-    25d6:	7f 4f       	sbci	r23, 0xFF	; 255
-    25d8:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    25dc:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    25e0:	e6 0f       	add	r30, r22
-    25e2:	f7 1f       	adc	r31, r23
-    25e4:	e4 91       	lpm	r30, Z
-    25e6:	6b b1       	in	r22, 0x0b	; 11
-    25e8:	74 e0       	ldi	r23, 0x04	; 4
-    25ea:	e7 9f       	mul	r30, r23
-    25ec:	f0 01       	movw	r30, r0
-    25ee:	11 24       	eor	r1, r1
-    25f0:	63 70       	andi	r22, 0x03	; 3
-    25f2:	e6 2b       	or	r30, r22
-    25f4:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    2554:	64 91       	lpm	r22, Z
+    2556:	eb b1       	in	r30, 0x0b	; 11
+    2558:	f4 e0       	ldi	r31, 0x04	; 4
+    255a:	6f 9f       	mul	r22, r31
+    255c:	b0 01       	movw	r22, r0
+    255e:	11 24       	eor	r1, r1
+    2560:	e3 70       	andi	r30, 0x03	; 3
+    2562:	e6 2b       	or	r30, r22
+    2564:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
+    2566:	65 b1       	in	r22, 0x05	; 5
+    2568:	6a 60       	ori	r22, 0x0A	; 10
+    256a:	65 b9       	out	0x05, r22	; 5
+    256c:	65 b1       	in	r22, 0x05	; 5
+    256e:	65 7f       	andi	r22, 0xF5	; 245
+    2570:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2572:	65 b1       	in	r22, 0x05	; 5
+    2574:	6a 60       	ori	r22, 0x0A	; 10
+    2576:	65 b9       	out	0x05, r22	; 5
+    2578:	65 b1       	in	r22, 0x05	; 5
+    257a:	65 7f       	andi	r22, 0xF5	; 245
+    257c:	65 b9       	out	0x05, r22	; 5
+
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    257e:	f9 01       	movw	r30, r18
+    2580:	ba 96       	adiw	r30, 0x2a	; 42
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2582:	64 91       	lpm	r22, Z
+    2584:	eb b1       	in	r30, 0x0b	; 11
+    2586:	f4 e0       	ldi	r31, 0x04	; 4
+    2588:	6f 9f       	mul	r22, r31
+    258a:	b0 01       	movw	r22, r0
+    258c:	11 24       	eor	r1, r1
+    258e:	e3 70       	andi	r30, 0x03	; 3
+    2590:	e6 2b       	or	r30, r22
+    2592:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2594:	65 b1       	in	r22, 0x05	; 5
+    2596:	6a 60       	ori	r22, 0x0A	; 10
+    2598:	65 b9       	out	0x05, r22	; 5
+    259a:	65 b1       	in	r22, 0x05	; 5
+    259c:	65 7f       	andi	r22, 0xF5	; 245
+    259e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    25a0:	65 b1       	in	r22, 0x05	; 5
+    25a2:	6a 60       	ori	r22, 0x0A	; 10
+    25a4:	65 b9       	out	0x05, r22	; 5
+    25a6:	65 b1       	in	r22, 0x05	; 5
+    25a8:	65 7f       	andi	r22, 0xF5	; 245
+    25aa:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    25ac:	f9 01       	movw	r30, r18
+    25ae:	bb 96       	adiw	r30, 0x2b	; 43
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    25b0:	64 91       	lpm	r22, Z
+    25b2:	eb b1       	in	r30, 0x0b	; 11
+    25b4:	f4 e0       	ldi	r31, 0x04	; 4
+    25b6:	6f 9f       	mul	r22, r31
+    25b8:	b0 01       	movw	r22, r0
+    25ba:	11 24       	eor	r1, r1
+    25bc:	e3 70       	andi	r30, 0x03	; 3
+    25be:	e6 2b       	or	r30, r22
+    25c0:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    25c2:	65 b1       	in	r22, 0x05	; 5
+    25c4:	6a 60       	ori	r22, 0x0A	; 10
+    25c6:	65 b9       	out	0x05, r22	; 5
+    25c8:	65 b1       	in	r22, 0x05	; 5
+    25ca:	65 7f       	andi	r22, 0xF5	; 245
+    25cc:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    25ce:	65 b1       	in	r22, 0x05	; 5
+    25d0:	6a 60       	ori	r22, 0x0A	; 10
+    25d2:	65 b9       	out	0x05, r22	; 5
+    25d4:	65 b1       	in	r22, 0x05	; 5
+    25d6:	65 7f       	andi	r22, 0xF5	; 245
+    25d8:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    25da:	f9 01       	movw	r30, r18
+    25dc:	bc 96       	adiw	r30, 0x2c	; 44
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    25de:	64 91       	lpm	r22, Z
+    25e0:	eb b1       	in	r30, 0x0b	; 11
+    25e2:	f4 e0       	ldi	r31, 0x04	; 4
+    25e4:	6f 9f       	mul	r22, r31
+    25e6:	b0 01       	movw	r22, r0
+    25e8:	11 24       	eor	r1, r1
+    25ea:	e3 70       	andi	r30, 0x03	; 3
+    25ec:	e6 2b       	or	r30, r22
+    25ee:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    25f0:	65 b1       	in	r22, 0x05	; 5
+    25f2:	6a 60       	ori	r22, 0x0A	; 10
+    25f4:	65 b9       	out	0x05, r22	; 5
     25f6:	65 b1       	in	r22, 0x05	; 5
-    25f8:	6a 60       	ori	r22, 0x0A	; 10
+    25f8:	65 7f       	andi	r22, 0xF5	; 245
     25fa:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
     25fc:	65 b1       	in	r22, 0x05	; 5
-    25fe:	65 7f       	andi	r22, 0xF5	; 245
+    25fe:	6a 60       	ori	r22, 0x0A	; 10
     2600:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
     2602:	65 b1       	in	r22, 0x05	; 5
-    2604:	6a 60       	ori	r22, 0x0A	; 10
+    2604:	65 7f       	andi	r22, 0xF5	; 245
     2606:	65 b9       	out	0x05, r22	; 5
-    2608:	65 b1       	in	r22, 0x05	; 5
-    260a:	65 7f       	andi	r22, 0xF5	; 245
-    260c:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 20));
-    260e:	b9 01       	movw	r22, r18
-    2610:	6c 5e       	subi	r22, 0xEC	; 236
-    2612:	7f 4f       	sbci	r23, 0xFF	; 255
-    2614:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2618:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    261c:	e6 0f       	add	r30, r22
-    261e:	f7 1f       	adc	r31, r23
-    2620:	e4 91       	lpm	r30, Z
-    2622:	6b b1       	in	r22, 0x0b	; 11
-    2624:	74 e0       	ldi	r23, 0x04	; 4
-    2626:	e7 9f       	mul	r30, r23
-    2628:	f0 01       	movw	r30, r0
-    262a:	11 24       	eor	r1, r1
-    262c:	63 70       	andi	r22, 0x03	; 3
-    262e:	e6 2b       	or	r30, r22
-    2630:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2632:	65 b1       	in	r22, 0x05	; 5
-    2634:	6a 60       	ori	r22, 0x0A	; 10
-    2636:	65 b9       	out	0x05, r22	; 5
-    2638:	65 b1       	in	r22, 0x05	; 5
-    263a:	65 7f       	andi	r22, 0xF5	; 245
-    263c:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    263e:	65 b1       	in	r22, 0x05	; 5
-    2640:	6a 60       	ori	r22, 0x0A	; 10
-    2642:	65 b9       	out	0x05, r22	; 5
-    2644:	65 b1       	in	r22, 0x05	; 5
-    2646:	65 7f       	andi	r22, 0xF5	; 245
-    2648:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 21));
-    264a:	b9 01       	movw	r22, r18
-    264c:	6b 5e       	subi	r22, 0xEB	; 235
-    264e:	7f 4f       	sbci	r23, 0xFF	; 255
-    2650:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2654:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2658:	e6 0f       	add	r30, r22
-    265a:	f7 1f       	adc	r31, r23
-    265c:	e4 91       	lpm	r30, Z
-    265e:	6b b1       	in	r22, 0x0b	; 11
-    2660:	74 e0       	ldi	r23, 0x04	; 4
-    2662:	e7 9f       	mul	r30, r23
-    2664:	f0 01       	movw	r30, r0
-    2666:	11 24       	eor	r1, r1
-    2668:	63 70       	andi	r22, 0x03	; 3
-    266a:	e6 2b       	or	r30, r22
-    266c:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    266e:	65 b1       	in	r22, 0x05	; 5
-    2670:	6a 60       	ori	r22, 0x0A	; 10
-    2672:	65 b9       	out	0x05, r22	; 5
-    2674:	65 b1       	in	r22, 0x05	; 5
-    2676:	65 7f       	andi	r22, 0xF5	; 245
-    2678:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2608:	f9 01       	movw	r30, r18
+    260a:	bd 96       	adiw	r30, 0x2d	; 45
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    260c:	64 91       	lpm	r22, Z
+    260e:	eb b1       	in	r30, 0x0b	; 11
+    2610:	f4 e0       	ldi	r31, 0x04	; 4
+    2612:	6f 9f       	mul	r22, r31
+    2614:	b0 01       	movw	r22, r0
+    2616:	11 24       	eor	r1, r1
+    2618:	e3 70       	andi	r30, 0x03	; 3
+    261a:	e6 2b       	or	r30, r22
+    261c:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    261e:	65 b1       	in	r22, 0x05	; 5
+    2620:	6a 60       	ori	r22, 0x0A	; 10
+    2622:	65 b9       	out	0x05, r22	; 5
+    2624:	65 b1       	in	r22, 0x05	; 5
+    2626:	65 7f       	andi	r22, 0xF5	; 245
+    2628:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    262a:	65 b1       	in	r22, 0x05	; 5
+    262c:	6a 60       	ori	r22, 0x0A	; 10
+    262e:	65 b9       	out	0x05, r22	; 5
+    2630:	65 b1       	in	r22, 0x05	; 5
+    2632:	65 7f       	andi	r22, 0xF5	; 245
+    2634:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2636:	f9 01       	movw	r30, r18
+    2638:	be 96       	adiw	r30, 0x2e	; 46
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    263a:	64 91       	lpm	r22, Z
+    263c:	eb b1       	in	r30, 0x0b	; 11
+    263e:	f4 e0       	ldi	r31, 0x04	; 4
+    2640:	6f 9f       	mul	r22, r31
+    2642:	b0 01       	movw	r22, r0
+    2644:	11 24       	eor	r1, r1
+    2646:	e3 70       	andi	r30, 0x03	; 3
+    2648:	e6 2b       	or	r30, r22
+    264a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    264c:	65 b1       	in	r22, 0x05	; 5
+    264e:	6a 60       	ori	r22, 0x0A	; 10
+    2650:	65 b9       	out	0x05, r22	; 5
+    2652:	65 b1       	in	r22, 0x05	; 5
+    2654:	65 7f       	andi	r22, 0xF5	; 245
+    2656:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2658:	65 b1       	in	r22, 0x05	; 5
+    265a:	6a 60       	ori	r22, 0x0A	; 10
+    265c:	65 b9       	out	0x05, r22	; 5
+    265e:	65 b1       	in	r22, 0x05	; 5
+    2660:	65 7f       	andi	r22, 0xF5	; 245
+    2662:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2664:	f9 01       	movw	r30, r18
+    2666:	bf 96       	adiw	r30, 0x2f	; 47
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2668:	64 91       	lpm	r22, Z
+    266a:	eb b1       	in	r30, 0x0b	; 11
+    266c:	f4 e0       	ldi	r31, 0x04	; 4
+    266e:	6f 9f       	mul	r22, r31
+    2670:	b0 01       	movw	r22, r0
+    2672:	11 24       	eor	r1, r1
+    2674:	e3 70       	andi	r30, 0x03	; 3
+    2676:	e6 2b       	or	r30, r22
+    2678:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
     267a:	65 b1       	in	r22, 0x05	; 5
     267c:	6a 60       	ori	r22, 0x0A	; 10
@@ -5123,149 +6256,212 @@ private:
     2680:	65 b1       	in	r22, 0x05	; 5
     2682:	65 7f       	andi	r22, 0xF5	; 245
     2684:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 22));
-    2686:	b9 01       	movw	r22, r18
-    2688:	6a 5e       	subi	r22, 0xEA	; 234
-    268a:	7f 4f       	sbci	r23, 0xFF	; 255
-    268c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2690:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2694:	e6 0f       	add	r30, r22
-    2696:	f7 1f       	adc	r31, r23
-    2698:	e4 91       	lpm	r30, Z
-    269a:	6b b1       	in	r22, 0x0b	; 11
-    269c:	74 e0       	ldi	r23, 0x04	; 4
-    269e:	e7 9f       	mul	r30, r23
-    26a0:	f0 01       	movw	r30, r0
-    26a2:	11 24       	eor	r1, r1
-    26a4:	63 70       	andi	r22, 0x03	; 3
-    26a6:	e6 2b       	or	r30, r22
-    26a8:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    26aa:	65 b1       	in	r22, 0x05	; 5
-    26ac:	6a 60       	ori	r22, 0x0A	; 10
-    26ae:	65 b9       	out	0x05, r22	; 5
-    26b0:	65 b1       	in	r22, 0x05	; 5
-    26b2:	65 7f       	andi	r22, 0xF5	; 245
-    26b4:	65 b9       	out	0x05, r22	; 5
+    2686:	65 b1       	in	r22, 0x05	; 5
+    2688:	6a 60       	ori	r22, 0x0A	; 10
+    268a:	65 b9       	out	0x05, r22	; 5
+    268c:	65 b1       	in	r22, 0x05	; 5
+    268e:	65 7f       	andi	r22, 0xF5	; 245
+    2690:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    26b6:	65 b1       	in	r22, 0x05	; 5
-    26b8:	6a 60       	ori	r22, 0x0A	; 10
-    26ba:	65 b9       	out	0x05, r22	; 5
-    26bc:	65 b1       	in	r22, 0x05	; 5
-    26be:	65 7f       	andi	r22, 0xF5	; 245
-    26c0:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 23));
-    26c2:	b9 01       	movw	r22, r18
-    26c4:	69 5e       	subi	r22, 0xE9	; 233
-    26c6:	7f 4f       	sbci	r23, 0xFF	; 255
-    26c8:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    26cc:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    26d0:	e6 0f       	add	r30, r22
-    26d2:	f7 1f       	adc	r31, r23
-    26d4:	e4 91       	lpm	r30, Z
-    26d6:	6b b1       	in	r22, 0x0b	; 11
-    26d8:	74 e0       	ldi	r23, 0x04	; 4
-    26da:	e7 9f       	mul	r30, r23
-    26dc:	f0 01       	movw	r30, r0
-    26de:	11 24       	eor	r1, r1
-    26e0:	63 70       	andi	r22, 0x03	; 3
-    26e2:	e6 2b       	or	r30, r22
-    26e4:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    26e6:	65 b1       	in	r22, 0x05	; 5
-    26e8:	6a 60       	ori	r22, 0x0A	; 10
-    26ea:	65 b9       	out	0x05, r22	; 5
-    26ec:	65 b1       	in	r22, 0x05	; 5
-    26ee:	65 7f       	andi	r22, 0xF5	; 245
-    26f0:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    26f2:	65 b1       	in	r22, 0x05	; 5
-    26f4:	6a 60       	ori	r22, 0x0A	; 10
-    26f6:	65 b9       	out	0x05, r22	; 5
-    26f8:	65 b1       	in	r22, 0x05	; 5
-    26fa:	65 7f       	andi	r22, 0xF5	; 245
-    26fc:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2692:	f9 01       	movw	r30, r18
+    2694:	f0 96       	adiw	r30, 0x30	; 48
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
-            // chip 3
-            SET_COLOR(pgm_read_byte(buffer + index + 24));
-    26fe:	b9 01       	movw	r22, r18
-    2700:	68 5e       	subi	r22, 0xE8	; 232
-    2702:	7f 4f       	sbci	r23, 0xFF	; 255
-    2704:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2708:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    270c:	e6 0f       	add	r30, r22
-    270e:	f7 1f       	adc	r31, r23
-    2710:	e4 91       	lpm	r30, Z
-    2712:	6b b1       	in	r22, 0x0b	; 11
-    2714:	74 e0       	ldi	r23, 0x04	; 4
-    2716:	e7 9f       	mul	r30, r23
-    2718:	f0 01       	movw	r30, r0
-    271a:	11 24       	eor	r1, r1
-    271c:	63 70       	andi	r22, 0x03	; 3
-    271e:	e6 2b       	or	r30, r22
-    2720:	eb b9       	out	0x0b, r30	; 11
+            // chip 6
+            SET_COLOR(pgm_read_byte(index++));
+    2696:	64 91       	lpm	r22, Z
+    2698:	eb b1       	in	r30, 0x0b	; 11
+    269a:	f4 e0       	ldi	r31, 0x04	; 4
+    269c:	6f 9f       	mul	r22, r31
+    269e:	b0 01       	movw	r22, r0
+    26a0:	11 24       	eor	r1, r1
+    26a2:	e3 70       	andi	r30, 0x03	; 3
+    26a4:	e6 2b       	or	r30, r22
+    26a6:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2722:	65 b1       	in	r22, 0x05	; 5
-    2724:	6a 60       	ori	r22, 0x0A	; 10
-    2726:	65 b9       	out	0x05, r22	; 5
-    2728:	65 b1       	in	r22, 0x05	; 5
-    272a:	65 7f       	andi	r22, 0xF5	; 245
-    272c:	65 b9       	out	0x05, r22	; 5
+    26a8:	65 b1       	in	r22, 0x05	; 5
+    26aa:	6a 60       	ori	r22, 0x0A	; 10
+    26ac:	65 b9       	out	0x05, r22	; 5
+    26ae:	65 b1       	in	r22, 0x05	; 5
+    26b0:	65 7f       	andi	r22, 0xF5	; 245
+    26b2:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    272e:	65 b1       	in	r22, 0x05	; 5
-    2730:	6a 60       	ori	r22, 0x0A	; 10
-    2732:	65 b9       	out	0x05, r22	; 5
-    2734:	65 b1       	in	r22, 0x05	; 5
-    2736:	65 7f       	andi	r22, 0xF5	; 245
-    2738:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 25));
-    273a:	b9 01       	movw	r22, r18
-    273c:	67 5e       	subi	r22, 0xE7	; 231
-    273e:	7f 4f       	sbci	r23, 0xFF	; 255
-    2740:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2744:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2748:	e6 0f       	add	r30, r22
-    274a:	f7 1f       	adc	r31, r23
-    274c:	e4 91       	lpm	r30, Z
-    274e:	6b b1       	in	r22, 0x0b	; 11
-    2750:	74 e0       	ldi	r23, 0x04	; 4
-    2752:	e7 9f       	mul	r30, r23
-    2754:	f0 01       	movw	r30, r0
-    2756:	11 24       	eor	r1, r1
-    2758:	63 70       	andi	r22, 0x03	; 3
-    275a:	e6 2b       	or	r30, r22
-    275c:	eb b9       	out	0x0b, r30	; 11
+    26b4:	65 b1       	in	r22, 0x05	; 5
+    26b6:	6a 60       	ori	r22, 0x0A	; 10
+    26b8:	65 b9       	out	0x05, r22	; 5
+    26ba:	65 b1       	in	r22, 0x05	; 5
+    26bc:	65 7f       	andi	r22, 0xF5	; 245
+    26be:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    275e:	65 b1       	in	r22, 0x05	; 5
-    2760:	6a 60       	ori	r22, 0x0A	; 10
-    2762:	65 b9       	out	0x05, r22	; 5
-    2764:	65 b1       	in	r22, 0x05	; 5
-    2766:	65 7f       	andi	r22, 0xF5	; 245
-    2768:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    276a:	65 b1       	in	r22, 0x05	; 5
-    276c:	6a 60       	ori	r22, 0x0A	; 10
-    276e:	65 b9       	out	0x05, r22	; 5
-    2770:	65 b1       	in	r22, 0x05	; 5
-    2772:	65 7f       	andi	r22, 0xF5	; 245
-    2774:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 26));
-    2776:	b9 01       	movw	r22, r18
-    2778:	66 5e       	subi	r22, 0xE6	; 230
-    277a:	7f 4f       	sbci	r23, 0xFF	; 255
-    277c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2780:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2784:	e6 0f       	add	r30, r22
-    2786:	f7 1f       	adc	r31, r23
-    2788:	e4 91       	lpm	r30, Z
-    278a:	6b b1       	in	r22, 0x0b	; 11
-    278c:	74 e0       	ldi	r23, 0x04	; 4
-    278e:	e7 9f       	mul	r30, r23
-    2790:	f0 01       	movw	r30, r0
-    2792:	11 24       	eor	r1, r1
-    2794:	63 70       	andi	r22, 0x03	; 3
-    2796:	e6 2b       	or	r30, r22
-    2798:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 6
+            SET_COLOR(pgm_read_byte(index++));
+    26c0:	f9 01       	movw	r30, r18
+    26c2:	f1 96       	adiw	r30, 0x31	; 49
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    26c4:	64 91       	lpm	r22, Z
+    26c6:	eb b1       	in	r30, 0x0b	; 11
+    26c8:	f4 e0       	ldi	r31, 0x04	; 4
+    26ca:	6f 9f       	mul	r22, r31
+    26cc:	b0 01       	movw	r22, r0
+    26ce:	11 24       	eor	r1, r1
+    26d0:	e3 70       	andi	r30, 0x03	; 3
+    26d2:	e6 2b       	or	r30, r22
+    26d4:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    26d6:	65 b1       	in	r22, 0x05	; 5
+    26d8:	6a 60       	ori	r22, 0x0A	; 10
+    26da:	65 b9       	out	0x05, r22	; 5
+    26dc:	65 b1       	in	r22, 0x05	; 5
+    26de:	65 7f       	andi	r22, 0xF5	; 245
+    26e0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    26e2:	65 b1       	in	r22, 0x05	; 5
+    26e4:	6a 60       	ori	r22, 0x0A	; 10
+    26e6:	65 b9       	out	0x05, r22	; 5
+    26e8:	65 b1       	in	r22, 0x05	; 5
+    26ea:	65 7f       	andi	r22, 0xF5	; 245
+    26ec:	65 b9       	out	0x05, r22	; 5
+
+            // chip 6
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    26ee:	f9 01       	movw	r30, r18
+    26f0:	f2 96       	adiw	r30, 0x32	; 50
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    26f2:	64 91       	lpm	r22, Z
+    26f4:	eb b1       	in	r30, 0x0b	; 11
+    26f6:	f4 e0       	ldi	r31, 0x04	; 4
+    26f8:	6f 9f       	mul	r22, r31
+    26fa:	b0 01       	movw	r22, r0
+    26fc:	11 24       	eor	r1, r1
+    26fe:	e3 70       	andi	r30, 0x03	; 3
+    2700:	e6 2b       	or	r30, r22
+    2702:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2704:	65 b1       	in	r22, 0x05	; 5
+    2706:	6a 60       	ori	r22, 0x0A	; 10
+    2708:	65 b9       	out	0x05, r22	; 5
+    270a:	65 b1       	in	r22, 0x05	; 5
+    270c:	65 7f       	andi	r22, 0xF5	; 245
+    270e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2710:	65 b1       	in	r22, 0x05	; 5
+    2712:	6a 60       	ori	r22, 0x0A	; 10
+    2714:	65 b9       	out	0x05, r22	; 5
+    2716:	65 b1       	in	r22, 0x05	; 5
+    2718:	65 7f       	andi	r22, 0xF5	; 245
+    271a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    271c:	f9 01       	movw	r30, r18
+    271e:	f3 96       	adiw	r30, 0x33	; 51
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2720:	64 91       	lpm	r22, Z
+    2722:	eb b1       	in	r30, 0x0b	; 11
+    2724:	f4 e0       	ldi	r31, 0x04	; 4
+    2726:	6f 9f       	mul	r22, r31
+    2728:	b0 01       	movw	r22, r0
+    272a:	11 24       	eor	r1, r1
+    272c:	e3 70       	andi	r30, 0x03	; 3
+    272e:	e6 2b       	or	r30, r22
+    2730:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2732:	65 b1       	in	r22, 0x05	; 5
+    2734:	6a 60       	ori	r22, 0x0A	; 10
+    2736:	65 b9       	out	0x05, r22	; 5
+    2738:	65 b1       	in	r22, 0x05	; 5
+    273a:	65 7f       	andi	r22, 0xF5	; 245
+    273c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    273e:	65 b1       	in	r22, 0x05	; 5
+    2740:	6a 60       	ori	r22, 0x0A	; 10
+    2742:	65 b9       	out	0x05, r22	; 5
+    2744:	65 b1       	in	r22, 0x05	; 5
+    2746:	65 7f       	andi	r22, 0xF5	; 245
+    2748:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    274a:	f9 01       	movw	r30, r18
+    274c:	f4 96       	adiw	r30, 0x34	; 52
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    274e:	64 91       	lpm	r22, Z
+    2750:	eb b1       	in	r30, 0x0b	; 11
+    2752:	f4 e0       	ldi	r31, 0x04	; 4
+    2754:	6f 9f       	mul	r22, r31
+    2756:	b0 01       	movw	r22, r0
+    2758:	11 24       	eor	r1, r1
+    275a:	e3 70       	andi	r30, 0x03	; 3
+    275c:	e6 2b       	or	r30, r22
+    275e:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2760:	65 b1       	in	r22, 0x05	; 5
+    2762:	6a 60       	ori	r22, 0x0A	; 10
+    2764:	65 b9       	out	0x05, r22	; 5
+    2766:	65 b1       	in	r22, 0x05	; 5
+    2768:	65 7f       	andi	r22, 0xF5	; 245
+    276a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    276c:	65 b1       	in	r22, 0x05	; 5
+    276e:	6a 60       	ori	r22, 0x0A	; 10
+    2770:	65 b9       	out	0x05, r22	; 5
+    2772:	65 b1       	in	r22, 0x05	; 5
+    2774:	65 7f       	andi	r22, 0xF5	; 245
+    2776:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2778:	f9 01       	movw	r30, r18
+    277a:	f5 96       	adiw	r30, 0x35	; 53
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    277c:	64 91       	lpm	r22, Z
+    277e:	eb b1       	in	r30, 0x0b	; 11
+    2780:	f4 e0       	ldi	r31, 0x04	; 4
+    2782:	6f 9f       	mul	r22, r31
+    2784:	b0 01       	movw	r22, r0
+    2786:	11 24       	eor	r1, r1
+    2788:	e3 70       	andi	r30, 0x03	; 3
+    278a:	e6 2b       	or	r30, r22
+    278c:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    278e:	65 b1       	in	r22, 0x05	; 5
+    2790:	6a 60       	ori	r22, 0x0A	; 10
+    2792:	65 b9       	out	0x05, r22	; 5
+    2794:	65 b1       	in	r22, 0x05	; 5
+    2796:	65 7f       	andi	r22, 0xF5	; 245
+    2798:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
     279a:	65 b1       	in	r22, 0x05	; 5
     279c:	6a 60       	ori	r22, 0x0A	; 10
@@ -5274,496 +6470,713 @@ private:
     27a2:	65 7f       	andi	r22, 0xF5	; 245
     27a4:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    27a6:	65 b1       	in	r22, 0x05	; 5
-    27a8:	6a 60       	ori	r22, 0x0A	; 10
-    27aa:	65 b9       	out	0x05, r22	; 5
-    27ac:	65 b1       	in	r22, 0x05	; 5
-    27ae:	65 7f       	andi	r22, 0xF5	; 245
-    27b0:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 27));
-    27b2:	b9 01       	movw	r22, r18
-    27b4:	65 5e       	subi	r22, 0xE5	; 229
-    27b6:	7f 4f       	sbci	r23, 0xFF	; 255
-    27b8:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    27bc:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    27c0:	e6 0f       	add	r30, r22
-    27c2:	f7 1f       	adc	r31, r23
-    27c4:	e4 91       	lpm	r30, Z
-    27c6:	6b b1       	in	r22, 0x0b	; 11
-    27c8:	74 e0       	ldi	r23, 0x04	; 4
-    27ca:	e7 9f       	mul	r30, r23
-    27cc:	f0 01       	movw	r30, r0
-    27ce:	11 24       	eor	r1, r1
-    27d0:	63 70       	andi	r22, 0x03	; 3
-    27d2:	e6 2b       	or	r30, r22
-    27d4:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    27d6:	65 b1       	in	r22, 0x05	; 5
-    27d8:	6a 60       	ori	r22, 0x0A	; 10
-    27da:	65 b9       	out	0x05, r22	; 5
-    27dc:	65 b1       	in	r22, 0x05	; 5
-    27de:	65 7f       	andi	r22, 0xF5	; 245
-    27e0:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    27e2:	65 b1       	in	r22, 0x05	; 5
-    27e4:	6a 60       	ori	r22, 0x0A	; 10
-    27e6:	65 b9       	out	0x05, r22	; 5
-    27e8:	65 b1       	in	r22, 0x05	; 5
-    27ea:	65 7f       	andi	r22, 0xF5	; 245
-    27ec:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 28));
-    27ee:	b9 01       	movw	r22, r18
-    27f0:	64 5e       	subi	r22, 0xE4	; 228
-    27f2:	7f 4f       	sbci	r23, 0xFF	; 255
-    27f4:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    27f8:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    27fc:	e6 0f       	add	r30, r22
-    27fe:	f7 1f       	adc	r31, r23
-    2800:	e4 91       	lpm	r30, Z
-    2802:	6b b1       	in	r22, 0x0b	; 11
-    2804:	74 e0       	ldi	r23, 0x04	; 4
-    2806:	e7 9f       	mul	r30, r23
-    2808:	f0 01       	movw	r30, r0
-    280a:	11 24       	eor	r1, r1
-    280c:	63 70       	andi	r22, 0x03	; 3
-    280e:	e6 2b       	or	r30, r22
-    2810:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2812:	65 b1       	in	r22, 0x05	; 5
-    2814:	6a 60       	ori	r22, 0x0A	; 10
-    2816:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    27a6:	f9 01       	movw	r30, r18
+    27a8:	f6 96       	adiw	r30, 0x36	; 54
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    27aa:	64 91       	lpm	r22, Z
+    27ac:	eb b1       	in	r30, 0x0b	; 11
+    27ae:	f4 e0       	ldi	r31, 0x04	; 4
+    27b0:	6f 9f       	mul	r22, r31
+    27b2:	b0 01       	movw	r22, r0
+    27b4:	11 24       	eor	r1, r1
+    27b6:	e3 70       	andi	r30, 0x03	; 3
+    27b8:	e6 2b       	or	r30, r22
+    27ba:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    27bc:	65 b1       	in	r22, 0x05	; 5
+    27be:	6a 60       	ori	r22, 0x0A	; 10
+    27c0:	65 b9       	out	0x05, r22	; 5
+    27c2:	65 b1       	in	r22, 0x05	; 5
+    27c4:	65 7f       	andi	r22, 0xF5	; 245
+    27c6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    27c8:	65 b1       	in	r22, 0x05	; 5
+    27ca:	6a 60       	ori	r22, 0x0A	; 10
+    27cc:	65 b9       	out	0x05, r22	; 5
+    27ce:	65 b1       	in	r22, 0x05	; 5
+    27d0:	65 7f       	andi	r22, 0xF5	; 245
+    27d2:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    27d4:	f9 01       	movw	r30, r18
+    27d6:	f7 96       	adiw	r30, 0x37	; 55
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    27d8:	64 91       	lpm	r22, Z
+    27da:	eb b1       	in	r30, 0x0b	; 11
+    27dc:	f4 e0       	ldi	r31, 0x04	; 4
+    27de:	6f 9f       	mul	r22, r31
+    27e0:	b0 01       	movw	r22, r0
+    27e2:	11 24       	eor	r1, r1
+    27e4:	e3 70       	andi	r30, 0x03	; 3
+    27e6:	e6 2b       	or	r30, r22
+    27e8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    27ea:	65 b1       	in	r22, 0x05	; 5
+    27ec:	6a 60       	ori	r22, 0x0A	; 10
+    27ee:	65 b9       	out	0x05, r22	; 5
+    27f0:	65 b1       	in	r22, 0x05	; 5
+    27f2:	65 7f       	andi	r22, 0xF5	; 245
+    27f4:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    27f6:	65 b1       	in	r22, 0x05	; 5
+    27f8:	6a 60       	ori	r22, 0x0A	; 10
+    27fa:	65 b9       	out	0x05, r22	; 5
+    27fc:	65 b1       	in	r22, 0x05	; 5
+    27fe:	65 7f       	andi	r22, 0xF5	; 245
+    2800:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2802:	f9 01       	movw	r30, r18
+    2804:	f8 96       	adiw	r30, 0x38	; 56
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 7
+            SET_COLOR(pgm_read_byte(index++));
+    2806:	64 91       	lpm	r22, Z
+    2808:	eb b1       	in	r30, 0x0b	; 11
+    280a:	f4 e0       	ldi	r31, 0x04	; 4
+    280c:	6f 9f       	mul	r22, r31
+    280e:	b0 01       	movw	r22, r0
+    2810:	11 24       	eor	r1, r1
+    2812:	e3 70       	andi	r30, 0x03	; 3
+    2814:	e6 2b       	or	r30, r22
+    2816:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
     2818:	65 b1       	in	r22, 0x05	; 5
-    281a:	65 7f       	andi	r22, 0xF5	; 245
+    281a:	6a 60       	ori	r22, 0x0A	; 10
     281c:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
     281e:	65 b1       	in	r22, 0x05	; 5
-    2820:	6a 60       	ori	r22, 0x0A	; 10
+    2820:	65 7f       	andi	r22, 0xF5	; 245
     2822:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
     2824:	65 b1       	in	r22, 0x05	; 5
-    2826:	65 7f       	andi	r22, 0xF5	; 245
+    2826:	6a 60       	ori	r22, 0x0A	; 10
     2828:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 29));
-    282a:	b9 01       	movw	r22, r18
-    282c:	63 5e       	subi	r22, 0xE3	; 227
-    282e:	7f 4f       	sbci	r23, 0xFF	; 255
-    2830:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2834:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2838:	e6 0f       	add	r30, r22
-    283a:	f7 1f       	adc	r31, r23
-    283c:	e4 91       	lpm	r30, Z
-    283e:	6b b1       	in	r22, 0x0b	; 11
-    2840:	74 e0       	ldi	r23, 0x04	; 4
-    2842:	e7 9f       	mul	r30, r23
-    2844:	f0 01       	movw	r30, r0
-    2846:	11 24       	eor	r1, r1
-    2848:	63 70       	andi	r22, 0x03	; 3
-    284a:	e6 2b       	or	r30, r22
-    284c:	eb b9       	out	0x0b, r30	; 11
+    282a:	65 b1       	in	r22, 0x05	; 5
+    282c:	65 7f       	andi	r22, 0xF5	; 245
+    282e:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    284e:	65 b1       	in	r22, 0x05	; 5
-    2850:	6a 60       	ori	r22, 0x0A	; 10
-    2852:	65 b9       	out	0x05, r22	; 5
-    2854:	65 b1       	in	r22, 0x05	; 5
-    2856:	65 7f       	andi	r22, 0xF5	; 245
-    2858:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    285a:	65 b1       	in	r22, 0x05	; 5
-    285c:	6a 60       	ori	r22, 0x0A	; 10
-    285e:	65 b9       	out	0x05, r22	; 5
-    2860:	65 b1       	in	r22, 0x05	; 5
-    2862:	65 7f       	andi	r22, 0xF5	; 245
-    2864:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 30));
-    2866:	b9 01       	movw	r22, r18
-    2868:	62 5e       	subi	r22, 0xE2	; 226
-    286a:	7f 4f       	sbci	r23, 0xFF	; 255
-    286c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2870:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2874:	e6 0f       	add	r30, r22
-    2876:	f7 1f       	adc	r31, r23
-    2878:	e4 91       	lpm	r30, Z
-    287a:	6b b1       	in	r22, 0x0b	; 11
-    287c:	74 e0       	ldi	r23, 0x04	; 4
-    287e:	e7 9f       	mul	r30, r23
-    2880:	f0 01       	movw	r30, r0
-    2882:	11 24       	eor	r1, r1
-    2884:	63 70       	andi	r22, 0x03	; 3
-    2886:	e6 2b       	or	r30, r22
-    2888:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    288a:	65 b1       	in	r22, 0x05	; 5
-    288c:	6a 60       	ori	r22, 0x0A	; 10
-    288e:	65 b9       	out	0x05, r22	; 5
-    2890:	65 b1       	in	r22, 0x05	; 5
-    2892:	65 7f       	andi	r22, 0xF5	; 245
-    2894:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    2896:	65 b1       	in	r22, 0x05	; 5
-    2898:	6a 60       	ori	r22, 0x0A	; 10
-    289a:	65 b9       	out	0x05, r22	; 5
-    289c:	65 b1       	in	r22, 0x05	; 5
-    289e:	65 7f       	andi	r22, 0xF5	; 245
-    28a0:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 31));
-    28a2:	b9 01       	movw	r22, r18
-    28a4:	61 5e       	subi	r22, 0xE1	; 225
-    28a6:	7f 4f       	sbci	r23, 0xFF	; 255
-    28a8:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    28ac:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    28b0:	e6 0f       	add	r30, r22
-    28b2:	f7 1f       	adc	r31, r23
-    28b4:	e4 91       	lpm	r30, Z
-    28b6:	6b b1       	in	r22, 0x0b	; 11
-    28b8:	74 e0       	ldi	r23, 0x04	; 4
-    28ba:	e7 9f       	mul	r30, r23
-    28bc:	f0 01       	movw	r30, r0
-    28be:	11 24       	eor	r1, r1
-    28c0:	63 70       	andi	r22, 0x03	; 3
-    28c2:	e6 2b       	or	r30, r22
-    28c4:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    28c6:	65 b1       	in	r22, 0x05	; 5
-    28c8:	6a 60       	ori	r22, 0x0A	; 10
-    28ca:	65 b9       	out	0x05, r22	; 5
-    28cc:	65 b1       	in	r22, 0x05	; 5
-    28ce:	65 7f       	andi	r22, 0xF5	; 245
-    28d0:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    28d2:	65 b1       	in	r22, 0x05	; 5
-    28d4:	6a 60       	ori	r22, 0x0A	; 10
-    28d6:	65 b9       	out	0x05, r22	; 5
-    28d8:	65 b1       	in	r22, 0x05	; 5
-    28da:	65 7f       	andi	r22, 0xF5	; 245
-    28dc:	65 b9       	out	0x05, r22	; 5
 
-            // chip 4
-            SET_COLOR(pgm_read_byte(buffer + index + 32));
-    28de:	b9 01       	movw	r22, r18
-    28e0:	60 5e       	subi	r22, 0xE0	; 224
-    28e2:	7f 4f       	sbci	r23, 0xFF	; 255
-    28e4:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    28e8:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    28ec:	e6 0f       	add	r30, r22
-    28ee:	f7 1f       	adc	r31, r23
-    28f0:	e4 91       	lpm	r30, Z
-    28f2:	6b b1       	in	r22, 0x0b	; 11
-    28f4:	74 e0       	ldi	r23, 0x04	; 4
-    28f6:	e7 9f       	mul	r30, r23
-    28f8:	f0 01       	movw	r30, r0
-    28fa:	11 24       	eor	r1, r1
-    28fc:	63 70       	andi	r22, 0x03	; 3
-    28fe:	e6 2b       	or	r30, r22
-    2900:	eb b9       	out	0x0b, r30	; 11
+            // chip 7
+            SET_COLOR(pgm_read_byte(index++));
+    2830:	f9 01       	movw	r30, r18
+    2832:	f9 96       	adiw	r30, 0x39	; 57
             PWCLK_GCLK;
-    2902:	65 b1       	in	r22, 0x05	; 5
-    2904:	6a 60       	ori	r22, 0x0A	; 10
-    2906:	65 b9       	out	0x05, r22	; 5
-    2908:	65 b1       	in	r22, 0x05	; 5
-    290a:	65 7f       	andi	r22, 0xF5	; 245
-    290c:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    290e:	65 b1       	in	r22, 0x05	; 5
-    2910:	6a 60       	ori	r22, 0x0A	; 10
-    2912:	65 b9       	out	0x05, r22	; 5
-    2914:	65 b1       	in	r22, 0x05	; 5
-    2916:	65 7f       	andi	r22, 0xF5	; 245
-    2918:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 33));
-    291a:	b9 01       	movw	r22, r18
-    291c:	6f 5d       	subi	r22, 0xDF	; 223
-    291e:	7f 4f       	sbci	r23, 0xFF	; 255
-    2920:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2924:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2928:	e6 0f       	add	r30, r22
-    292a:	f7 1f       	adc	r31, r23
-    292c:	e4 91       	lpm	r30, Z
-    292e:	6b b1       	in	r22, 0x0b	; 11
-    2930:	74 e0       	ldi	r23, 0x04	; 4
-    2932:	e7 9f       	mul	r30, r23
-    2934:	f0 01       	movw	r30, r0
-    2936:	11 24       	eor	r1, r1
-    2938:	63 70       	andi	r22, 0x03	; 3
-    293a:	e6 2b       	or	r30, r22
-    293c:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    2834:	64 91       	lpm	r22, Z
+    2836:	eb b1       	in	r30, 0x0b	; 11
+    2838:	f4 e0       	ldi	r31, 0x04	; 4
+    283a:	6f 9f       	mul	r22, r31
+    283c:	b0 01       	movw	r22, r0
+    283e:	11 24       	eor	r1, r1
+    2840:	e3 70       	andi	r30, 0x03	; 3
+    2842:	e6 2b       	or	r30, r22
+    2844:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
+    2846:	65 b1       	in	r22, 0x05	; 5
+    2848:	6a 60       	ori	r22, 0x0A	; 10
+    284a:	65 b9       	out	0x05, r22	; 5
+    284c:	65 b1       	in	r22, 0x05	; 5
+    284e:	65 7f       	andi	r22, 0xF5	; 245
+    2850:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2852:	65 b1       	in	r22, 0x05	; 5
+    2854:	6a 60       	ori	r22, 0x0A	; 10
+    2856:	65 b9       	out	0x05, r22	; 5
+    2858:	65 b1       	in	r22, 0x05	; 5
+    285a:	65 7f       	andi	r22, 0xF5	; 245
+    285c:	65 b9       	out	0x05, r22	; 5
+
+            // chip 7
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    285e:	f9 01       	movw	r30, r18
+    2860:	fa 96       	adiw	r30, 0x3a	; 58
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2862:	64 91       	lpm	r22, Z
+    2864:	eb b1       	in	r30, 0x0b	; 11
+    2866:	f4 e0       	ldi	r31, 0x04	; 4
+    2868:	6f 9f       	mul	r22, r31
+    286a:	b0 01       	movw	r22, r0
+    286c:	11 24       	eor	r1, r1
+    286e:	e3 70       	andi	r30, 0x03	; 3
+    2870:	e6 2b       	or	r30, r22
+    2872:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2874:	65 b1       	in	r22, 0x05	; 5
+    2876:	6a 60       	ori	r22, 0x0A	; 10
+    2878:	65 b9       	out	0x05, r22	; 5
+    287a:	65 b1       	in	r22, 0x05	; 5
+    287c:	65 7f       	andi	r22, 0xF5	; 245
+    287e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2880:	65 b1       	in	r22, 0x05	; 5
+    2882:	6a 60       	ori	r22, 0x0A	; 10
+    2884:	65 b9       	out	0x05, r22	; 5
+    2886:	65 b1       	in	r22, 0x05	; 5
+    2888:	65 7f       	andi	r22, 0xF5	; 245
+    288a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    288c:	f9 01       	movw	r30, r18
+    288e:	fb 96       	adiw	r30, 0x3b	; 59
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2890:	64 91       	lpm	r22, Z
+    2892:	eb b1       	in	r30, 0x0b	; 11
+    2894:	f4 e0       	ldi	r31, 0x04	; 4
+    2896:	6f 9f       	mul	r22, r31
+    2898:	b0 01       	movw	r22, r0
+    289a:	11 24       	eor	r1, r1
+    289c:	e3 70       	andi	r30, 0x03	; 3
+    289e:	e6 2b       	or	r30, r22
+    28a0:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    28a2:	65 b1       	in	r22, 0x05	; 5
+    28a4:	6a 60       	ori	r22, 0x0A	; 10
+    28a6:	65 b9       	out	0x05, r22	; 5
+    28a8:	65 b1       	in	r22, 0x05	; 5
+    28aa:	65 7f       	andi	r22, 0xF5	; 245
+    28ac:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    28ae:	65 b1       	in	r22, 0x05	; 5
+    28b0:	6a 60       	ori	r22, 0x0A	; 10
+    28b2:	65 b9       	out	0x05, r22	; 5
+    28b4:	65 b1       	in	r22, 0x05	; 5
+    28b6:	65 7f       	andi	r22, 0xF5	; 245
+    28b8:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    28ba:	f9 01       	movw	r30, r18
+    28bc:	fc 96       	adiw	r30, 0x3c	; 60
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    28be:	64 91       	lpm	r22, Z
+    28c0:	eb b1       	in	r30, 0x0b	; 11
+    28c2:	f4 e0       	ldi	r31, 0x04	; 4
+    28c4:	6f 9f       	mul	r22, r31
+    28c6:	b0 01       	movw	r22, r0
+    28c8:	11 24       	eor	r1, r1
+    28ca:	e3 70       	andi	r30, 0x03	; 3
+    28cc:	e6 2b       	or	r30, r22
+    28ce:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    28d0:	65 b1       	in	r22, 0x05	; 5
+    28d2:	6a 60       	ori	r22, 0x0A	; 10
+    28d4:	65 b9       	out	0x05, r22	; 5
+    28d6:	65 b1       	in	r22, 0x05	; 5
+    28d8:	65 7f       	andi	r22, 0xF5	; 245
+    28da:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    28dc:	65 b1       	in	r22, 0x05	; 5
+    28de:	6a 60       	ori	r22, 0x0A	; 10
+    28e0:	65 b9       	out	0x05, r22	; 5
+    28e2:	65 b1       	in	r22, 0x05	; 5
+    28e4:	65 7f       	andi	r22, 0xF5	; 245
+    28e6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    28e8:	f9 01       	movw	r30, r18
+    28ea:	fd 96       	adiw	r30, 0x3d	; 61
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    28ec:	64 91       	lpm	r22, Z
+    28ee:	eb b1       	in	r30, 0x0b	; 11
+    28f0:	f4 e0       	ldi	r31, 0x04	; 4
+    28f2:	6f 9f       	mul	r22, r31
+    28f4:	b0 01       	movw	r22, r0
+    28f6:	11 24       	eor	r1, r1
+    28f8:	e3 70       	andi	r30, 0x03	; 3
+    28fa:	e6 2b       	or	r30, r22
+    28fc:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    28fe:	65 b1       	in	r22, 0x05	; 5
+    2900:	6a 60       	ori	r22, 0x0A	; 10
+    2902:	65 b9       	out	0x05, r22	; 5
+    2904:	65 b1       	in	r22, 0x05	; 5
+    2906:	65 7f       	andi	r22, 0xF5	; 245
+    2908:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    290a:	65 b1       	in	r22, 0x05	; 5
+    290c:	6a 60       	ori	r22, 0x0A	; 10
+    290e:	65 b9       	out	0x05, r22	; 5
+    2910:	65 b1       	in	r22, 0x05	; 5
+    2912:	65 7f       	andi	r22, 0xF5	; 245
+    2914:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2916:	f9 01       	movw	r30, r18
+    2918:	fe 96       	adiw	r30, 0x3e	; 62
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    291a:	64 91       	lpm	r22, Z
+    291c:	eb b1       	in	r30, 0x0b	; 11
+    291e:	f4 e0       	ldi	r31, 0x04	; 4
+    2920:	6f 9f       	mul	r22, r31
+    2922:	b0 01       	movw	r22, r0
+    2924:	11 24       	eor	r1, r1
+    2926:	e3 70       	andi	r30, 0x03	; 3
+    2928:	e6 2b       	or	r30, r22
+    292a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    292c:	65 b1       	in	r22, 0x05	; 5
+    292e:	6a 60       	ori	r22, 0x0A	; 10
+    2930:	65 b9       	out	0x05, r22	; 5
+    2932:	65 b1       	in	r22, 0x05	; 5
+    2934:	65 7f       	andi	r22, 0xF5	; 245
+    2936:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2938:	65 b1       	in	r22, 0x05	; 5
+    293a:	6a 60       	ori	r22, 0x0A	; 10
+    293c:	65 b9       	out	0x05, r22	; 5
     293e:	65 b1       	in	r22, 0x05	; 5
-    2940:	6a 60       	ori	r22, 0x0A	; 10
+    2940:	65 7f       	andi	r22, 0xF5	; 245
     2942:	65 b9       	out	0x05, r22	; 5
-    2944:	65 b1       	in	r22, 0x05	; 5
-    2946:	65 7f       	andi	r22, 0xF5	; 245
-    2948:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    294a:	65 b1       	in	r22, 0x05	; 5
-    294c:	6a 60       	ori	r22, 0x0A	; 10
-    294e:	65 b9       	out	0x05, r22	; 5
-    2950:	65 b1       	in	r22, 0x05	; 5
-    2952:	65 7f       	andi	r22, 0xF5	; 245
-    2954:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 34));
-    2956:	b9 01       	movw	r22, r18
-    2958:	6e 5d       	subi	r22, 0xDE	; 222
-    295a:	7f 4f       	sbci	r23, 0xFF	; 255
-    295c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2960:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2964:	e6 0f       	add	r30, r22
-    2966:	f7 1f       	adc	r31, r23
-    2968:	e4 91       	lpm	r30, Z
-    296a:	6b b1       	in	r22, 0x0b	; 11
-    296c:	74 e0       	ldi	r23, 0x04	; 4
-    296e:	e7 9f       	mul	r30, r23
-    2970:	f0 01       	movw	r30, r0
-    2972:	11 24       	eor	r1, r1
-    2974:	63 70       	andi	r22, 0x03	; 3
-    2976:	e6 2b       	or	r30, r22
-    2978:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    297a:	65 b1       	in	r22, 0x05	; 5
-    297c:	6a 60       	ori	r22, 0x0A	; 10
-    297e:	65 b9       	out	0x05, r22	; 5
-    2980:	65 b1       	in	r22, 0x05	; 5
-    2982:	65 7f       	andi	r22, 0xF5	; 245
-    2984:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    2986:	65 b1       	in	r22, 0x05	; 5
-    2988:	6a 60       	ori	r22, 0x0A	; 10
-    298a:	65 b9       	out	0x05, r22	; 5
-    298c:	65 b1       	in	r22, 0x05	; 5
-    298e:	65 7f       	andi	r22, 0xF5	; 245
-    2990:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 35));
-    2992:	b9 01       	movw	r22, r18
-    2994:	6d 5d       	subi	r22, 0xDD	; 221
-    2996:	7f 4f       	sbci	r23, 0xFF	; 255
-    2998:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    299c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    29a0:	e6 0f       	add	r30, r22
-    29a2:	f7 1f       	adc	r31, r23
-    29a4:	e4 91       	lpm	r30, Z
-    29a6:	6b b1       	in	r22, 0x0b	; 11
-    29a8:	74 e0       	ldi	r23, 0x04	; 4
-    29aa:	e7 9f       	mul	r30, r23
-    29ac:	f0 01       	movw	r30, r0
-    29ae:	11 24       	eor	r1, r1
-    29b0:	63 70       	andi	r22, 0x03	; 3
-    29b2:	e6 2b       	or	r30, r22
-    29b4:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    29b6:	65 b1       	in	r22, 0x05	; 5
-    29b8:	6a 60       	ori	r22, 0x0A	; 10
-    29ba:	65 b9       	out	0x05, r22	; 5
-    29bc:	65 b1       	in	r22, 0x05	; 5
-    29be:	65 7f       	andi	r22, 0xF5	; 245
-    29c0:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    2944:	f9 01       	movw	r30, r18
+    2946:	ff 96       	adiw	r30, 0x3f	; 63
             PWCLK_GCLK;
-    29c2:	65 b1       	in	r22, 0x05	; 5
-    29c4:	6a 60       	ori	r22, 0x0A	; 10
-    29c6:	65 b9       	out	0x05, r22	; 5
-    29c8:	65 b1       	in	r22, 0x05	; 5
-    29ca:	65 7f       	andi	r22, 0xF5	; 245
-    29cc:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 36));
-    29ce:	b9 01       	movw	r22, r18
-    29d0:	6c 5d       	subi	r22, 0xDC	; 220
-    29d2:	7f 4f       	sbci	r23, 0xFF	; 255
-    29d4:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    29d8:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    29dc:	e6 0f       	add	r30, r22
-    29de:	f7 1f       	adc	r31, r23
-    29e0:	e4 91       	lpm	r30, Z
-    29e2:	6b b1       	in	r22, 0x0b	; 11
-    29e4:	74 e0       	ldi	r23, 0x04	; 4
-    29e6:	e7 9f       	mul	r30, r23
-    29e8:	f0 01       	movw	r30, r0
-    29ea:	11 24       	eor	r1, r1
-    29ec:	63 70       	andi	r22, 0x03	; 3
-    29ee:	e6 2b       	or	r30, r22
-    29f0:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    29f2:	65 b1       	in	r22, 0x05	; 5
-    29f4:	6a 60       	ori	r22, 0x0A	; 10
-    29f6:	65 b9       	out	0x05, r22	; 5
-    29f8:	65 b1       	in	r22, 0x05	; 5
-    29fa:	65 7f       	andi	r22, 0xF5	; 245
-    29fc:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    2948:	e4 91       	lpm	r30, Z
+    294a:	2b b1       	in	r18, 0x0b	; 11
+    294c:	34 e0       	ldi	r19, 0x04	; 4
+    294e:	e3 9f       	mul	r30, r19
+    2950:	f0 01       	movw	r30, r0
+    2952:	11 24       	eor	r1, r1
+    2954:	23 70       	andi	r18, 0x03	; 3
+    2956:	e2 2b       	or	r30, r18
+    2958:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    29fe:	65 b1       	in	r22, 0x05	; 5
-    2a00:	6a 60       	ori	r22, 0x0A	; 10
-    2a02:	65 b9       	out	0x05, r22	; 5
-    2a04:	65 b1       	in	r22, 0x05	; 5
-    2a06:	65 7f       	andi	r22, 0xF5	; 245
-    2a08:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 37));
-    2a0a:	b9 01       	movw	r22, r18
-    2a0c:	6b 5d       	subi	r22, 0xDB	; 219
-    2a0e:	7f 4f       	sbci	r23, 0xFF	; 255
-    2a10:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2a14:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2a18:	e6 0f       	add	r30, r22
-    2a1a:	f7 1f       	adc	r31, r23
-    2a1c:	e4 91       	lpm	r30, Z
-    2a1e:	6b b1       	in	r22, 0x0b	; 11
-    2a20:	74 e0       	ldi	r23, 0x04	; 4
-    2a22:	e7 9f       	mul	r30, r23
-    2a24:	f0 01       	movw	r30, r0
-    2a26:	11 24       	eor	r1, r1
-    2a28:	63 70       	andi	r22, 0x03	; 3
-    2a2a:	e6 2b       	or	r30, r22
-    2a2c:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    2a2e:	65 b1       	in	r22, 0x05	; 5
-    2a30:	6a 60       	ori	r22, 0x0A	; 10
-    2a32:	65 b9       	out	0x05, r22	; 5
-    2a34:	65 b1       	in	r22, 0x05	; 5
-    2a36:	65 7f       	andi	r22, 0xF5	; 245
-    2a38:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    2a3a:	65 b1       	in	r22, 0x05	; 5
-    2a3c:	6a 60       	ori	r22, 0x0A	; 10
-    2a3e:	65 b9       	out	0x05, r22	; 5
-    2a40:	65 b1       	in	r22, 0x05	; 5
-    2a42:	65 7f       	andi	r22, 0xF5	; 245
-    2a44:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 38));
-    2a46:	b9 01       	movw	r22, r18
-    2a48:	6a 5d       	subi	r22, 0xDA	; 218
-    2a4a:	7f 4f       	sbci	r23, 0xFF	; 255
-    2a4c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2a50:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2a54:	e6 0f       	add	r30, r22
-    2a56:	f7 1f       	adc	r31, r23
-    2a58:	e4 91       	lpm	r30, Z
-    2a5a:	6b b1       	in	r22, 0x0b	; 11
-    2a5c:	74 e0       	ldi	r23, 0x04	; 4
-    2a5e:	e7 9f       	mul	r30, r23
-    2a60:	f0 01       	movw	r30, r0
-    2a62:	11 24       	eor	r1, r1
-    2a64:	63 70       	andi	r22, 0x03	; 3
-    2a66:	e6 2b       	or	r30, r22
-    2a68:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    2a6a:	65 b1       	in	r22, 0x05	; 5
-    2a6c:	6a 60       	ori	r22, 0x0A	; 10
-    2a6e:	65 b9       	out	0x05, r22	; 5
-    2a70:	65 b1       	in	r22, 0x05	; 5
-    2a72:	65 7f       	andi	r22, 0xF5	; 245
-    2a74:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    2a76:	65 b1       	in	r22, 0x05	; 5
-    2a78:	6a 60       	ori	r22, 0x0A	; 10
-    2a7a:	65 b9       	out	0x05, r22	; 5
-    2a7c:	65 b1       	in	r22, 0x05	; 5
-    2a7e:	65 7f       	andi	r22, 0xF5	; 245
-    2a80:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 39));
-    2a82:	b9 01       	movw	r22, r18
-    2a84:	69 5d       	subi	r22, 0xD9	; 217
-    2a86:	7f 4f       	sbci	r23, 0xFF	; 255
-    2a88:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2a8c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2a90:	e6 0f       	add	r30, r22
-    2a92:	f7 1f       	adc	r31, r23
-    2a94:	e4 91       	lpm	r30, Z
-    2a96:	6b b1       	in	r22, 0x0b	; 11
-    2a98:	74 e0       	ldi	r23, 0x04	; 4
-    2a9a:	e7 9f       	mul	r30, r23
-    2a9c:	f0 01       	movw	r30, r0
-    2a9e:	11 24       	eor	r1, r1
-    2aa0:	63 70       	andi	r22, 0x03	; 3
-    2aa2:	e6 2b       	or	r30, r22
-    2aa4:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    2aa6:	65 b1       	in	r22, 0x05	; 5
-    2aa8:	6a 60       	ori	r22, 0x0A	; 10
-    2aaa:	65 b9       	out	0x05, r22	; 5
-    2aac:	65 b1       	in	r22, 0x05	; 5
-    2aae:	65 7f       	andi	r22, 0xF5	; 245
-    2ab0:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    2ab2:	65 b1       	in	r22, 0x05	; 5
-    2ab4:	6a 60       	ori	r22, 0x0A	; 10
-    2ab6:	65 b9       	out	0x05, r22	; 5
-    2ab8:	65 b1       	in	r22, 0x05	; 5
-    2aba:	65 7f       	andi	r22, 0xF5	; 245
-    2abc:	65 b9       	out	0x05, r22	; 5
+    295a:	25 b1       	in	r18, 0x05	; 5
+    295c:	2a 60       	ori	r18, 0x0A	; 10
+    295e:	25 b9       	out	0x05, r18	; 5
+    2960:	25 b1       	in	r18, 0x05	; 5
+    2962:	25 7f       	andi	r18, 0xF5	; 245
+    2964:	25 b9       	out	0x05, r18	; 5
 
-            // chip 5
-            SET_COLOR(pgm_read_byte(buffer + index + 40));
-    2abe:	b9 01       	movw	r22, r18
-    2ac0:	68 5d       	subi	r22, 0xD8	; 216
-    2ac2:	7f 4f       	sbci	r23, 0xFF	; 255
-    2ac4:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2ac8:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2acc:	e6 0f       	add	r30, r22
-    2ace:	f7 1f       	adc	r31, r23
-    2ad0:	e4 91       	lpm	r30, Z
-    2ad2:	6b b1       	in	r22, 0x0b	; 11
-    2ad4:	74 e0       	ldi	r23, 0x04	; 4
-    2ad6:	e7 9f       	mul	r30, r23
-    2ad8:	f0 01       	movw	r30, r0
-    2ada:	11 24       	eor	r1, r1
-    2adc:	63 70       	andi	r22, 0x03	; 3
-    2ade:	e6 2b       	or	r30, r22
-    2ae0:	eb b9       	out	0x0b, r30	; 11
+            // shift data into buffers
+            HIGH_LAT;
+    2966:	2a 9a       	sbi	0x05, 2	; 5
             PWCLK_GCLK;
+    2968:	25 b1       	in	r18, 0x05	; 5
+    296a:	2a 60       	ori	r18, 0x0A	; 10
+    296c:	25 b9       	out	0x05, r18	; 5
+    296e:	25 b1       	in	r18, 0x05	; 5
+    2970:	25 7f       	andi	r18, 0xF5	; 245
+    2972:	25 b9       	out	0x05, r18	; 5
+            CLEAR_LAT;
+    2974:	2a 98       	cbi	0x05, 2	; 5
+
+#pragma endregion // MSB
+
+            index = ((y & ~1) << 5) + (PANEL_BUFFERSIZE / 2); // advance index to next section
+    2976:	9c 01       	movw	r18, r24
+    2978:	38 5f       	subi	r19, 0xF8	; 248
+
+#pragma region LSB
+            // chip 0
+            SET_COLOR(pgm_read_byte(index++));
+    297a:	f9 01       	movw	r30, r18
+    297c:	a4 91       	lpm	r26, Z
+    297e:	6b b1       	in	r22, 0x0b	; 11
+    2980:	74 e0       	ldi	r23, 0x04	; 4
+    2982:	a7 9f       	mul	r26, r23
+    2984:	f0 01       	movw	r30, r0
+    2986:	11 24       	eor	r1, r1
+    2988:	63 70       	andi	r22, 0x03	; 3
+    298a:	6e 2b       	or	r22, r30
+    298c:	6b b9       	out	0x0b, r22	; 11
+            PWCLK_GCLK;
+    298e:	65 b1       	in	r22, 0x05	; 5
+    2990:	6a 60       	ori	r22, 0x0A	; 10
+    2992:	65 b9       	out	0x05, r22	; 5
+    2994:	65 b1       	in	r22, 0x05	; 5
+    2996:	65 7f       	andi	r22, 0xF5	; 245
+    2998:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    299a:	65 b1       	in	r22, 0x05	; 5
+    299c:	6a 60       	ori	r22, 0x0A	; 10
+    299e:	65 b9       	out	0x05, r22	; 5
+    29a0:	65 b1       	in	r22, 0x05	; 5
+    29a2:	65 7f       	andi	r22, 0xF5	; 245
+    29a4:	65 b9       	out	0x05, r22	; 5
+
+            index = ((y & ~1) << 5) + (PANEL_BUFFERSIZE / 2); // advance index to next section
+
+#pragma region LSB
+            // chip 0
+            SET_COLOR(pgm_read_byte(index++));
+    29a6:	f9 01       	movw	r30, r18
+    29a8:	31 96       	adiw	r30, 0x01	; 1
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    29aa:	64 91       	lpm	r22, Z
+    29ac:	eb b1       	in	r30, 0x0b	; 11
+    29ae:	f4 e0       	ldi	r31, 0x04	; 4
+    29b0:	6f 9f       	mul	r22, r31
+    29b2:	b0 01       	movw	r22, r0
+    29b4:	11 24       	eor	r1, r1
+    29b6:	e3 70       	andi	r30, 0x03	; 3
+    29b8:	e6 2b       	or	r30, r22
+    29ba:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    29bc:	65 b1       	in	r22, 0x05	; 5
+    29be:	6a 60       	ori	r22, 0x0A	; 10
+    29c0:	65 b9       	out	0x05, r22	; 5
+    29c2:	65 b1       	in	r22, 0x05	; 5
+    29c4:	65 7f       	andi	r22, 0xF5	; 245
+    29c6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    29c8:	65 b1       	in	r22, 0x05	; 5
+    29ca:	6a 60       	ori	r22, 0x0A	; 10
+    29cc:	65 b9       	out	0x05, r22	; 5
+    29ce:	65 b1       	in	r22, 0x05	; 5
+    29d0:	65 7f       	andi	r22, 0xF5	; 245
+    29d2:	65 b9       	out	0x05, r22	; 5
+#pragma region LSB
+            // chip 0
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    29d4:	f9 01       	movw	r30, r18
+    29d6:	32 96       	adiw	r30, 0x02	; 2
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    29d8:	64 91       	lpm	r22, Z
+    29da:	eb b1       	in	r30, 0x0b	; 11
+    29dc:	f4 e0       	ldi	r31, 0x04	; 4
+    29de:	6f 9f       	mul	r22, r31
+    29e0:	b0 01       	movw	r22, r0
+    29e2:	11 24       	eor	r1, r1
+    29e4:	e3 70       	andi	r30, 0x03	; 3
+    29e6:	e6 2b       	or	r30, r22
+    29e8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    29ea:	65 b1       	in	r22, 0x05	; 5
+    29ec:	6a 60       	ori	r22, 0x0A	; 10
+    29ee:	65 b9       	out	0x05, r22	; 5
+    29f0:	65 b1       	in	r22, 0x05	; 5
+    29f2:	65 7f       	andi	r22, 0xF5	; 245
+    29f4:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    29f6:	65 b1       	in	r22, 0x05	; 5
+    29f8:	6a 60       	ori	r22, 0x0A	; 10
+    29fa:	65 b9       	out	0x05, r22	; 5
+    29fc:	65 b1       	in	r22, 0x05	; 5
+    29fe:	65 7f       	andi	r22, 0xF5	; 245
+    2a00:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2a02:	f9 01       	movw	r30, r18
+    2a04:	33 96       	adiw	r30, 0x03	; 3
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2a06:	64 91       	lpm	r22, Z
+    2a08:	eb b1       	in	r30, 0x0b	; 11
+    2a0a:	f4 e0       	ldi	r31, 0x04	; 4
+    2a0c:	6f 9f       	mul	r22, r31
+    2a0e:	b0 01       	movw	r22, r0
+    2a10:	11 24       	eor	r1, r1
+    2a12:	e3 70       	andi	r30, 0x03	; 3
+    2a14:	e6 2b       	or	r30, r22
+    2a16:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2a18:	65 b1       	in	r22, 0x05	; 5
+    2a1a:	6a 60       	ori	r22, 0x0A	; 10
+    2a1c:	65 b9       	out	0x05, r22	; 5
+    2a1e:	65 b1       	in	r22, 0x05	; 5
+    2a20:	65 7f       	andi	r22, 0xF5	; 245
+    2a22:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2a24:	65 b1       	in	r22, 0x05	; 5
+    2a26:	6a 60       	ori	r22, 0x0A	; 10
+    2a28:	65 b9       	out	0x05, r22	; 5
+    2a2a:	65 b1       	in	r22, 0x05	; 5
+    2a2c:	65 7f       	andi	r22, 0xF5	; 245
+    2a2e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2a30:	f9 01       	movw	r30, r18
+    2a32:	34 96       	adiw	r30, 0x04	; 4
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2a34:	64 91       	lpm	r22, Z
+    2a36:	eb b1       	in	r30, 0x0b	; 11
+    2a38:	f4 e0       	ldi	r31, 0x04	; 4
+    2a3a:	6f 9f       	mul	r22, r31
+    2a3c:	b0 01       	movw	r22, r0
+    2a3e:	11 24       	eor	r1, r1
+    2a40:	e3 70       	andi	r30, 0x03	; 3
+    2a42:	e6 2b       	or	r30, r22
+    2a44:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2a46:	65 b1       	in	r22, 0x05	; 5
+    2a48:	6a 60       	ori	r22, 0x0A	; 10
+    2a4a:	65 b9       	out	0x05, r22	; 5
+    2a4c:	65 b1       	in	r22, 0x05	; 5
+    2a4e:	65 7f       	andi	r22, 0xF5	; 245
+    2a50:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2a52:	65 b1       	in	r22, 0x05	; 5
+    2a54:	6a 60       	ori	r22, 0x0A	; 10
+    2a56:	65 b9       	out	0x05, r22	; 5
+    2a58:	65 b1       	in	r22, 0x05	; 5
+    2a5a:	65 7f       	andi	r22, 0xF5	; 245
+    2a5c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2a5e:	f9 01       	movw	r30, r18
+    2a60:	35 96       	adiw	r30, 0x05	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2a62:	64 91       	lpm	r22, Z
+    2a64:	eb b1       	in	r30, 0x0b	; 11
+    2a66:	f4 e0       	ldi	r31, 0x04	; 4
+    2a68:	6f 9f       	mul	r22, r31
+    2a6a:	b0 01       	movw	r22, r0
+    2a6c:	11 24       	eor	r1, r1
+    2a6e:	e3 70       	andi	r30, 0x03	; 3
+    2a70:	e6 2b       	or	r30, r22
+    2a72:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2a74:	65 b1       	in	r22, 0x05	; 5
+    2a76:	6a 60       	ori	r22, 0x0A	; 10
+    2a78:	65 b9       	out	0x05, r22	; 5
+    2a7a:	65 b1       	in	r22, 0x05	; 5
+    2a7c:	65 7f       	andi	r22, 0xF5	; 245
+    2a7e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2a80:	65 b1       	in	r22, 0x05	; 5
+    2a82:	6a 60       	ori	r22, 0x0A	; 10
+    2a84:	65 b9       	out	0x05, r22	; 5
+    2a86:	65 b1       	in	r22, 0x05	; 5
+    2a88:	65 7f       	andi	r22, 0xF5	; 245
+    2a8a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2a8c:	f9 01       	movw	r30, r18
+    2a8e:	36 96       	adiw	r30, 0x06	; 6
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2a90:	64 91       	lpm	r22, Z
+    2a92:	eb b1       	in	r30, 0x0b	; 11
+    2a94:	f4 e0       	ldi	r31, 0x04	; 4
+    2a96:	6f 9f       	mul	r22, r31
+    2a98:	b0 01       	movw	r22, r0
+    2a9a:	11 24       	eor	r1, r1
+    2a9c:	e3 70       	andi	r30, 0x03	; 3
+    2a9e:	e6 2b       	or	r30, r22
+    2aa0:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2aa2:	65 b1       	in	r22, 0x05	; 5
+    2aa4:	6a 60       	ori	r22, 0x0A	; 10
+    2aa6:	65 b9       	out	0x05, r22	; 5
+    2aa8:	65 b1       	in	r22, 0x05	; 5
+    2aaa:	65 7f       	andi	r22, 0xF5	; 245
+    2aac:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2aae:	65 b1       	in	r22, 0x05	; 5
+    2ab0:	6a 60       	ori	r22, 0x0A	; 10
+    2ab2:	65 b9       	out	0x05, r22	; 5
+    2ab4:	65 b1       	in	r22, 0x05	; 5
+    2ab6:	65 7f       	andi	r22, 0xF5	; 245
+    2ab8:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2aba:	f9 01       	movw	r30, r18
+    2abc:	37 96       	adiw	r30, 0x07	; 7
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2abe:	64 91       	lpm	r22, Z
+    2ac0:	eb b1       	in	r30, 0x0b	; 11
+    2ac2:	f4 e0       	ldi	r31, 0x04	; 4
+    2ac4:	6f 9f       	mul	r22, r31
+    2ac6:	b0 01       	movw	r22, r0
+    2ac8:	11 24       	eor	r1, r1
+    2aca:	e3 70       	andi	r30, 0x03	; 3
+    2acc:	e6 2b       	or	r30, r22
+    2ace:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2ad0:	65 b1       	in	r22, 0x05	; 5
+    2ad2:	6a 60       	ori	r22, 0x0A	; 10
+    2ad4:	65 b9       	out	0x05, r22	; 5
+    2ad6:	65 b1       	in	r22, 0x05	; 5
+    2ad8:	65 7f       	andi	r22, 0xF5	; 245
+    2ada:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2adc:	65 b1       	in	r22, 0x05	; 5
+    2ade:	6a 60       	ori	r22, 0x0A	; 10
+    2ae0:	65 b9       	out	0x05, r22	; 5
     2ae2:	65 b1       	in	r22, 0x05	; 5
-    2ae4:	6a 60       	ori	r22, 0x0A	; 10
+    2ae4:	65 7f       	andi	r22, 0xF5	; 245
     2ae6:	65 b9       	out	0x05, r22	; 5
-    2ae8:	65 b1       	in	r22, 0x05	; 5
-    2aea:	65 7f       	andi	r22, 0xF5	; 245
-    2aec:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2aee:	65 b1       	in	r22, 0x05	; 5
-    2af0:	6a 60       	ori	r22, 0x0A	; 10
-    2af2:	65 b9       	out	0x05, r22	; 5
-    2af4:	65 b1       	in	r22, 0x05	; 5
-    2af6:	65 7f       	andi	r22, 0xF5	; 245
-    2af8:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 41));
-    2afa:	b9 01       	movw	r22, r18
-    2afc:	67 5d       	subi	r22, 0xD7	; 215
-    2afe:	7f 4f       	sbci	r23, 0xFF	; 255
-    2b00:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2b04:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2b08:	e6 0f       	add	r30, r22
-    2b0a:	f7 1f       	adc	r31, r23
-    2b0c:	e4 91       	lpm	r30, Z
-    2b0e:	6b b1       	in	r22, 0x0b	; 11
-    2b10:	74 e0       	ldi	r23, 0x04	; 4
-    2b12:	e7 9f       	mul	r30, r23
-    2b14:	f0 01       	movw	r30, r0
-    2b16:	11 24       	eor	r1, r1
-    2b18:	63 70       	andi	r22, 0x03	; 3
-    2b1a:	e6 2b       	or	r30, r22
-    2b1c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2b1e:	65 b1       	in	r22, 0x05	; 5
-    2b20:	6a 60       	ori	r22, 0x0A	; 10
-    2b22:	65 b9       	out	0x05, r22	; 5
-    2b24:	65 b1       	in	r22, 0x05	; 5
-    2b26:	65 7f       	andi	r22, 0xF5	; 245
-    2b28:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    2b2a:	65 b1       	in	r22, 0x05	; 5
-    2b2c:	6a 60       	ori	r22, 0x0A	; 10
-    2b2e:	65 b9       	out	0x05, r22	; 5
-    2b30:	65 b1       	in	r22, 0x05	; 5
-    2b32:	65 7f       	andi	r22, 0xF5	; 245
-    2b34:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 42));
-    2b36:	b9 01       	movw	r22, r18
-    2b38:	66 5d       	subi	r22, 0xD6	; 214
-    2b3a:	7f 4f       	sbci	r23, 0xFF	; 255
-    2b3c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2b40:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2b44:	e6 0f       	add	r30, r22
-    2b46:	f7 1f       	adc	r31, r23
-    2b48:	e4 91       	lpm	r30, Z
-    2b4a:	6b b1       	in	r22, 0x0b	; 11
-    2b4c:	74 e0       	ldi	r23, 0x04	; 4
-    2b4e:	e7 9f       	mul	r30, r23
-    2b50:	f0 01       	movw	r30, r0
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2ae8:	f9 01       	movw	r30, r18
+    2aea:	38 96       	adiw	r30, 0x08	; 8
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 1
+            SET_COLOR(pgm_read_byte(index++));
+    2aec:	64 91       	lpm	r22, Z
+    2aee:	eb b1       	in	r30, 0x0b	; 11
+    2af0:	f4 e0       	ldi	r31, 0x04	; 4
+    2af2:	6f 9f       	mul	r22, r31
+    2af4:	b0 01       	movw	r22, r0
+    2af6:	11 24       	eor	r1, r1
+    2af8:	e3 70       	andi	r30, 0x03	; 3
+    2afa:	e6 2b       	or	r30, r22
+    2afc:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2afe:	65 b1       	in	r22, 0x05	; 5
+    2b00:	6a 60       	ori	r22, 0x0A	; 10
+    2b02:	65 b9       	out	0x05, r22	; 5
+    2b04:	65 b1       	in	r22, 0x05	; 5
+    2b06:	65 7f       	andi	r22, 0xF5	; 245
+    2b08:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2b0a:	65 b1       	in	r22, 0x05	; 5
+    2b0c:	6a 60       	ori	r22, 0x0A	; 10
+    2b0e:	65 b9       	out	0x05, r22	; 5
+    2b10:	65 b1       	in	r22, 0x05	; 5
+    2b12:	65 7f       	andi	r22, 0xF5	; 245
+    2b14:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 1
+            SET_COLOR(pgm_read_byte(index++));
+    2b16:	f9 01       	movw	r30, r18
+    2b18:	39 96       	adiw	r30, 0x09	; 9
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2b1a:	64 91       	lpm	r22, Z
+    2b1c:	eb b1       	in	r30, 0x0b	; 11
+    2b1e:	f4 e0       	ldi	r31, 0x04	; 4
+    2b20:	6f 9f       	mul	r22, r31
+    2b22:	b0 01       	movw	r22, r0
+    2b24:	11 24       	eor	r1, r1
+    2b26:	e3 70       	andi	r30, 0x03	; 3
+    2b28:	e6 2b       	or	r30, r22
+    2b2a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2b2c:	65 b1       	in	r22, 0x05	; 5
+    2b2e:	6a 60       	ori	r22, 0x0A	; 10
+    2b30:	65 b9       	out	0x05, r22	; 5
+    2b32:	65 b1       	in	r22, 0x05	; 5
+    2b34:	65 7f       	andi	r22, 0xF5	; 245
+    2b36:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2b38:	65 b1       	in	r22, 0x05	; 5
+    2b3a:	6a 60       	ori	r22, 0x0A	; 10
+    2b3c:	65 b9       	out	0x05, r22	; 5
+    2b3e:	65 b1       	in	r22, 0x05	; 5
+    2b40:	65 7f       	andi	r22, 0xF5	; 245
+    2b42:	65 b9       	out	0x05, r22	; 5
+
+            // chip 1
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2b44:	f9 01       	movw	r30, r18
+    2b46:	3a 96       	adiw	r30, 0x0a	; 10
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2b48:	64 91       	lpm	r22, Z
+    2b4a:	eb b1       	in	r30, 0x0b	; 11
+    2b4c:	f4 e0       	ldi	r31, 0x04	; 4
+    2b4e:	6f 9f       	mul	r22, r31
+    2b50:	b0 01       	movw	r22, r0
     2b52:	11 24       	eor	r1, r1
-    2b54:	63 70       	andi	r22, 0x03	; 3
+    2b54:	e3 70       	andi	r30, 0x03	; 3
     2b56:	e6 2b       	or	r30, r22
     2b58:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
@@ -5780,280 +7193,402 @@ private:
     2b6c:	65 b1       	in	r22, 0x05	; 5
     2b6e:	65 7f       	andi	r22, 0xF5	; 245
     2b70:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 43));
-    2b72:	b9 01       	movw	r22, r18
-    2b74:	65 5d       	subi	r22, 0xD5	; 213
-    2b76:	7f 4f       	sbci	r23, 0xFF	; 255
-    2b78:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2b7c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2b80:	e6 0f       	add	r30, r22
-    2b82:	f7 1f       	adc	r31, r23
-    2b84:	e4 91       	lpm	r30, Z
-    2b86:	6b b1       	in	r22, 0x0b	; 11
-    2b88:	74 e0       	ldi	r23, 0x04	; 4
-    2b8a:	e7 9f       	mul	r30, r23
-    2b8c:	f0 01       	movw	r30, r0
-    2b8e:	11 24       	eor	r1, r1
-    2b90:	63 70       	andi	r22, 0x03	; 3
-    2b92:	e6 2b       	or	r30, r22
-    2b94:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2b96:	65 b1       	in	r22, 0x05	; 5
-    2b98:	6a 60       	ori	r22, 0x0A	; 10
-    2b9a:	65 b9       	out	0x05, r22	; 5
-    2b9c:	65 b1       	in	r22, 0x05	; 5
-    2b9e:	65 7f       	andi	r22, 0xF5	; 245
-    2ba0:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2ba2:	65 b1       	in	r22, 0x05	; 5
-    2ba4:	6a 60       	ori	r22, 0x0A	; 10
-    2ba6:	65 b9       	out	0x05, r22	; 5
-    2ba8:	65 b1       	in	r22, 0x05	; 5
-    2baa:	65 7f       	andi	r22, 0xF5	; 245
-    2bac:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 44));
-    2bae:	b9 01       	movw	r22, r18
-    2bb0:	64 5d       	subi	r22, 0xD4	; 212
-    2bb2:	7f 4f       	sbci	r23, 0xFF	; 255
-    2bb4:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2bb8:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2bbc:	e6 0f       	add	r30, r22
-    2bbe:	f7 1f       	adc	r31, r23
-    2bc0:	e4 91       	lpm	r30, Z
-    2bc2:	6b b1       	in	r22, 0x0b	; 11
-    2bc4:	74 e0       	ldi	r23, 0x04	; 4
-    2bc6:	e7 9f       	mul	r30, r23
-    2bc8:	f0 01       	movw	r30, r0
-    2bca:	11 24       	eor	r1, r1
-    2bcc:	63 70       	andi	r22, 0x03	; 3
-    2bce:	e6 2b       	or	r30, r22
-    2bd0:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    2bd2:	65 b1       	in	r22, 0x05	; 5
-    2bd4:	6a 60       	ori	r22, 0x0A	; 10
-    2bd6:	65 b9       	out	0x05, r22	; 5
-    2bd8:	65 b1       	in	r22, 0x05	; 5
-    2bda:	65 7f       	andi	r22, 0xF5	; 245
-    2bdc:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2bde:	65 b1       	in	r22, 0x05	; 5
-    2be0:	6a 60       	ori	r22, 0x0A	; 10
-    2be2:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    2b72:	f9 01       	movw	r30, r18
+    2b74:	3b 96       	adiw	r30, 0x0b	; 11
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2b76:	64 91       	lpm	r22, Z
+    2b78:	eb b1       	in	r30, 0x0b	; 11
+    2b7a:	f4 e0       	ldi	r31, 0x04	; 4
+    2b7c:	6f 9f       	mul	r22, r31
+    2b7e:	b0 01       	movw	r22, r0
+    2b80:	11 24       	eor	r1, r1
+    2b82:	e3 70       	andi	r30, 0x03	; 3
+    2b84:	e6 2b       	or	r30, r22
+    2b86:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2b88:	65 b1       	in	r22, 0x05	; 5
+    2b8a:	6a 60       	ori	r22, 0x0A	; 10
+    2b8c:	65 b9       	out	0x05, r22	; 5
+    2b8e:	65 b1       	in	r22, 0x05	; 5
+    2b90:	65 7f       	andi	r22, 0xF5	; 245
+    2b92:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2b94:	65 b1       	in	r22, 0x05	; 5
+    2b96:	6a 60       	ori	r22, 0x0A	; 10
+    2b98:	65 b9       	out	0x05, r22	; 5
+    2b9a:	65 b1       	in	r22, 0x05	; 5
+    2b9c:	65 7f       	andi	r22, 0xF5	; 245
+    2b9e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2ba0:	f9 01       	movw	r30, r18
+    2ba2:	3c 96       	adiw	r30, 0x0c	; 12
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2ba4:	64 91       	lpm	r22, Z
+    2ba6:	eb b1       	in	r30, 0x0b	; 11
+    2ba8:	f4 e0       	ldi	r31, 0x04	; 4
+    2baa:	6f 9f       	mul	r22, r31
+    2bac:	b0 01       	movw	r22, r0
+    2bae:	11 24       	eor	r1, r1
+    2bb0:	e3 70       	andi	r30, 0x03	; 3
+    2bb2:	e6 2b       	or	r30, r22
+    2bb4:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2bb6:	65 b1       	in	r22, 0x05	; 5
+    2bb8:	6a 60       	ori	r22, 0x0A	; 10
+    2bba:	65 b9       	out	0x05, r22	; 5
+    2bbc:	65 b1       	in	r22, 0x05	; 5
+    2bbe:	65 7f       	andi	r22, 0xF5	; 245
+    2bc0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2bc2:	65 b1       	in	r22, 0x05	; 5
+    2bc4:	6a 60       	ori	r22, 0x0A	; 10
+    2bc6:	65 b9       	out	0x05, r22	; 5
+    2bc8:	65 b1       	in	r22, 0x05	; 5
+    2bca:	65 7f       	andi	r22, 0xF5	; 245
+    2bcc:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2bce:	f9 01       	movw	r30, r18
+    2bd0:	3d 96       	adiw	r30, 0x0d	; 13
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2bd2:	64 91       	lpm	r22, Z
+    2bd4:	eb b1       	in	r30, 0x0b	; 11
+    2bd6:	f4 e0       	ldi	r31, 0x04	; 4
+    2bd8:	6f 9f       	mul	r22, r31
+    2bda:	b0 01       	movw	r22, r0
+    2bdc:	11 24       	eor	r1, r1
+    2bde:	e3 70       	andi	r30, 0x03	; 3
+    2be0:	e6 2b       	or	r30, r22
+    2be2:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
     2be4:	65 b1       	in	r22, 0x05	; 5
-    2be6:	65 7f       	andi	r22, 0xF5	; 245
+    2be6:	6a 60       	ori	r22, 0x0A	; 10
     2be8:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 45));
-    2bea:	b9 01       	movw	r22, r18
-    2bec:	63 5d       	subi	r22, 0xD3	; 211
-    2bee:	7f 4f       	sbci	r23, 0xFF	; 255
-    2bf0:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2bf4:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2bf8:	e6 0f       	add	r30, r22
-    2bfa:	f7 1f       	adc	r31, r23
-    2bfc:	e4 91       	lpm	r30, Z
-    2bfe:	6b b1       	in	r22, 0x0b	; 11
-    2c00:	74 e0       	ldi	r23, 0x04	; 4
-    2c02:	e7 9f       	mul	r30, r23
-    2c04:	f0 01       	movw	r30, r0
-    2c06:	11 24       	eor	r1, r1
-    2c08:	63 70       	andi	r22, 0x03	; 3
-    2c0a:	e6 2b       	or	r30, r22
-    2c0c:	eb b9       	out	0x0b, r30	; 11
+    2bea:	65 b1       	in	r22, 0x05	; 5
+    2bec:	65 7f       	andi	r22, 0xF5	; 245
+    2bee:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2c0e:	65 b1       	in	r22, 0x05	; 5
-    2c10:	6a 60       	ori	r22, 0x0A	; 10
-    2c12:	65 b9       	out	0x05, r22	; 5
-    2c14:	65 b1       	in	r22, 0x05	; 5
-    2c16:	65 7f       	andi	r22, 0xF5	; 245
-    2c18:	65 b9       	out	0x05, r22	; 5
+    2bf0:	65 b1       	in	r22, 0x05	; 5
+    2bf2:	6a 60       	ori	r22, 0x0A	; 10
+    2bf4:	65 b9       	out	0x05, r22	; 5
+    2bf6:	65 b1       	in	r22, 0x05	; 5
+    2bf8:	65 7f       	andi	r22, 0xF5	; 245
+    2bfa:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2c1a:	65 b1       	in	r22, 0x05	; 5
-    2c1c:	6a 60       	ori	r22, 0x0A	; 10
-    2c1e:	65 b9       	out	0x05, r22	; 5
-    2c20:	65 b1       	in	r22, 0x05	; 5
-    2c22:	65 7f       	andi	r22, 0xF5	; 245
-    2c24:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 46));
-    2c26:	b9 01       	movw	r22, r18
-    2c28:	62 5d       	subi	r22, 0xD2	; 210
-    2c2a:	7f 4f       	sbci	r23, 0xFF	; 255
-    2c2c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2c30:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2c34:	e6 0f       	add	r30, r22
-    2c36:	f7 1f       	adc	r31, r23
-    2c38:	e4 91       	lpm	r30, Z
-    2c3a:	6b b1       	in	r22, 0x0b	; 11
-    2c3c:	74 e0       	ldi	r23, 0x04	; 4
-    2c3e:	e7 9f       	mul	r30, r23
-    2c40:	f0 01       	movw	r30, r0
-    2c42:	11 24       	eor	r1, r1
-    2c44:	63 70       	andi	r22, 0x03	; 3
-    2c46:	e6 2b       	or	r30, r22
-    2c48:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2c4a:	65 b1       	in	r22, 0x05	; 5
-    2c4c:	6a 60       	ori	r22, 0x0A	; 10
-    2c4e:	65 b9       	out	0x05, r22	; 5
-    2c50:	65 b1       	in	r22, 0x05	; 5
-    2c52:	65 7f       	andi	r22, 0xF5	; 245
-    2c54:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    2c56:	65 b1       	in	r22, 0x05	; 5
-    2c58:	6a 60       	ori	r22, 0x0A	; 10
-    2c5a:	65 b9       	out	0x05, r22	; 5
-    2c5c:	65 b1       	in	r22, 0x05	; 5
-    2c5e:	65 7f       	andi	r22, 0xF5	; 245
-    2c60:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 47));
-    2c62:	b9 01       	movw	r22, r18
-    2c64:	61 5d       	subi	r22, 0xD1	; 209
-    2c66:	7f 4f       	sbci	r23, 0xFF	; 255
-    2c68:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2c6c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2c70:	e6 0f       	add	r30, r22
-    2c72:	f7 1f       	adc	r31, r23
-    2c74:	e4 91       	lpm	r30, Z
-    2c76:	6b b1       	in	r22, 0x0b	; 11
-    2c78:	74 e0       	ldi	r23, 0x04	; 4
-    2c7a:	e7 9f       	mul	r30, r23
-    2c7c:	f0 01       	movw	r30, r0
-    2c7e:	11 24       	eor	r1, r1
-    2c80:	63 70       	andi	r22, 0x03	; 3
-    2c82:	e6 2b       	or	r30, r22
-    2c84:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2c86:	65 b1       	in	r22, 0x05	; 5
-    2c88:	6a 60       	ori	r22, 0x0A	; 10
-    2c8a:	65 b9       	out	0x05, r22	; 5
-    2c8c:	65 b1       	in	r22, 0x05	; 5
-    2c8e:	65 7f       	andi	r22, 0xF5	; 245
-    2c90:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    2bfc:	f9 01       	movw	r30, r18
+    2bfe:	3e 96       	adiw	r30, 0x0e	; 14
             PWCLK_GCLK;
-    2c92:	65 b1       	in	r22, 0x05	; 5
-    2c94:	6a 60       	ori	r22, 0x0A	; 10
-    2c96:	65 b9       	out	0x05, r22	; 5
-    2c98:	65 b1       	in	r22, 0x05	; 5
-    2c9a:	65 7f       	andi	r22, 0xF5	; 245
-    2c9c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2c00:	64 91       	lpm	r22, Z
+    2c02:	eb b1       	in	r30, 0x0b	; 11
+    2c04:	f4 e0       	ldi	r31, 0x04	; 4
+    2c06:	6f 9f       	mul	r22, r31
+    2c08:	b0 01       	movw	r22, r0
+    2c0a:	11 24       	eor	r1, r1
+    2c0c:	e3 70       	andi	r30, 0x03	; 3
+    2c0e:	e6 2b       	or	r30, r22
+    2c10:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2c12:	65 b1       	in	r22, 0x05	; 5
+    2c14:	6a 60       	ori	r22, 0x0A	; 10
+    2c16:	65 b9       	out	0x05, r22	; 5
+    2c18:	65 b1       	in	r22, 0x05	; 5
+    2c1a:	65 7f       	andi	r22, 0xF5	; 245
+    2c1c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2c1e:	65 b1       	in	r22, 0x05	; 5
+    2c20:	6a 60       	ori	r22, 0x0A	; 10
+    2c22:	65 b9       	out	0x05, r22	; 5
+    2c24:	65 b1       	in	r22, 0x05	; 5
+    2c26:	65 7f       	andi	r22, 0xF5	; 245
+    2c28:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2c2a:	f9 01       	movw	r30, r18
+    2c2c:	3f 96       	adiw	r30, 0x0f	; 15
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2c2e:	64 91       	lpm	r22, Z
+    2c30:	eb b1       	in	r30, 0x0b	; 11
+    2c32:	f4 e0       	ldi	r31, 0x04	; 4
+    2c34:	6f 9f       	mul	r22, r31
+    2c36:	b0 01       	movw	r22, r0
+    2c38:	11 24       	eor	r1, r1
+    2c3a:	e3 70       	andi	r30, 0x03	; 3
+    2c3c:	e6 2b       	or	r30, r22
+    2c3e:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2c40:	65 b1       	in	r22, 0x05	; 5
+    2c42:	6a 60       	ori	r22, 0x0A	; 10
+    2c44:	65 b9       	out	0x05, r22	; 5
+    2c46:	65 b1       	in	r22, 0x05	; 5
+    2c48:	65 7f       	andi	r22, 0xF5	; 245
+    2c4a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2c4c:	65 b1       	in	r22, 0x05	; 5
+    2c4e:	6a 60       	ori	r22, 0x0A	; 10
+    2c50:	65 b9       	out	0x05, r22	; 5
+    2c52:	65 b1       	in	r22, 0x05	; 5
+    2c54:	65 7f       	andi	r22, 0xF5	; 245
+    2c56:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2c58:	f9 01       	movw	r30, r18
+    2c5a:	70 96       	adiw	r30, 0x10	; 16
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
-            // chip 6
-            SET_COLOR(pgm_read_byte(buffer + index + 48));
-    2c9e:	b9 01       	movw	r22, r18
-    2ca0:	60 5d       	subi	r22, 0xD0	; 208
-    2ca2:	7f 4f       	sbci	r23, 0xFF	; 255
-    2ca4:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2ca8:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2cac:	e6 0f       	add	r30, r22
-    2cae:	f7 1f       	adc	r31, r23
-    2cb0:	e4 91       	lpm	r30, Z
-    2cb2:	6b b1       	in	r22, 0x0b	; 11
-    2cb4:	74 e0       	ldi	r23, 0x04	; 4
-    2cb6:	e7 9f       	mul	r30, r23
-    2cb8:	f0 01       	movw	r30, r0
-    2cba:	11 24       	eor	r1, r1
-    2cbc:	63 70       	andi	r22, 0x03	; 3
-    2cbe:	e6 2b       	or	r30, r22
-    2cc0:	eb b9       	out	0x0b, r30	; 11
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
+    2c5c:	64 91       	lpm	r22, Z
+    2c5e:	eb b1       	in	r30, 0x0b	; 11
+    2c60:	f4 e0       	ldi	r31, 0x04	; 4
+    2c62:	6f 9f       	mul	r22, r31
+    2c64:	b0 01       	movw	r22, r0
+    2c66:	11 24       	eor	r1, r1
+    2c68:	e3 70       	andi	r30, 0x03	; 3
+    2c6a:	e6 2b       	or	r30, r22
+    2c6c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2cc2:	65 b1       	in	r22, 0x05	; 5
-    2cc4:	6a 60       	ori	r22, 0x0A	; 10
-    2cc6:	65 b9       	out	0x05, r22	; 5
-    2cc8:	65 b1       	in	r22, 0x05	; 5
-    2cca:	65 7f       	andi	r22, 0xF5	; 245
-    2ccc:	65 b9       	out	0x05, r22	; 5
+    2c6e:	65 b1       	in	r22, 0x05	; 5
+    2c70:	6a 60       	ori	r22, 0x0A	; 10
+    2c72:	65 b9       	out	0x05, r22	; 5
+    2c74:	65 b1       	in	r22, 0x05	; 5
+    2c76:	65 7f       	andi	r22, 0xF5	; 245
+    2c78:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2cce:	65 b1       	in	r22, 0x05	; 5
-    2cd0:	6a 60       	ori	r22, 0x0A	; 10
-    2cd2:	65 b9       	out	0x05, r22	; 5
-    2cd4:	65 b1       	in	r22, 0x05	; 5
-    2cd6:	65 7f       	andi	r22, 0xF5	; 245
-    2cd8:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 49));
-    2cda:	b9 01       	movw	r22, r18
-    2cdc:	6f 5c       	subi	r22, 0xCF	; 207
-    2cde:	7f 4f       	sbci	r23, 0xFF	; 255
-    2ce0:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2ce4:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2ce8:	e6 0f       	add	r30, r22
-    2cea:	f7 1f       	adc	r31, r23
-    2cec:	e4 91       	lpm	r30, Z
-    2cee:	6b b1       	in	r22, 0x0b	; 11
-    2cf0:	74 e0       	ldi	r23, 0x04	; 4
-    2cf2:	e7 9f       	mul	r30, r23
-    2cf4:	f0 01       	movw	r30, r0
-    2cf6:	11 24       	eor	r1, r1
-    2cf8:	63 70       	andi	r22, 0x03	; 3
-    2cfa:	e6 2b       	or	r30, r22
-    2cfc:	eb b9       	out	0x0b, r30	; 11
+    2c7a:	65 b1       	in	r22, 0x05	; 5
+    2c7c:	6a 60       	ori	r22, 0x0A	; 10
+    2c7e:	65 b9       	out	0x05, r22	; 5
+    2c80:	65 b1       	in	r22, 0x05	; 5
+    2c82:	65 7f       	andi	r22, 0xF5	; 245
+    2c84:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
+    2c86:	f9 01       	movw	r30, r18
+    2c88:	71 96       	adiw	r30, 0x11	; 17
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2c8a:	64 91       	lpm	r22, Z
+    2c8c:	eb b1       	in	r30, 0x0b	; 11
+    2c8e:	f4 e0       	ldi	r31, 0x04	; 4
+    2c90:	6f 9f       	mul	r22, r31
+    2c92:	b0 01       	movw	r22, r0
+    2c94:	11 24       	eor	r1, r1
+    2c96:	e3 70       	andi	r30, 0x03	; 3
+    2c98:	e6 2b       	or	r30, r22
+    2c9a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2c9c:	65 b1       	in	r22, 0x05	; 5
+    2c9e:	6a 60       	ori	r22, 0x0A	; 10
+    2ca0:	65 b9       	out	0x05, r22	; 5
+    2ca2:	65 b1       	in	r22, 0x05	; 5
+    2ca4:	65 7f       	andi	r22, 0xF5	; 245
+    2ca6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2ca8:	65 b1       	in	r22, 0x05	; 5
+    2caa:	6a 60       	ori	r22, 0x0A	; 10
+    2cac:	65 b9       	out	0x05, r22	; 5
+    2cae:	65 b1       	in	r22, 0x05	; 5
+    2cb0:	65 7f       	andi	r22, 0xF5	; 245
+    2cb2:	65 b9       	out	0x05, r22	; 5
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2cb4:	f9 01       	movw	r30, r18
+    2cb6:	72 96       	adiw	r30, 0x12	; 18
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2cb8:	64 91       	lpm	r22, Z
+    2cba:	eb b1       	in	r30, 0x0b	; 11
+    2cbc:	f4 e0       	ldi	r31, 0x04	; 4
+    2cbe:	6f 9f       	mul	r22, r31
+    2cc0:	b0 01       	movw	r22, r0
+    2cc2:	11 24       	eor	r1, r1
+    2cc4:	e3 70       	andi	r30, 0x03	; 3
+    2cc6:	e6 2b       	or	r30, r22
+    2cc8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2cca:	65 b1       	in	r22, 0x05	; 5
+    2ccc:	6a 60       	ori	r22, 0x0A	; 10
+    2cce:	65 b9       	out	0x05, r22	; 5
+    2cd0:	65 b1       	in	r22, 0x05	; 5
+    2cd2:	65 7f       	andi	r22, 0xF5	; 245
+    2cd4:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2cd6:	65 b1       	in	r22, 0x05	; 5
+    2cd8:	6a 60       	ori	r22, 0x0A	; 10
+    2cda:	65 b9       	out	0x05, r22	; 5
+    2cdc:	65 b1       	in	r22, 0x05	; 5
+    2cde:	65 7f       	andi	r22, 0xF5	; 245
+    2ce0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2ce2:	f9 01       	movw	r30, r18
+    2ce4:	73 96       	adiw	r30, 0x13	; 19
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2ce6:	64 91       	lpm	r22, Z
+    2ce8:	eb b1       	in	r30, 0x0b	; 11
+    2cea:	f4 e0       	ldi	r31, 0x04	; 4
+    2cec:	6f 9f       	mul	r22, r31
+    2cee:	b0 01       	movw	r22, r0
+    2cf0:	11 24       	eor	r1, r1
+    2cf2:	e3 70       	andi	r30, 0x03	; 3
+    2cf4:	e6 2b       	or	r30, r22
+    2cf6:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2cf8:	65 b1       	in	r22, 0x05	; 5
+    2cfa:	6a 60       	ori	r22, 0x0A	; 10
+    2cfc:	65 b9       	out	0x05, r22	; 5
     2cfe:	65 b1       	in	r22, 0x05	; 5
-    2d00:	6a 60       	ori	r22, 0x0A	; 10
+    2d00:	65 7f       	andi	r22, 0xF5	; 245
     2d02:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
     2d04:	65 b1       	in	r22, 0x05	; 5
-    2d06:	65 7f       	andi	r22, 0xF5	; 245
+    2d06:	6a 60       	ori	r22, 0x0A	; 10
     2d08:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
     2d0a:	65 b1       	in	r22, 0x05	; 5
-    2d0c:	6a 60       	ori	r22, 0x0A	; 10
+    2d0c:	65 7f       	andi	r22, 0xF5	; 245
     2d0e:	65 b9       	out	0x05, r22	; 5
-    2d10:	65 b1       	in	r22, 0x05	; 5
-    2d12:	65 7f       	andi	r22, 0xF5	; 245
-    2d14:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 50));
-    2d16:	b9 01       	movw	r22, r18
-    2d18:	6e 5c       	subi	r22, 0xCE	; 206
-    2d1a:	7f 4f       	sbci	r23, 0xFF	; 255
-    2d1c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2d20:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2d24:	e6 0f       	add	r30, r22
-    2d26:	f7 1f       	adc	r31, r23
-    2d28:	e4 91       	lpm	r30, Z
-    2d2a:	6b b1       	in	r22, 0x0b	; 11
-    2d2c:	74 e0       	ldi	r23, 0x04	; 4
-    2d2e:	e7 9f       	mul	r30, r23
-    2d30:	f0 01       	movw	r30, r0
-    2d32:	11 24       	eor	r1, r1
-    2d34:	63 70       	andi	r22, 0x03	; 3
-    2d36:	e6 2b       	or	r30, r22
-    2d38:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2d3a:	65 b1       	in	r22, 0x05	; 5
-    2d3c:	6a 60       	ori	r22, 0x0A	; 10
-    2d3e:	65 b9       	out	0x05, r22	; 5
-    2d40:	65 b1       	in	r22, 0x05	; 5
-    2d42:	65 7f       	andi	r22, 0xF5	; 245
-    2d44:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2d46:	65 b1       	in	r22, 0x05	; 5
-    2d48:	6a 60       	ori	r22, 0x0A	; 10
-    2d4a:	65 b9       	out	0x05, r22	; 5
-    2d4c:	65 b1       	in	r22, 0x05	; 5
-    2d4e:	65 7f       	andi	r22, 0xF5	; 245
-    2d50:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 51));
-    2d52:	b9 01       	movw	r22, r18
-    2d54:	6d 5c       	subi	r22, 0xCD	; 205
-    2d56:	7f 4f       	sbci	r23, 0xFF	; 255
-    2d58:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2d5c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2d60:	e6 0f       	add	r30, r22
-    2d62:	f7 1f       	adc	r31, r23
-    2d64:	e4 91       	lpm	r30, Z
-    2d66:	6b b1       	in	r22, 0x0b	; 11
-    2d68:	74 e0       	ldi	r23, 0x04	; 4
-    2d6a:	e7 9f       	mul	r30, r23
-    2d6c:	f0 01       	movw	r30, r0
-    2d6e:	11 24       	eor	r1, r1
-    2d70:	63 70       	andi	r22, 0x03	; 3
-    2d72:	e6 2b       	or	r30, r22
-    2d74:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    2d76:	65 b1       	in	r22, 0x05	; 5
-    2d78:	6a 60       	ori	r22, 0x0A	; 10
-    2d7a:	65 b9       	out	0x05, r22	; 5
-    2d7c:	65 b1       	in	r22, 0x05	; 5
-    2d7e:	65 7f       	andi	r22, 0xF5	; 245
-    2d80:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2d10:	f9 01       	movw	r30, r18
+    2d12:	74 96       	adiw	r30, 0x14	; 20
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2d14:	64 91       	lpm	r22, Z
+    2d16:	eb b1       	in	r30, 0x0b	; 11
+    2d18:	f4 e0       	ldi	r31, 0x04	; 4
+    2d1a:	6f 9f       	mul	r22, r31
+    2d1c:	b0 01       	movw	r22, r0
+    2d1e:	11 24       	eor	r1, r1
+    2d20:	e3 70       	andi	r30, 0x03	; 3
+    2d22:	e6 2b       	or	r30, r22
+    2d24:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2d26:	65 b1       	in	r22, 0x05	; 5
+    2d28:	6a 60       	ori	r22, 0x0A	; 10
+    2d2a:	65 b9       	out	0x05, r22	; 5
+    2d2c:	65 b1       	in	r22, 0x05	; 5
+    2d2e:	65 7f       	andi	r22, 0xF5	; 245
+    2d30:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2d32:	65 b1       	in	r22, 0x05	; 5
+    2d34:	6a 60       	ori	r22, 0x0A	; 10
+    2d36:	65 b9       	out	0x05, r22	; 5
+    2d38:	65 b1       	in	r22, 0x05	; 5
+    2d3a:	65 7f       	andi	r22, 0xF5	; 245
+    2d3c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2d3e:	f9 01       	movw	r30, r18
+    2d40:	75 96       	adiw	r30, 0x15	; 21
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2d42:	64 91       	lpm	r22, Z
+    2d44:	eb b1       	in	r30, 0x0b	; 11
+    2d46:	f4 e0       	ldi	r31, 0x04	; 4
+    2d48:	6f 9f       	mul	r22, r31
+    2d4a:	b0 01       	movw	r22, r0
+    2d4c:	11 24       	eor	r1, r1
+    2d4e:	e3 70       	andi	r30, 0x03	; 3
+    2d50:	e6 2b       	or	r30, r22
+    2d52:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2d54:	65 b1       	in	r22, 0x05	; 5
+    2d56:	6a 60       	ori	r22, 0x0A	; 10
+    2d58:	65 b9       	out	0x05, r22	; 5
+    2d5a:	65 b1       	in	r22, 0x05	; 5
+    2d5c:	65 7f       	andi	r22, 0xF5	; 245
+    2d5e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2d60:	65 b1       	in	r22, 0x05	; 5
+    2d62:	6a 60       	ori	r22, 0x0A	; 10
+    2d64:	65 b9       	out	0x05, r22	; 5
+    2d66:	65 b1       	in	r22, 0x05	; 5
+    2d68:	65 7f       	andi	r22, 0xF5	; 245
+    2d6a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2d6c:	f9 01       	movw	r30, r18
+    2d6e:	76 96       	adiw	r30, 0x16	; 22
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2d70:	64 91       	lpm	r22, Z
+    2d72:	eb b1       	in	r30, 0x0b	; 11
+    2d74:	f4 e0       	ldi	r31, 0x04	; 4
+    2d76:	6f 9f       	mul	r22, r31
+    2d78:	b0 01       	movw	r22, r0
+    2d7a:	11 24       	eor	r1, r1
+    2d7c:	e3 70       	andi	r30, 0x03	; 3
+    2d7e:	e6 2b       	or	r30, r22
+    2d80:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
     2d82:	65 b1       	in	r22, 0x05	; 5
     2d84:	6a 60       	ori	r22, 0x0A	; 10
@@ -6061,149 +7596,212 @@ private:
     2d88:	65 b1       	in	r22, 0x05	; 5
     2d8a:	65 7f       	andi	r22, 0xF5	; 245
     2d8c:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 52));
-    2d8e:	b9 01       	movw	r22, r18
-    2d90:	6c 5c       	subi	r22, 0xCC	; 204
-    2d92:	7f 4f       	sbci	r23, 0xFF	; 255
-    2d94:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2d98:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2d9c:	e6 0f       	add	r30, r22
-    2d9e:	f7 1f       	adc	r31, r23
-    2da0:	e4 91       	lpm	r30, Z
-    2da2:	6b b1       	in	r22, 0x0b	; 11
-    2da4:	74 e0       	ldi	r23, 0x04	; 4
-    2da6:	e7 9f       	mul	r30, r23
-    2da8:	f0 01       	movw	r30, r0
-    2daa:	11 24       	eor	r1, r1
-    2dac:	63 70       	andi	r22, 0x03	; 3
-    2dae:	e6 2b       	or	r30, r22
-    2db0:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2db2:	65 b1       	in	r22, 0x05	; 5
-    2db4:	6a 60       	ori	r22, 0x0A	; 10
-    2db6:	65 b9       	out	0x05, r22	; 5
-    2db8:	65 b1       	in	r22, 0x05	; 5
-    2dba:	65 7f       	andi	r22, 0xF5	; 245
-    2dbc:	65 b9       	out	0x05, r22	; 5
+    2d8e:	65 b1       	in	r22, 0x05	; 5
+    2d90:	6a 60       	ori	r22, 0x0A	; 10
+    2d92:	65 b9       	out	0x05, r22	; 5
+    2d94:	65 b1       	in	r22, 0x05	; 5
+    2d96:	65 7f       	andi	r22, 0xF5	; 245
+    2d98:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2dbe:	65 b1       	in	r22, 0x05	; 5
-    2dc0:	6a 60       	ori	r22, 0x0A	; 10
-    2dc2:	65 b9       	out	0x05, r22	; 5
-    2dc4:	65 b1       	in	r22, 0x05	; 5
-    2dc6:	65 7f       	andi	r22, 0xF5	; 245
-    2dc8:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 53));
-    2dca:	b9 01       	movw	r22, r18
-    2dcc:	6b 5c       	subi	r22, 0xCB	; 203
-    2dce:	7f 4f       	sbci	r23, 0xFF	; 255
-    2dd0:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2dd4:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2dd8:	e6 0f       	add	r30, r22
-    2dda:	f7 1f       	adc	r31, r23
-    2ddc:	e4 91       	lpm	r30, Z
-    2dde:	6b b1       	in	r22, 0x0b	; 11
-    2de0:	74 e0       	ldi	r23, 0x04	; 4
-    2de2:	e7 9f       	mul	r30, r23
-    2de4:	f0 01       	movw	r30, r0
-    2de6:	11 24       	eor	r1, r1
-    2de8:	63 70       	andi	r22, 0x03	; 3
-    2dea:	e6 2b       	or	r30, r22
-    2dec:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2dee:	65 b1       	in	r22, 0x05	; 5
-    2df0:	6a 60       	ori	r22, 0x0A	; 10
-    2df2:	65 b9       	out	0x05, r22	; 5
-    2df4:	65 b1       	in	r22, 0x05	; 5
-    2df6:	65 7f       	andi	r22, 0xF5	; 245
-    2df8:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    2dfa:	65 b1       	in	r22, 0x05	; 5
-    2dfc:	6a 60       	ori	r22, 0x0A	; 10
-    2dfe:	65 b9       	out	0x05, r22	; 5
-    2e00:	65 b1       	in	r22, 0x05	; 5
-    2e02:	65 7f       	andi	r22, 0xF5	; 245
-    2e04:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 54));
-    2e06:	b9 01       	movw	r22, r18
-    2e08:	6a 5c       	subi	r22, 0xCA	; 202
-    2e0a:	7f 4f       	sbci	r23, 0xFF	; 255
-    2e0c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2e10:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2e14:	e6 0f       	add	r30, r22
-    2e16:	f7 1f       	adc	r31, r23
-    2e18:	e4 91       	lpm	r30, Z
-    2e1a:	6b b1       	in	r22, 0x0b	; 11
-    2e1c:	74 e0       	ldi	r23, 0x04	; 4
-    2e1e:	e7 9f       	mul	r30, r23
-    2e20:	f0 01       	movw	r30, r0
-    2e22:	11 24       	eor	r1, r1
-    2e24:	63 70       	andi	r22, 0x03	; 3
-    2e26:	e6 2b       	or	r30, r22
-    2e28:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2e2a:	65 b1       	in	r22, 0x05	; 5
-    2e2c:	6a 60       	ori	r22, 0x0A	; 10
-    2e2e:	65 b9       	out	0x05, r22	; 5
-    2e30:	65 b1       	in	r22, 0x05	; 5
-    2e32:	65 7f       	andi	r22, 0xF5	; 245
-    2e34:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    2d9a:	f9 01       	movw	r30, r18
+    2d9c:	77 96       	adiw	r30, 0x17	; 23
             PWCLK_GCLK;
-    2e36:	65 b1       	in	r22, 0x05	; 5
-    2e38:	6a 60       	ori	r22, 0x0A	; 10
-    2e3a:	65 b9       	out	0x05, r22	; 5
-    2e3c:	65 b1       	in	r22, 0x05	; 5
-    2e3e:	65 7f       	andi	r22, 0xF5	; 245
-    2e40:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 55));
-    2e42:	b9 01       	movw	r22, r18
-    2e44:	69 5c       	subi	r22, 0xC9	; 201
-    2e46:	7f 4f       	sbci	r23, 0xFF	; 255
-    2e48:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2e4c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2e50:	e6 0f       	add	r30, r22
-    2e52:	f7 1f       	adc	r31, r23
-    2e54:	e4 91       	lpm	r30, Z
-    2e56:	6b b1       	in	r22, 0x0b	; 11
-    2e58:	74 e0       	ldi	r23, 0x04	; 4
-    2e5a:	e7 9f       	mul	r30, r23
-    2e5c:	f0 01       	movw	r30, r0
-    2e5e:	11 24       	eor	r1, r1
-    2e60:	63 70       	andi	r22, 0x03	; 3
-    2e62:	e6 2b       	or	r30, r22
-    2e64:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2e66:	65 b1       	in	r22, 0x05	; 5
-    2e68:	6a 60       	ori	r22, 0x0A	; 10
-    2e6a:	65 b9       	out	0x05, r22	; 5
-    2e6c:	65 b1       	in	r22, 0x05	; 5
-    2e6e:	65 7f       	andi	r22, 0xF5	; 245
-    2e70:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    2d9e:	64 91       	lpm	r22, Z
+    2da0:	eb b1       	in	r30, 0x0b	; 11
+    2da2:	f4 e0       	ldi	r31, 0x04	; 4
+    2da4:	6f 9f       	mul	r22, r31
+    2da6:	b0 01       	movw	r22, r0
+    2da8:	11 24       	eor	r1, r1
+    2daa:	e3 70       	andi	r30, 0x03	; 3
+    2dac:	e6 2b       	or	r30, r22
+    2dae:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2e72:	65 b1       	in	r22, 0x05	; 5
-    2e74:	6a 60       	ori	r22, 0x0A	; 10
-    2e76:	65 b9       	out	0x05, r22	; 5
-    2e78:	65 b1       	in	r22, 0x05	; 5
-    2e7a:	65 7f       	andi	r22, 0xF5	; 245
-    2e7c:	65 b9       	out	0x05, r22	; 5
+    2db0:	65 b1       	in	r22, 0x05	; 5
+    2db2:	6a 60       	ori	r22, 0x0A	; 10
+    2db4:	65 b9       	out	0x05, r22	; 5
+    2db6:	65 b1       	in	r22, 0x05	; 5
+    2db8:	65 7f       	andi	r22, 0xF5	; 245
+    2dba:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2dbc:	65 b1       	in	r22, 0x05	; 5
+    2dbe:	6a 60       	ori	r22, 0x0A	; 10
+    2dc0:	65 b9       	out	0x05, r22	; 5
+    2dc2:	65 b1       	in	r22, 0x05	; 5
+    2dc4:	65 7f       	andi	r22, 0xF5	; 245
+    2dc6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2dc8:	f9 01       	movw	r30, r18
+    2dca:	78 96       	adiw	r30, 0x18	; 24
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
-            // chip 7
-            SET_COLOR(pgm_read_byte(buffer + index + 56));
-    2e7e:	b9 01       	movw	r22, r18
-    2e80:	68 5c       	subi	r22, 0xC8	; 200
-    2e82:	7f 4f       	sbci	r23, 0xFF	; 255
-    2e84:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2e88:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2e8c:	e6 0f       	add	r30, r22
-    2e8e:	f7 1f       	adc	r31, r23
-    2e90:	e4 91       	lpm	r30, Z
-    2e92:	6b b1       	in	r22, 0x0b	; 11
-    2e94:	74 e0       	ldi	r23, 0x04	; 4
-    2e96:	e7 9f       	mul	r30, r23
-    2e98:	f0 01       	movw	r30, r0
-    2e9a:	11 24       	eor	r1, r1
-    2e9c:	63 70       	andi	r22, 0x03	; 3
-    2e9e:	e6 2b       	or	r30, r22
-    2ea0:	eb b9       	out	0x0b, r30	; 11
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
+    2dcc:	64 91       	lpm	r22, Z
+    2dce:	eb b1       	in	r30, 0x0b	; 11
+    2dd0:	f4 e0       	ldi	r31, 0x04	; 4
+    2dd2:	6f 9f       	mul	r22, r31
+    2dd4:	b0 01       	movw	r22, r0
+    2dd6:	11 24       	eor	r1, r1
+    2dd8:	e3 70       	andi	r30, 0x03	; 3
+    2dda:	e6 2b       	or	r30, r22
+    2ddc:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2dde:	65 b1       	in	r22, 0x05	; 5
+    2de0:	6a 60       	ori	r22, 0x0A	; 10
+    2de2:	65 b9       	out	0x05, r22	; 5
+    2de4:	65 b1       	in	r22, 0x05	; 5
+    2de6:	65 7f       	andi	r22, 0xF5	; 245
+    2de8:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2dea:	65 b1       	in	r22, 0x05	; 5
+    2dec:	6a 60       	ori	r22, 0x0A	; 10
+    2dee:	65 b9       	out	0x05, r22	; 5
+    2df0:	65 b1       	in	r22, 0x05	; 5
+    2df2:	65 7f       	andi	r22, 0xF5	; 245
+    2df4:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
+    2df6:	f9 01       	movw	r30, r18
+    2df8:	79 96       	adiw	r30, 0x19	; 25
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2dfa:	64 91       	lpm	r22, Z
+    2dfc:	eb b1       	in	r30, 0x0b	; 11
+    2dfe:	f4 e0       	ldi	r31, 0x04	; 4
+    2e00:	6f 9f       	mul	r22, r31
+    2e02:	b0 01       	movw	r22, r0
+    2e04:	11 24       	eor	r1, r1
+    2e06:	e3 70       	andi	r30, 0x03	; 3
+    2e08:	e6 2b       	or	r30, r22
+    2e0a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2e0c:	65 b1       	in	r22, 0x05	; 5
+    2e0e:	6a 60       	ori	r22, 0x0A	; 10
+    2e10:	65 b9       	out	0x05, r22	; 5
+    2e12:	65 b1       	in	r22, 0x05	; 5
+    2e14:	65 7f       	andi	r22, 0xF5	; 245
+    2e16:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2e18:	65 b1       	in	r22, 0x05	; 5
+    2e1a:	6a 60       	ori	r22, 0x0A	; 10
+    2e1c:	65 b9       	out	0x05, r22	; 5
+    2e1e:	65 b1       	in	r22, 0x05	; 5
+    2e20:	65 7f       	andi	r22, 0xF5	; 245
+    2e22:	65 b9       	out	0x05, r22	; 5
+
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2e24:	f9 01       	movw	r30, r18
+    2e26:	7a 96       	adiw	r30, 0x1a	; 26
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2e28:	64 91       	lpm	r22, Z
+    2e2a:	eb b1       	in	r30, 0x0b	; 11
+    2e2c:	f4 e0       	ldi	r31, 0x04	; 4
+    2e2e:	6f 9f       	mul	r22, r31
+    2e30:	b0 01       	movw	r22, r0
+    2e32:	11 24       	eor	r1, r1
+    2e34:	e3 70       	andi	r30, 0x03	; 3
+    2e36:	e6 2b       	or	r30, r22
+    2e38:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2e3a:	65 b1       	in	r22, 0x05	; 5
+    2e3c:	6a 60       	ori	r22, 0x0A	; 10
+    2e3e:	65 b9       	out	0x05, r22	; 5
+    2e40:	65 b1       	in	r22, 0x05	; 5
+    2e42:	65 7f       	andi	r22, 0xF5	; 245
+    2e44:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2e46:	65 b1       	in	r22, 0x05	; 5
+    2e48:	6a 60       	ori	r22, 0x0A	; 10
+    2e4a:	65 b9       	out	0x05, r22	; 5
+    2e4c:	65 b1       	in	r22, 0x05	; 5
+    2e4e:	65 7f       	andi	r22, 0xF5	; 245
+    2e50:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2e52:	f9 01       	movw	r30, r18
+    2e54:	7b 96       	adiw	r30, 0x1b	; 27
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2e56:	64 91       	lpm	r22, Z
+    2e58:	eb b1       	in	r30, 0x0b	; 11
+    2e5a:	f4 e0       	ldi	r31, 0x04	; 4
+    2e5c:	6f 9f       	mul	r22, r31
+    2e5e:	b0 01       	movw	r22, r0
+    2e60:	11 24       	eor	r1, r1
+    2e62:	e3 70       	andi	r30, 0x03	; 3
+    2e64:	e6 2b       	or	r30, r22
+    2e66:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2e68:	65 b1       	in	r22, 0x05	; 5
+    2e6a:	6a 60       	ori	r22, 0x0A	; 10
+    2e6c:	65 b9       	out	0x05, r22	; 5
+    2e6e:	65 b1       	in	r22, 0x05	; 5
+    2e70:	65 7f       	andi	r22, 0xF5	; 245
+    2e72:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2e74:	65 b1       	in	r22, 0x05	; 5
+    2e76:	6a 60       	ori	r22, 0x0A	; 10
+    2e78:	65 b9       	out	0x05, r22	; 5
+    2e7a:	65 b1       	in	r22, 0x05	; 5
+    2e7c:	65 7f       	andi	r22, 0xF5	; 245
+    2e7e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2e80:	f9 01       	movw	r30, r18
+    2e82:	7c 96       	adiw	r30, 0x1c	; 28
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2e84:	64 91       	lpm	r22, Z
+    2e86:	eb b1       	in	r30, 0x0b	; 11
+    2e88:	f4 e0       	ldi	r31, 0x04	; 4
+    2e8a:	6f 9f       	mul	r22, r31
+    2e8c:	b0 01       	movw	r22, r0
+    2e8e:	11 24       	eor	r1, r1
+    2e90:	e3 70       	andi	r30, 0x03	; 3
+    2e92:	e6 2b       	or	r30, r22
+    2e94:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2e96:	65 b1       	in	r22, 0x05	; 5
+    2e98:	6a 60       	ori	r22, 0x0A	; 10
+    2e9a:	65 b9       	out	0x05, r22	; 5
+    2e9c:	65 b1       	in	r22, 0x05	; 5
+    2e9e:	65 7f       	andi	r22, 0xF5	; 245
+    2ea0:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
     2ea2:	65 b1       	in	r22, 0x05	; 5
     2ea4:	6a 60       	ori	r22, 0x0A	; 10
@@ -6212,286 +7810,401 @@ private:
     2eaa:	65 7f       	andi	r22, 0xF5	; 245
     2eac:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2eae:	65 b1       	in	r22, 0x05	; 5
-    2eb0:	6a 60       	ori	r22, 0x0A	; 10
-    2eb2:	65 b9       	out	0x05, r22	; 5
-    2eb4:	65 b1       	in	r22, 0x05	; 5
-    2eb6:	65 7f       	andi	r22, 0xF5	; 245
-    2eb8:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 57));
-    2eba:	b9 01       	movw	r22, r18
-    2ebc:	67 5c       	subi	r22, 0xC7	; 199
-    2ebe:	7f 4f       	sbci	r23, 0xFF	; 255
-    2ec0:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2ec4:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2ec8:	e6 0f       	add	r30, r22
-    2eca:	f7 1f       	adc	r31, r23
-    2ecc:	e4 91       	lpm	r30, Z
-    2ece:	6b b1       	in	r22, 0x0b	; 11
-    2ed0:	74 e0       	ldi	r23, 0x04	; 4
-    2ed2:	e7 9f       	mul	r30, r23
-    2ed4:	f0 01       	movw	r30, r0
-    2ed6:	11 24       	eor	r1, r1
-    2ed8:	63 70       	andi	r22, 0x03	; 3
-    2eda:	e6 2b       	or	r30, r22
-    2edc:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2ede:	65 b1       	in	r22, 0x05	; 5
-    2ee0:	6a 60       	ori	r22, 0x0A	; 10
-    2ee2:	65 b9       	out	0x05, r22	; 5
-    2ee4:	65 b1       	in	r22, 0x05	; 5
-    2ee6:	65 7f       	andi	r22, 0xF5	; 245
-    2ee8:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    2eea:	65 b1       	in	r22, 0x05	; 5
-    2eec:	6a 60       	ori	r22, 0x0A	; 10
-    2eee:	65 b9       	out	0x05, r22	; 5
-    2ef0:	65 b1       	in	r22, 0x05	; 5
-    2ef2:	65 7f       	andi	r22, 0xF5	; 245
-    2ef4:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 58));
-    2ef6:	b9 01       	movw	r22, r18
-    2ef8:	66 5c       	subi	r22, 0xC6	; 198
-    2efa:	7f 4f       	sbci	r23, 0xFF	; 255
-    2efc:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2f00:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2f04:	e6 0f       	add	r30, r22
-    2f06:	f7 1f       	adc	r31, r23
-    2f08:	e4 91       	lpm	r30, Z
-    2f0a:	6b b1       	in	r22, 0x0b	; 11
-    2f0c:	74 e0       	ldi	r23, 0x04	; 4
-    2f0e:	e7 9f       	mul	r30, r23
-    2f10:	f0 01       	movw	r30, r0
-    2f12:	11 24       	eor	r1, r1
-    2f14:	63 70       	andi	r22, 0x03	; 3
-    2f16:	e6 2b       	or	r30, r22
-    2f18:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    2f1a:	65 b1       	in	r22, 0x05	; 5
-    2f1c:	6a 60       	ori	r22, 0x0A	; 10
-    2f1e:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    2eae:	f9 01       	movw	r30, r18
+    2eb0:	7d 96       	adiw	r30, 0x1d	; 29
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2eb2:	64 91       	lpm	r22, Z
+    2eb4:	eb b1       	in	r30, 0x0b	; 11
+    2eb6:	f4 e0       	ldi	r31, 0x04	; 4
+    2eb8:	6f 9f       	mul	r22, r31
+    2eba:	b0 01       	movw	r22, r0
+    2ebc:	11 24       	eor	r1, r1
+    2ebe:	e3 70       	andi	r30, 0x03	; 3
+    2ec0:	e6 2b       	or	r30, r22
+    2ec2:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2ec4:	65 b1       	in	r22, 0x05	; 5
+    2ec6:	6a 60       	ori	r22, 0x0A	; 10
+    2ec8:	65 b9       	out	0x05, r22	; 5
+    2eca:	65 b1       	in	r22, 0x05	; 5
+    2ecc:	65 7f       	andi	r22, 0xF5	; 245
+    2ece:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2ed0:	65 b1       	in	r22, 0x05	; 5
+    2ed2:	6a 60       	ori	r22, 0x0A	; 10
+    2ed4:	65 b9       	out	0x05, r22	; 5
+    2ed6:	65 b1       	in	r22, 0x05	; 5
+    2ed8:	65 7f       	andi	r22, 0xF5	; 245
+    2eda:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2edc:	f9 01       	movw	r30, r18
+    2ede:	7e 96       	adiw	r30, 0x1e	; 30
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2ee0:	64 91       	lpm	r22, Z
+    2ee2:	eb b1       	in	r30, 0x0b	; 11
+    2ee4:	f4 e0       	ldi	r31, 0x04	; 4
+    2ee6:	6f 9f       	mul	r22, r31
+    2ee8:	b0 01       	movw	r22, r0
+    2eea:	11 24       	eor	r1, r1
+    2eec:	e3 70       	andi	r30, 0x03	; 3
+    2eee:	e6 2b       	or	r30, r22
+    2ef0:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2ef2:	65 b1       	in	r22, 0x05	; 5
+    2ef4:	6a 60       	ori	r22, 0x0A	; 10
+    2ef6:	65 b9       	out	0x05, r22	; 5
+    2ef8:	65 b1       	in	r22, 0x05	; 5
+    2efa:	65 7f       	andi	r22, 0xF5	; 245
+    2efc:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2efe:	65 b1       	in	r22, 0x05	; 5
+    2f00:	6a 60       	ori	r22, 0x0A	; 10
+    2f02:	65 b9       	out	0x05, r22	; 5
+    2f04:	65 b1       	in	r22, 0x05	; 5
+    2f06:	65 7f       	andi	r22, 0xF5	; 245
+    2f08:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2f0a:	f9 01       	movw	r30, r18
+    2f0c:	7f 96       	adiw	r30, 0x1f	; 31
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2f0e:	64 91       	lpm	r22, Z
+    2f10:	eb b1       	in	r30, 0x0b	; 11
+    2f12:	f4 e0       	ldi	r31, 0x04	; 4
+    2f14:	6f 9f       	mul	r22, r31
+    2f16:	b0 01       	movw	r22, r0
+    2f18:	11 24       	eor	r1, r1
+    2f1a:	e3 70       	andi	r30, 0x03	; 3
+    2f1c:	e6 2b       	or	r30, r22
+    2f1e:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
     2f20:	65 b1       	in	r22, 0x05	; 5
-    2f22:	65 7f       	andi	r22, 0xF5	; 245
+    2f22:	6a 60       	ori	r22, 0x0A	; 10
     2f24:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
     2f26:	65 b1       	in	r22, 0x05	; 5
-    2f28:	6a 60       	ori	r22, 0x0A	; 10
+    2f28:	65 7f       	andi	r22, 0xF5	; 245
     2f2a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
     2f2c:	65 b1       	in	r22, 0x05	; 5
-    2f2e:	65 7f       	andi	r22, 0xF5	; 245
+    2f2e:	6a 60       	ori	r22, 0x0A	; 10
     2f30:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 59));
-    2f32:	b9 01       	movw	r22, r18
-    2f34:	65 5c       	subi	r22, 0xC5	; 197
-    2f36:	7f 4f       	sbci	r23, 0xFF	; 255
-    2f38:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2f3c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2f40:	e6 0f       	add	r30, r22
-    2f42:	f7 1f       	adc	r31, r23
-    2f44:	e4 91       	lpm	r30, Z
-    2f46:	6b b1       	in	r22, 0x0b	; 11
-    2f48:	74 e0       	ldi	r23, 0x04	; 4
-    2f4a:	e7 9f       	mul	r30, r23
-    2f4c:	f0 01       	movw	r30, r0
-    2f4e:	11 24       	eor	r1, r1
-    2f50:	63 70       	andi	r22, 0x03	; 3
-    2f52:	e6 2b       	or	r30, r22
-    2f54:	eb b9       	out	0x0b, r30	; 11
+    2f32:	65 b1       	in	r22, 0x05	; 5
+    2f34:	65 7f       	andi	r22, 0xF5	; 245
+    2f36:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2f56:	65 b1       	in	r22, 0x05	; 5
-    2f58:	6a 60       	ori	r22, 0x0A	; 10
-    2f5a:	65 b9       	out	0x05, r22	; 5
-    2f5c:	65 b1       	in	r22, 0x05	; 5
-    2f5e:	65 7f       	andi	r22, 0xF5	; 245
-    2f60:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2f62:	65 b1       	in	r22, 0x05	; 5
-    2f64:	6a 60       	ori	r22, 0x0A	; 10
-    2f66:	65 b9       	out	0x05, r22	; 5
-    2f68:	65 b1       	in	r22, 0x05	; 5
-    2f6a:	65 7f       	andi	r22, 0xF5	; 245
-    2f6c:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 60));
-    2f6e:	b9 01       	movw	r22, r18
-    2f70:	64 5c       	subi	r22, 0xC4	; 196
-    2f72:	7f 4f       	sbci	r23, 0xFF	; 255
-    2f74:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2f78:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2f7c:	e6 0f       	add	r30, r22
-    2f7e:	f7 1f       	adc	r31, r23
-    2f80:	e4 91       	lpm	r30, Z
-    2f82:	6b b1       	in	r22, 0x0b	; 11
-    2f84:	74 e0       	ldi	r23, 0x04	; 4
-    2f86:	e7 9f       	mul	r30, r23
-    2f88:	f0 01       	movw	r30, r0
-    2f8a:	11 24       	eor	r1, r1
-    2f8c:	63 70       	andi	r22, 0x03	; 3
-    2f8e:	e6 2b       	or	r30, r22
-    2f90:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    2f92:	65 b1       	in	r22, 0x05	; 5
-    2f94:	6a 60       	ori	r22, 0x0A	; 10
-    2f96:	65 b9       	out	0x05, r22	; 5
-    2f98:	65 b1       	in	r22, 0x05	; 5
-    2f9a:	65 7f       	andi	r22, 0xF5	; 245
-    2f9c:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2f9e:	65 b1       	in	r22, 0x05	; 5
-    2fa0:	6a 60       	ori	r22, 0x0A	; 10
-    2fa2:	65 b9       	out	0x05, r22	; 5
-    2fa4:	65 b1       	in	r22, 0x05	; 5
-    2fa6:	65 7f       	andi	r22, 0xF5	; 245
-    2fa8:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 61));
-    2faa:	b9 01       	movw	r22, r18
-    2fac:	63 5c       	subi	r22, 0xC3	; 195
-    2fae:	7f 4f       	sbci	r23, 0xFF	; 255
-    2fb0:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2fb4:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2fb8:	e6 0f       	add	r30, r22
-    2fba:	f7 1f       	adc	r31, r23
-    2fbc:	e4 91       	lpm	r30, Z
-    2fbe:	6b b1       	in	r22, 0x0b	; 11
-    2fc0:	74 e0       	ldi	r23, 0x04	; 4
-    2fc2:	e7 9f       	mul	r30, r23
-    2fc4:	f0 01       	movw	r30, r0
-    2fc6:	11 24       	eor	r1, r1
-    2fc8:	63 70       	andi	r22, 0x03	; 3
-    2fca:	e6 2b       	or	r30, r22
-    2fcc:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    2f38:	f9 01       	movw	r30, r18
+    2f3a:	b0 96       	adiw	r30, 0x20	; 32
             PWCLK_GCLK;
-    2fce:	65 b1       	in	r22, 0x05	; 5
-    2fd0:	6a 60       	ori	r22, 0x0A	; 10
-    2fd2:	65 b9       	out	0x05, r22	; 5
-    2fd4:	65 b1       	in	r22, 0x05	; 5
-    2fd6:	65 7f       	andi	r22, 0xF5	; 245
-    2fd8:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    2fda:	65 b1       	in	r22, 0x05	; 5
-    2fdc:	6a 60       	ori	r22, 0x0A	; 10
-    2fde:	65 b9       	out	0x05, r22	; 5
-    2fe0:	65 b1       	in	r22, 0x05	; 5
-    2fe2:	65 7f       	andi	r22, 0xF5	; 245
-    2fe4:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 62));
-    2fe6:	b9 01       	movw	r22, r18
-    2fe8:	62 5c       	subi	r22, 0xC2	; 194
-    2fea:	7f 4f       	sbci	r23, 0xFF	; 255
-    2fec:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    2ff0:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    2ff4:	e6 0f       	add	r30, r22
-    2ff6:	f7 1f       	adc	r31, r23
-    2ff8:	e4 91       	lpm	r30, Z
-    2ffa:	6b b1       	in	r22, 0x0b	; 11
-    2ffc:	74 e0       	ldi	r23, 0x04	; 4
-    2ffe:	e7 9f       	mul	r30, r23
-    3000:	f0 01       	movw	r30, r0
-    3002:	11 24       	eor	r1, r1
-    3004:	63 70       	andi	r22, 0x03	; 3
-    3006:	e6 2b       	or	r30, r22
-    3008:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    300a:	65 b1       	in	r22, 0x05	; 5
-    300c:	6a 60       	ori	r22, 0x0A	; 10
-    300e:	65 b9       	out	0x05, r22	; 5
-    3010:	65 b1       	in	r22, 0x05	; 5
-    3012:	65 7f       	andi	r22, 0xF5	; 245
-    3014:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3016:	65 b1       	in	r22, 0x05	; 5
-    3018:	6a 60       	ori	r22, 0x0A	; 10
-    301a:	65 b9       	out	0x05, r22	; 5
-    301c:	65 b1       	in	r22, 0x05	; 5
-    301e:	65 7f       	andi	r22, 0xF5	; 245
-    3020:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 63));
-    3022:	21 5c       	subi	r18, 0xC1	; 193
-    3024:	3f 4f       	sbci	r19, 0xFF	; 255
-    3026:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    302a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    302e:	e2 0f       	add	r30, r18
-    3030:	f3 1f       	adc	r31, r19
-    3032:	24 91       	lpm	r18, Z
-    3034:	3b b1       	in	r19, 0x0b	; 11
-    3036:	64 e0       	ldi	r22, 0x04	; 4
-    3038:	26 9f       	mul	r18, r22
-    303a:	f0 01       	movw	r30, r0
-    303c:	11 24       	eor	r1, r1
-    303e:	33 70       	andi	r19, 0x03	; 3
-    3040:	e3 2b       	or	r30, r19
-    3042:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3044:	25 b1       	in	r18, 0x05	; 5
-    3046:	2a 60       	ori	r18, 0x0A	; 10
-    3048:	25 b9       	out	0x05, r18	; 5
-    304a:	25 b1       	in	r18, 0x05	; 5
-    304c:	25 7f       	andi	r18, 0xF5	; 245
-    304e:	25 b9       	out	0x05, r18	; 5
 
-            // shift data into buffers
-            HIGH_LAT;
-    3050:	2a 9a       	sbi	0x05, 2	; 5
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
+    2f3c:	64 91       	lpm	r22, Z
+    2f3e:	eb b1       	in	r30, 0x0b	; 11
+    2f40:	f4 e0       	ldi	r31, 0x04	; 4
+    2f42:	6f 9f       	mul	r22, r31
+    2f44:	b0 01       	movw	r22, r0
+    2f46:	11 24       	eor	r1, r1
+    2f48:	e3 70       	andi	r30, 0x03	; 3
+    2f4a:	e6 2b       	or	r30, r22
+    2f4c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    3052:	25 b1       	in	r18, 0x05	; 5
-    3054:	2a 60       	ori	r18, 0x0A	; 10
-    3056:	25 b9       	out	0x05, r18	; 5
-    3058:	25 b1       	in	r18, 0x05	; 5
-    305a:	25 7f       	andi	r18, 0xF5	; 245
-    305c:	25 b9       	out	0x05, r18	; 5
-            CLEAR_LAT;
-    305e:	2a 98       	cbi	0x05, 2	; 5
-
-#pragma endregion // MSB
-
-            index = ((y & ~1) << 5) + (PANEL_BUFFERSIZE / 2); // advance index to next section
-    3060:	9c 01       	movw	r18, r24
-    3062:	38 5f       	subi	r19, 0xF8	; 248
-
-#pragma region LSB
-            // chip 0
-            SET_COLOR(pgm_read_byte(buffer + index + 0));
-    3064:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3068:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    306c:	e2 0f       	add	r30, r18
-    306e:	f3 1f       	adc	r31, r19
-    3070:	e4 91       	lpm	r30, Z
-    3072:	6b b1       	in	r22, 0x0b	; 11
-    3074:	74 e0       	ldi	r23, 0x04	; 4
-    3076:	e7 9f       	mul	r30, r23
-    3078:	f0 01       	movw	r30, r0
-    307a:	11 24       	eor	r1, r1
-    307c:	63 70       	andi	r22, 0x03	; 3
-    307e:	e6 2b       	or	r30, r22
-    3080:	eb b9       	out	0x0b, r30	; 11
+    2f4e:	65 b1       	in	r22, 0x05	; 5
+    2f50:	6a 60       	ori	r22, 0x0A	; 10
+    2f52:	65 b9       	out	0x05, r22	; 5
+    2f54:	65 b1       	in	r22, 0x05	; 5
+    2f56:	65 7f       	andi	r22, 0xF5	; 245
+    2f58:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    3082:	65 b1       	in	r22, 0x05	; 5
-    3084:	6a 60       	ori	r22, 0x0A	; 10
-    3086:	65 b9       	out	0x05, r22	; 5
-    3088:	65 b1       	in	r22, 0x05	; 5
-    308a:	65 7f       	andi	r22, 0xF5	; 245
-    308c:	65 b9       	out	0x05, r22	; 5
+    2f5a:	65 b1       	in	r22, 0x05	; 5
+    2f5c:	6a 60       	ori	r22, 0x0A	; 10
+    2f5e:	65 b9       	out	0x05, r22	; 5
+    2f60:	65 b1       	in	r22, 0x05	; 5
+    2f62:	65 7f       	andi	r22, 0xF5	; 245
+    2f64:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    308e:	65 b1       	in	r22, 0x05	; 5
-    3090:	6a 60       	ori	r22, 0x0A	; 10
-    3092:	65 b9       	out	0x05, r22	; 5
-    3094:	65 b1       	in	r22, 0x05	; 5
-    3096:	65 7f       	andi	r22, 0xF5	; 245
-    3098:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 1));
-    309a:	b9 01       	movw	r22, r18
-    309c:	6f 5f       	subi	r22, 0xFF	; 255
-    309e:	7f 4f       	sbci	r23, 0xFF	; 255
-    30a0:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    30a4:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    30a8:	e6 0f       	add	r30, r22
-    30aa:	f7 1f       	adc	r31, r23
-    30ac:	e4 91       	lpm	r30, Z
-    30ae:	6b b1       	in	r22, 0x0b	; 11
-    30b0:	74 e0       	ldi	r23, 0x04	; 4
-    30b2:	e7 9f       	mul	r30, r23
-    30b4:	f0 01       	movw	r30, r0
+            PWCLK_GCLK;
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
+    2f66:	f9 01       	movw	r30, r18
+    2f68:	b1 96       	adiw	r30, 0x21	; 33
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2f6a:	64 91       	lpm	r22, Z
+    2f6c:	eb b1       	in	r30, 0x0b	; 11
+    2f6e:	f4 e0       	ldi	r31, 0x04	; 4
+    2f70:	6f 9f       	mul	r22, r31
+    2f72:	b0 01       	movw	r22, r0
+    2f74:	11 24       	eor	r1, r1
+    2f76:	e3 70       	andi	r30, 0x03	; 3
+    2f78:	e6 2b       	or	r30, r22
+    2f7a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2f7c:	65 b1       	in	r22, 0x05	; 5
+    2f7e:	6a 60       	ori	r22, 0x0A	; 10
+    2f80:	65 b9       	out	0x05, r22	; 5
+    2f82:	65 b1       	in	r22, 0x05	; 5
+    2f84:	65 7f       	andi	r22, 0xF5	; 245
+    2f86:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2f88:	65 b1       	in	r22, 0x05	; 5
+    2f8a:	6a 60       	ori	r22, 0x0A	; 10
+    2f8c:	65 b9       	out	0x05, r22	; 5
+    2f8e:	65 b1       	in	r22, 0x05	; 5
+    2f90:	65 7f       	andi	r22, 0xF5	; 245
+    2f92:	65 b9       	out	0x05, r22	; 5
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2f94:	f9 01       	movw	r30, r18
+    2f96:	b2 96       	adiw	r30, 0x22	; 34
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2f98:	64 91       	lpm	r22, Z
+    2f9a:	eb b1       	in	r30, 0x0b	; 11
+    2f9c:	f4 e0       	ldi	r31, 0x04	; 4
+    2f9e:	6f 9f       	mul	r22, r31
+    2fa0:	b0 01       	movw	r22, r0
+    2fa2:	11 24       	eor	r1, r1
+    2fa4:	e3 70       	andi	r30, 0x03	; 3
+    2fa6:	e6 2b       	or	r30, r22
+    2fa8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2faa:	65 b1       	in	r22, 0x05	; 5
+    2fac:	6a 60       	ori	r22, 0x0A	; 10
+    2fae:	65 b9       	out	0x05, r22	; 5
+    2fb0:	65 b1       	in	r22, 0x05	; 5
+    2fb2:	65 7f       	andi	r22, 0xF5	; 245
+    2fb4:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2fb6:	65 b1       	in	r22, 0x05	; 5
+    2fb8:	6a 60       	ori	r22, 0x0A	; 10
+    2fba:	65 b9       	out	0x05, r22	; 5
+    2fbc:	65 b1       	in	r22, 0x05	; 5
+    2fbe:	65 7f       	andi	r22, 0xF5	; 245
+    2fc0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2fc2:	f9 01       	movw	r30, r18
+    2fc4:	b3 96       	adiw	r30, 0x23	; 35
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2fc6:	64 91       	lpm	r22, Z
+    2fc8:	eb b1       	in	r30, 0x0b	; 11
+    2fca:	f4 e0       	ldi	r31, 0x04	; 4
+    2fcc:	6f 9f       	mul	r22, r31
+    2fce:	b0 01       	movw	r22, r0
+    2fd0:	11 24       	eor	r1, r1
+    2fd2:	e3 70       	andi	r30, 0x03	; 3
+    2fd4:	e6 2b       	or	r30, r22
+    2fd6:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    2fd8:	65 b1       	in	r22, 0x05	; 5
+    2fda:	6a 60       	ori	r22, 0x0A	; 10
+    2fdc:	65 b9       	out	0x05, r22	; 5
+    2fde:	65 b1       	in	r22, 0x05	; 5
+    2fe0:	65 7f       	andi	r22, 0xF5	; 245
+    2fe2:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    2fe4:	65 b1       	in	r22, 0x05	; 5
+    2fe6:	6a 60       	ori	r22, 0x0A	; 10
+    2fe8:	65 b9       	out	0x05, r22	; 5
+    2fea:	65 b1       	in	r22, 0x05	; 5
+    2fec:	65 7f       	andi	r22, 0xF5	; 245
+    2fee:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2ff0:	f9 01       	movw	r30, r18
+    2ff2:	b4 96       	adiw	r30, 0x24	; 36
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    2ff4:	64 91       	lpm	r22, Z
+    2ff6:	eb b1       	in	r30, 0x0b	; 11
+    2ff8:	f4 e0       	ldi	r31, 0x04	; 4
+    2ffa:	6f 9f       	mul	r22, r31
+    2ffc:	b0 01       	movw	r22, r0
+    2ffe:	11 24       	eor	r1, r1
+    3000:	e3 70       	andi	r30, 0x03	; 3
+    3002:	e6 2b       	or	r30, r22
+    3004:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3006:	65 b1       	in	r22, 0x05	; 5
+    3008:	6a 60       	ori	r22, 0x0A	; 10
+    300a:	65 b9       	out	0x05, r22	; 5
+    300c:	65 b1       	in	r22, 0x05	; 5
+    300e:	65 7f       	andi	r22, 0xF5	; 245
+    3010:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    3012:	65 b1       	in	r22, 0x05	; 5
+    3014:	6a 60       	ori	r22, 0x0A	; 10
+    3016:	65 b9       	out	0x05, r22	; 5
+    3018:	65 b1       	in	r22, 0x05	; 5
+    301a:	65 7f       	andi	r22, 0xF5	; 245
+    301c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    301e:	f9 01       	movw	r30, r18
+    3020:	b5 96       	adiw	r30, 0x25	; 37
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3022:	64 91       	lpm	r22, Z
+    3024:	eb b1       	in	r30, 0x0b	; 11
+    3026:	f4 e0       	ldi	r31, 0x04	; 4
+    3028:	6f 9f       	mul	r22, r31
+    302a:	b0 01       	movw	r22, r0
+    302c:	11 24       	eor	r1, r1
+    302e:	e3 70       	andi	r30, 0x03	; 3
+    3030:	e6 2b       	or	r30, r22
+    3032:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3034:	65 b1       	in	r22, 0x05	; 5
+    3036:	6a 60       	ori	r22, 0x0A	; 10
+    3038:	65 b9       	out	0x05, r22	; 5
+    303a:	65 b1       	in	r22, 0x05	; 5
+    303c:	65 7f       	andi	r22, 0xF5	; 245
+    303e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    3040:	65 b1       	in	r22, 0x05	; 5
+    3042:	6a 60       	ori	r22, 0x0A	; 10
+    3044:	65 b9       	out	0x05, r22	; 5
+    3046:	65 b1       	in	r22, 0x05	; 5
+    3048:	65 7f       	andi	r22, 0xF5	; 245
+    304a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    304c:	f9 01       	movw	r30, r18
+    304e:	b6 96       	adiw	r30, 0x26	; 38
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3050:	64 91       	lpm	r22, Z
+    3052:	eb b1       	in	r30, 0x0b	; 11
+    3054:	f4 e0       	ldi	r31, 0x04	; 4
+    3056:	6f 9f       	mul	r22, r31
+    3058:	b0 01       	movw	r22, r0
+    305a:	11 24       	eor	r1, r1
+    305c:	e3 70       	andi	r30, 0x03	; 3
+    305e:	e6 2b       	or	r30, r22
+    3060:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3062:	65 b1       	in	r22, 0x05	; 5
+    3064:	6a 60       	ori	r22, 0x0A	; 10
+    3066:	65 b9       	out	0x05, r22	; 5
+    3068:	65 b1       	in	r22, 0x05	; 5
+    306a:	65 7f       	andi	r22, 0xF5	; 245
+    306c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    306e:	65 b1       	in	r22, 0x05	; 5
+    3070:	6a 60       	ori	r22, 0x0A	; 10
+    3072:	65 b9       	out	0x05, r22	; 5
+    3074:	65 b1       	in	r22, 0x05	; 5
+    3076:	65 7f       	andi	r22, 0xF5	; 245
+    3078:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    307a:	f9 01       	movw	r30, r18
+    307c:	b7 96       	adiw	r30, 0x27	; 39
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    307e:	64 91       	lpm	r22, Z
+    3080:	eb b1       	in	r30, 0x0b	; 11
+    3082:	f4 e0       	ldi	r31, 0x04	; 4
+    3084:	6f 9f       	mul	r22, r31
+    3086:	b0 01       	movw	r22, r0
+    3088:	11 24       	eor	r1, r1
+    308a:	e3 70       	andi	r30, 0x03	; 3
+    308c:	e6 2b       	or	r30, r22
+    308e:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3090:	65 b1       	in	r22, 0x05	; 5
+    3092:	6a 60       	ori	r22, 0x0A	; 10
+    3094:	65 b9       	out	0x05, r22	; 5
+    3096:	65 b1       	in	r22, 0x05	; 5
+    3098:	65 7f       	andi	r22, 0xF5	; 245
+    309a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    309c:	65 b1       	in	r22, 0x05	; 5
+    309e:	6a 60       	ori	r22, 0x0A	; 10
+    30a0:	65 b9       	out	0x05, r22	; 5
+    30a2:	65 b1       	in	r22, 0x05	; 5
+    30a4:	65 7f       	andi	r22, 0xF5	; 245
+    30a6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    30a8:	f9 01       	movw	r30, r18
+    30aa:	b8 96       	adiw	r30, 0x28	; 40
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
+    30ac:	64 91       	lpm	r22, Z
+    30ae:	eb b1       	in	r30, 0x0b	; 11
+    30b0:	f4 e0       	ldi	r31, 0x04	; 4
+    30b2:	6f 9f       	mul	r22, r31
+    30b4:	b0 01       	movw	r22, r0
     30b6:	11 24       	eor	r1, r1
-    30b8:	63 70       	andi	r22, 0x03	; 3
+    30b8:	e3 70       	andi	r30, 0x03	; 3
     30ba:	e6 2b       	or	r30, r22
     30bc:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
@@ -6508,280 +8221,402 @@ private:
     30d0:	65 b1       	in	r22, 0x05	; 5
     30d2:	65 7f       	andi	r22, 0xF5	; 245
     30d4:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 2));
-    30d6:	b9 01       	movw	r22, r18
-    30d8:	6e 5f       	subi	r22, 0xFE	; 254
-    30da:	7f 4f       	sbci	r23, 0xFF	; 255
-    30dc:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    30e0:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    30e4:	e6 0f       	add	r30, r22
-    30e6:	f7 1f       	adc	r31, r23
-    30e8:	e4 91       	lpm	r30, Z
-    30ea:	6b b1       	in	r22, 0x0b	; 11
-    30ec:	74 e0       	ldi	r23, 0x04	; 4
-    30ee:	e7 9f       	mul	r30, r23
-    30f0:	f0 01       	movw	r30, r0
-    30f2:	11 24       	eor	r1, r1
-    30f4:	63 70       	andi	r22, 0x03	; 3
-    30f6:	e6 2b       	or	r30, r22
-    30f8:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    30fa:	65 b1       	in	r22, 0x05	; 5
-    30fc:	6a 60       	ori	r22, 0x0A	; 10
-    30fe:	65 b9       	out	0x05, r22	; 5
-    3100:	65 b1       	in	r22, 0x05	; 5
-    3102:	65 7f       	andi	r22, 0xF5	; 245
-    3104:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    3106:	65 b1       	in	r22, 0x05	; 5
-    3108:	6a 60       	ori	r22, 0x0A	; 10
-    310a:	65 b9       	out	0x05, r22	; 5
-    310c:	65 b1       	in	r22, 0x05	; 5
-    310e:	65 7f       	andi	r22, 0xF5	; 245
-    3110:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 3));
-    3112:	b9 01       	movw	r22, r18
-    3114:	6d 5f       	subi	r22, 0xFD	; 253
-    3116:	7f 4f       	sbci	r23, 0xFF	; 255
-    3118:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    311c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3120:	e6 0f       	add	r30, r22
-    3122:	f7 1f       	adc	r31, r23
-    3124:	e4 91       	lpm	r30, Z
-    3126:	6b b1       	in	r22, 0x0b	; 11
-    3128:	74 e0       	ldi	r23, 0x04	; 4
-    312a:	e7 9f       	mul	r30, r23
-    312c:	f0 01       	movw	r30, r0
-    312e:	11 24       	eor	r1, r1
-    3130:	63 70       	andi	r22, 0x03	; 3
-    3132:	e6 2b       	or	r30, r22
-    3134:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3136:	65 b1       	in	r22, 0x05	; 5
-    3138:	6a 60       	ori	r22, 0x0A	; 10
-    313a:	65 b9       	out	0x05, r22	; 5
-    313c:	65 b1       	in	r22, 0x05	; 5
-    313e:	65 7f       	andi	r22, 0xF5	; 245
-    3140:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3142:	65 b1       	in	r22, 0x05	; 5
-    3144:	6a 60       	ori	r22, 0x0A	; 10
-    3146:	65 b9       	out	0x05, r22	; 5
-    3148:	65 b1       	in	r22, 0x05	; 5
-    314a:	65 7f       	andi	r22, 0xF5	; 245
-    314c:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 4));
-    314e:	b9 01       	movw	r22, r18
-    3150:	6c 5f       	subi	r22, 0xFC	; 252
-    3152:	7f 4f       	sbci	r23, 0xFF	; 255
-    3154:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3158:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    315c:	e6 0f       	add	r30, r22
-    315e:	f7 1f       	adc	r31, r23
-    3160:	e4 91       	lpm	r30, Z
-    3162:	6b b1       	in	r22, 0x0b	; 11
-    3164:	74 e0       	ldi	r23, 0x04	; 4
-    3166:	e7 9f       	mul	r30, r23
-    3168:	f0 01       	movw	r30, r0
-    316a:	11 24       	eor	r1, r1
-    316c:	63 70       	andi	r22, 0x03	; 3
-    316e:	e6 2b       	or	r30, r22
-    3170:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3172:	65 b1       	in	r22, 0x05	; 5
-    3174:	6a 60       	ori	r22, 0x0A	; 10
-    3176:	65 b9       	out	0x05, r22	; 5
-    3178:	65 b1       	in	r22, 0x05	; 5
-    317a:	65 7f       	andi	r22, 0xF5	; 245
-    317c:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    317e:	65 b1       	in	r22, 0x05	; 5
-    3180:	6a 60       	ori	r22, 0x0A	; 10
-    3182:	65 b9       	out	0x05, r22	; 5
-    3184:	65 b1       	in	r22, 0x05	; 5
-    3186:	65 7f       	andi	r22, 0xF5	; 245
-    3188:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 5));
-    318a:	b9 01       	movw	r22, r18
-    318c:	6b 5f       	subi	r22, 0xFB	; 251
-    318e:	7f 4f       	sbci	r23, 0xFF	; 255
-    3190:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3194:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3198:	e6 0f       	add	r30, r22
-    319a:	f7 1f       	adc	r31, r23
-    319c:	e4 91       	lpm	r30, Z
-    319e:	6b b1       	in	r22, 0x0b	; 11
-    31a0:	74 e0       	ldi	r23, 0x04	; 4
-    31a2:	e7 9f       	mul	r30, r23
-    31a4:	f0 01       	movw	r30, r0
-    31a6:	11 24       	eor	r1, r1
-    31a8:	63 70       	andi	r22, 0x03	; 3
-    31aa:	e6 2b       	or	r30, r22
-    31ac:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    31ae:	65 b1       	in	r22, 0x05	; 5
-    31b0:	6a 60       	ori	r22, 0x0A	; 10
-    31b2:	65 b9       	out	0x05, r22	; 5
-    31b4:	65 b1       	in	r22, 0x05	; 5
-    31b6:	65 7f       	andi	r22, 0xF5	; 245
-    31b8:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    31ba:	65 b1       	in	r22, 0x05	; 5
-    31bc:	6a 60       	ori	r22, 0x0A	; 10
-    31be:	65 b9       	out	0x05, r22	; 5
-    31c0:	65 b1       	in	r22, 0x05	; 5
-    31c2:	65 7f       	andi	r22, 0xF5	; 245
-    31c4:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 6));
-    31c6:	b9 01       	movw	r22, r18
-    31c8:	6a 5f       	subi	r22, 0xFA	; 250
-    31ca:	7f 4f       	sbci	r23, 0xFF	; 255
-    31cc:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    31d0:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    31d4:	e6 0f       	add	r30, r22
-    31d6:	f7 1f       	adc	r31, r23
-    31d8:	e4 91       	lpm	r30, Z
-    31da:	6b b1       	in	r22, 0x0b	; 11
-    31dc:	74 e0       	ldi	r23, 0x04	; 4
-    31de:	e7 9f       	mul	r30, r23
-    31e0:	f0 01       	movw	r30, r0
-    31e2:	11 24       	eor	r1, r1
-    31e4:	63 70       	andi	r22, 0x03	; 3
-    31e6:	e6 2b       	or	r30, r22
-    31e8:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    31ea:	65 b1       	in	r22, 0x05	; 5
-    31ec:	6a 60       	ori	r22, 0x0A	; 10
-    31ee:	65 b9       	out	0x05, r22	; 5
-    31f0:	65 b1       	in	r22, 0x05	; 5
-    31f2:	65 7f       	andi	r22, 0xF5	; 245
-    31f4:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    31f6:	65 b1       	in	r22, 0x05	; 5
-    31f8:	6a 60       	ori	r22, 0x0A	; 10
-    31fa:	65 b9       	out	0x05, r22	; 5
-    31fc:	65 b1       	in	r22, 0x05	; 5
-    31fe:	65 7f       	andi	r22, 0xF5	; 245
-    3200:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 7));
-    3202:	b9 01       	movw	r22, r18
-    3204:	69 5f       	subi	r22, 0xF9	; 249
-    3206:	7f 4f       	sbci	r23, 0xFF	; 255
-    3208:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    320c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3210:	e6 0f       	add	r30, r22
-    3212:	f7 1f       	adc	r31, r23
-    3214:	e4 91       	lpm	r30, Z
-    3216:	6b b1       	in	r22, 0x0b	; 11
-    3218:	74 e0       	ldi	r23, 0x04	; 4
-    321a:	e7 9f       	mul	r30, r23
-    321c:	f0 01       	movw	r30, r0
-    321e:	11 24       	eor	r1, r1
-    3220:	63 70       	andi	r22, 0x03	; 3
-    3222:	e6 2b       	or	r30, r22
-    3224:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3226:	65 b1       	in	r22, 0x05	; 5
-    3228:	6a 60       	ori	r22, 0x0A	; 10
-    322a:	65 b9       	out	0x05, r22	; 5
-    322c:	65 b1       	in	r22, 0x05	; 5
-    322e:	65 7f       	andi	r22, 0xF5	; 245
-    3230:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3232:	65 b1       	in	r22, 0x05	; 5
-    3234:	6a 60       	ori	r22, 0x0A	; 10
-    3236:	65 b9       	out	0x05, r22	; 5
-    3238:	65 b1       	in	r22, 0x05	; 5
-    323a:	65 7f       	andi	r22, 0xF5	; 245
-    323c:	65 b9       	out	0x05, r22	; 5
 
-            // chip 1
-            SET_COLOR(pgm_read_byte(buffer + index + 8));
-    323e:	b9 01       	movw	r22, r18
-    3240:	68 5f       	subi	r22, 0xF8	; 248
-    3242:	7f 4f       	sbci	r23, 0xFF	; 255
-    3244:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3248:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    324c:	e6 0f       	add	r30, r22
-    324e:	f7 1f       	adc	r31, r23
-    3250:	e4 91       	lpm	r30, Z
-    3252:	6b b1       	in	r22, 0x0b	; 11
-    3254:	74 e0       	ldi	r23, 0x04	; 4
-    3256:	e7 9f       	mul	r30, r23
-    3258:	f0 01       	movw	r30, r0
-    325a:	11 24       	eor	r1, r1
-    325c:	63 70       	andi	r22, 0x03	; 3
-    325e:	e6 2b       	or	r30, r22
-    3260:	eb b9       	out	0x0b, r30	; 11
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
+    30d6:	f9 01       	movw	r30, r18
+    30d8:	b9 96       	adiw	r30, 0x29	; 41
             PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    30da:	64 91       	lpm	r22, Z
+    30dc:	eb b1       	in	r30, 0x0b	; 11
+    30de:	f4 e0       	ldi	r31, 0x04	; 4
+    30e0:	6f 9f       	mul	r22, r31
+    30e2:	b0 01       	movw	r22, r0
+    30e4:	11 24       	eor	r1, r1
+    30e6:	e3 70       	andi	r30, 0x03	; 3
+    30e8:	e6 2b       	or	r30, r22
+    30ea:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    30ec:	65 b1       	in	r22, 0x05	; 5
+    30ee:	6a 60       	ori	r22, 0x0A	; 10
+    30f0:	65 b9       	out	0x05, r22	; 5
+    30f2:	65 b1       	in	r22, 0x05	; 5
+    30f4:	65 7f       	andi	r22, 0xF5	; 245
+    30f6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    30f8:	65 b1       	in	r22, 0x05	; 5
+    30fa:	6a 60       	ori	r22, 0x0A	; 10
+    30fc:	65 b9       	out	0x05, r22	; 5
+    30fe:	65 b1       	in	r22, 0x05	; 5
+    3100:	65 7f       	andi	r22, 0xF5	; 245
+    3102:	65 b9       	out	0x05, r22	; 5
+
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3104:	f9 01       	movw	r30, r18
+    3106:	ba 96       	adiw	r30, 0x2a	; 42
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3108:	64 91       	lpm	r22, Z
+    310a:	eb b1       	in	r30, 0x0b	; 11
+    310c:	f4 e0       	ldi	r31, 0x04	; 4
+    310e:	6f 9f       	mul	r22, r31
+    3110:	b0 01       	movw	r22, r0
+    3112:	11 24       	eor	r1, r1
+    3114:	e3 70       	andi	r30, 0x03	; 3
+    3116:	e6 2b       	or	r30, r22
+    3118:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    311a:	65 b1       	in	r22, 0x05	; 5
+    311c:	6a 60       	ori	r22, 0x0A	; 10
+    311e:	65 b9       	out	0x05, r22	; 5
+    3120:	65 b1       	in	r22, 0x05	; 5
+    3122:	65 7f       	andi	r22, 0xF5	; 245
+    3124:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    3126:	65 b1       	in	r22, 0x05	; 5
+    3128:	6a 60       	ori	r22, 0x0A	; 10
+    312a:	65 b9       	out	0x05, r22	; 5
+    312c:	65 b1       	in	r22, 0x05	; 5
+    312e:	65 7f       	andi	r22, 0xF5	; 245
+    3130:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3132:	f9 01       	movw	r30, r18
+    3134:	bb 96       	adiw	r30, 0x2b	; 43
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3136:	64 91       	lpm	r22, Z
+    3138:	eb b1       	in	r30, 0x0b	; 11
+    313a:	f4 e0       	ldi	r31, 0x04	; 4
+    313c:	6f 9f       	mul	r22, r31
+    313e:	b0 01       	movw	r22, r0
+    3140:	11 24       	eor	r1, r1
+    3142:	e3 70       	andi	r30, 0x03	; 3
+    3144:	e6 2b       	or	r30, r22
+    3146:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3148:	65 b1       	in	r22, 0x05	; 5
+    314a:	6a 60       	ori	r22, 0x0A	; 10
+    314c:	65 b9       	out	0x05, r22	; 5
+    314e:	65 b1       	in	r22, 0x05	; 5
+    3150:	65 7f       	andi	r22, 0xF5	; 245
+    3152:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    3154:	65 b1       	in	r22, 0x05	; 5
+    3156:	6a 60       	ori	r22, 0x0A	; 10
+    3158:	65 b9       	out	0x05, r22	; 5
+    315a:	65 b1       	in	r22, 0x05	; 5
+    315c:	65 7f       	andi	r22, 0xF5	; 245
+    315e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3160:	f9 01       	movw	r30, r18
+    3162:	bc 96       	adiw	r30, 0x2c	; 44
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3164:	64 91       	lpm	r22, Z
+    3166:	eb b1       	in	r30, 0x0b	; 11
+    3168:	f4 e0       	ldi	r31, 0x04	; 4
+    316a:	6f 9f       	mul	r22, r31
+    316c:	b0 01       	movw	r22, r0
+    316e:	11 24       	eor	r1, r1
+    3170:	e3 70       	andi	r30, 0x03	; 3
+    3172:	e6 2b       	or	r30, r22
+    3174:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3176:	65 b1       	in	r22, 0x05	; 5
+    3178:	6a 60       	ori	r22, 0x0A	; 10
+    317a:	65 b9       	out	0x05, r22	; 5
+    317c:	65 b1       	in	r22, 0x05	; 5
+    317e:	65 7f       	andi	r22, 0xF5	; 245
+    3180:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    3182:	65 b1       	in	r22, 0x05	; 5
+    3184:	6a 60       	ori	r22, 0x0A	; 10
+    3186:	65 b9       	out	0x05, r22	; 5
+    3188:	65 b1       	in	r22, 0x05	; 5
+    318a:	65 7f       	andi	r22, 0xF5	; 245
+    318c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    318e:	f9 01       	movw	r30, r18
+    3190:	bd 96       	adiw	r30, 0x2d	; 45
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3192:	64 91       	lpm	r22, Z
+    3194:	eb b1       	in	r30, 0x0b	; 11
+    3196:	f4 e0       	ldi	r31, 0x04	; 4
+    3198:	6f 9f       	mul	r22, r31
+    319a:	b0 01       	movw	r22, r0
+    319c:	11 24       	eor	r1, r1
+    319e:	e3 70       	andi	r30, 0x03	; 3
+    31a0:	e6 2b       	or	r30, r22
+    31a2:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    31a4:	65 b1       	in	r22, 0x05	; 5
+    31a6:	6a 60       	ori	r22, 0x0A	; 10
+    31a8:	65 b9       	out	0x05, r22	; 5
+    31aa:	65 b1       	in	r22, 0x05	; 5
+    31ac:	65 7f       	andi	r22, 0xF5	; 245
+    31ae:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    31b0:	65 b1       	in	r22, 0x05	; 5
+    31b2:	6a 60       	ori	r22, 0x0A	; 10
+    31b4:	65 b9       	out	0x05, r22	; 5
+    31b6:	65 b1       	in	r22, 0x05	; 5
+    31b8:	65 7f       	andi	r22, 0xF5	; 245
+    31ba:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    31bc:	f9 01       	movw	r30, r18
+    31be:	be 96       	adiw	r30, 0x2e	; 46
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    31c0:	64 91       	lpm	r22, Z
+    31c2:	eb b1       	in	r30, 0x0b	; 11
+    31c4:	f4 e0       	ldi	r31, 0x04	; 4
+    31c6:	6f 9f       	mul	r22, r31
+    31c8:	b0 01       	movw	r22, r0
+    31ca:	11 24       	eor	r1, r1
+    31cc:	e3 70       	andi	r30, 0x03	; 3
+    31ce:	e6 2b       	or	r30, r22
+    31d0:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    31d2:	65 b1       	in	r22, 0x05	; 5
+    31d4:	6a 60       	ori	r22, 0x0A	; 10
+    31d6:	65 b9       	out	0x05, r22	; 5
+    31d8:	65 b1       	in	r22, 0x05	; 5
+    31da:	65 7f       	andi	r22, 0xF5	; 245
+    31dc:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    31de:	65 b1       	in	r22, 0x05	; 5
+    31e0:	6a 60       	ori	r22, 0x0A	; 10
+    31e2:	65 b9       	out	0x05, r22	; 5
+    31e4:	65 b1       	in	r22, 0x05	; 5
+    31e6:	65 7f       	andi	r22, 0xF5	; 245
+    31e8:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    31ea:	f9 01       	movw	r30, r18
+    31ec:	bf 96       	adiw	r30, 0x2f	; 47
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    31ee:	64 91       	lpm	r22, Z
+    31f0:	eb b1       	in	r30, 0x0b	; 11
+    31f2:	f4 e0       	ldi	r31, 0x04	; 4
+    31f4:	6f 9f       	mul	r22, r31
+    31f6:	b0 01       	movw	r22, r0
+    31f8:	11 24       	eor	r1, r1
+    31fa:	e3 70       	andi	r30, 0x03	; 3
+    31fc:	e6 2b       	or	r30, r22
+    31fe:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3200:	65 b1       	in	r22, 0x05	; 5
+    3202:	6a 60       	ori	r22, 0x0A	; 10
+    3204:	65 b9       	out	0x05, r22	; 5
+    3206:	65 b1       	in	r22, 0x05	; 5
+    3208:	65 7f       	andi	r22, 0xF5	; 245
+    320a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    320c:	65 b1       	in	r22, 0x05	; 5
+    320e:	6a 60       	ori	r22, 0x0A	; 10
+    3210:	65 b9       	out	0x05, r22	; 5
+    3212:	65 b1       	in	r22, 0x05	; 5
+    3214:	65 7f       	andi	r22, 0xF5	; 245
+    3216:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3218:	f9 01       	movw	r30, r18
+    321a:	f0 96       	adiw	r30, 0x30	; 48
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 6
+            SET_COLOR(pgm_read_byte(index++));
+    321c:	64 91       	lpm	r22, Z
+    321e:	eb b1       	in	r30, 0x0b	; 11
+    3220:	f4 e0       	ldi	r31, 0x04	; 4
+    3222:	6f 9f       	mul	r22, r31
+    3224:	b0 01       	movw	r22, r0
+    3226:	11 24       	eor	r1, r1
+    3228:	e3 70       	andi	r30, 0x03	; 3
+    322a:	e6 2b       	or	r30, r22
+    322c:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    322e:	65 b1       	in	r22, 0x05	; 5
+    3230:	6a 60       	ori	r22, 0x0A	; 10
+    3232:	65 b9       	out	0x05, r22	; 5
+    3234:	65 b1       	in	r22, 0x05	; 5
+    3236:	65 7f       	andi	r22, 0xF5	; 245
+    3238:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    323a:	65 b1       	in	r22, 0x05	; 5
+    323c:	6a 60       	ori	r22, 0x0A	; 10
+    323e:	65 b9       	out	0x05, r22	; 5
+    3240:	65 b1       	in	r22, 0x05	; 5
+    3242:	65 7f       	andi	r22, 0xF5	; 245
+    3244:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 6
+            SET_COLOR(pgm_read_byte(index++));
+    3246:	f9 01       	movw	r30, r18
+    3248:	f1 96       	adiw	r30, 0x31	; 49
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    324a:	64 91       	lpm	r22, Z
+    324c:	eb b1       	in	r30, 0x0b	; 11
+    324e:	f4 e0       	ldi	r31, 0x04	; 4
+    3250:	6f 9f       	mul	r22, r31
+    3252:	b0 01       	movw	r22, r0
+    3254:	11 24       	eor	r1, r1
+    3256:	e3 70       	andi	r30, 0x03	; 3
+    3258:	e6 2b       	or	r30, r22
+    325a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    325c:	65 b1       	in	r22, 0x05	; 5
+    325e:	6a 60       	ori	r22, 0x0A	; 10
+    3260:	65 b9       	out	0x05, r22	; 5
     3262:	65 b1       	in	r22, 0x05	; 5
-    3264:	6a 60       	ori	r22, 0x0A	; 10
+    3264:	65 7f       	andi	r22, 0xF5	; 245
     3266:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
     3268:	65 b1       	in	r22, 0x05	; 5
-    326a:	65 7f       	andi	r22, 0xF5	; 245
+    326a:	6a 60       	ori	r22, 0x0A	; 10
     326c:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
     326e:	65 b1       	in	r22, 0x05	; 5
-    3270:	6a 60       	ori	r22, 0x0A	; 10
+    3270:	65 7f       	andi	r22, 0xF5	; 245
     3272:	65 b9       	out	0x05, r22	; 5
-    3274:	65 b1       	in	r22, 0x05	; 5
-    3276:	65 7f       	andi	r22, 0xF5	; 245
-    3278:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 9));
-    327a:	b9 01       	movw	r22, r18
-    327c:	67 5f       	subi	r22, 0xF7	; 247
-    327e:	7f 4f       	sbci	r23, 0xFF	; 255
-    3280:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3284:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3288:	e6 0f       	add	r30, r22
-    328a:	f7 1f       	adc	r31, r23
-    328c:	e4 91       	lpm	r30, Z
-    328e:	6b b1       	in	r22, 0x0b	; 11
-    3290:	74 e0       	ldi	r23, 0x04	; 4
-    3292:	e7 9f       	mul	r30, r23
-    3294:	f0 01       	movw	r30, r0
-    3296:	11 24       	eor	r1, r1
-    3298:	63 70       	andi	r22, 0x03	; 3
-    329a:	e6 2b       	or	r30, r22
-    329c:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 6
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    329e:	65 b1       	in	r22, 0x05	; 5
-    32a0:	6a 60       	ori	r22, 0x0A	; 10
-    32a2:	65 b9       	out	0x05, r22	; 5
-    32a4:	65 b1       	in	r22, 0x05	; 5
-    32a6:	65 7f       	andi	r22, 0xF5	; 245
-    32a8:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    32aa:	65 b1       	in	r22, 0x05	; 5
-    32ac:	6a 60       	ori	r22, 0x0A	; 10
-    32ae:	65 b9       	out	0x05, r22	; 5
-    32b0:	65 b1       	in	r22, 0x05	; 5
-    32b2:	65 7f       	andi	r22, 0xF5	; 245
-    32b4:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 10));
-    32b6:	b9 01       	movw	r22, r18
-    32b8:	66 5f       	subi	r22, 0xF6	; 246
-    32ba:	7f 4f       	sbci	r23, 0xFF	; 255
-    32bc:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    32c0:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    32c4:	e6 0f       	add	r30, r22
-    32c6:	f7 1f       	adc	r31, r23
-    32c8:	e4 91       	lpm	r30, Z
-    32ca:	6b b1       	in	r22, 0x0b	; 11
-    32cc:	74 e0       	ldi	r23, 0x04	; 4
-    32ce:	e7 9f       	mul	r30, r23
-    32d0:	f0 01       	movw	r30, r0
-    32d2:	11 24       	eor	r1, r1
-    32d4:	63 70       	andi	r22, 0x03	; 3
-    32d6:	e6 2b       	or	r30, r22
-    32d8:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3274:	f9 01       	movw	r30, r18
+    3276:	f2 96       	adiw	r30, 0x32	; 50
             PWCLK_GCLK;
-    32da:	65 b1       	in	r22, 0x05	; 5
-    32dc:	6a 60       	ori	r22, 0x0A	; 10
-    32de:	65 b9       	out	0x05, r22	; 5
-    32e0:	65 b1       	in	r22, 0x05	; 5
-    32e2:	65 7f       	andi	r22, 0xF5	; 245
-    32e4:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3278:	64 91       	lpm	r22, Z
+    327a:	eb b1       	in	r30, 0x0b	; 11
+    327c:	f4 e0       	ldi	r31, 0x04	; 4
+    327e:	6f 9f       	mul	r22, r31
+    3280:	b0 01       	movw	r22, r0
+    3282:	11 24       	eor	r1, r1
+    3284:	e3 70       	andi	r30, 0x03	; 3
+    3286:	e6 2b       	or	r30, r22
+    3288:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    328a:	65 b1       	in	r22, 0x05	; 5
+    328c:	6a 60       	ori	r22, 0x0A	; 10
+    328e:	65 b9       	out	0x05, r22	; 5
+    3290:	65 b1       	in	r22, 0x05	; 5
+    3292:	65 7f       	andi	r22, 0xF5	; 245
+    3294:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    3296:	65 b1       	in	r22, 0x05	; 5
+    3298:	6a 60       	ori	r22, 0x0A	; 10
+    329a:	65 b9       	out	0x05, r22	; 5
+    329c:	65 b1       	in	r22, 0x05	; 5
+    329e:	65 7f       	andi	r22, 0xF5	; 245
+    32a0:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    32a2:	f9 01       	movw	r30, r18
+    32a4:	f3 96       	adiw	r30, 0x33	; 51
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    32a6:	64 91       	lpm	r22, Z
+    32a8:	eb b1       	in	r30, 0x0b	; 11
+    32aa:	f4 e0       	ldi	r31, 0x04	; 4
+    32ac:	6f 9f       	mul	r22, r31
+    32ae:	b0 01       	movw	r22, r0
+    32b0:	11 24       	eor	r1, r1
+    32b2:	e3 70       	andi	r30, 0x03	; 3
+    32b4:	e6 2b       	or	r30, r22
+    32b6:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    32b8:	65 b1       	in	r22, 0x05	; 5
+    32ba:	6a 60       	ori	r22, 0x0A	; 10
+    32bc:	65 b9       	out	0x05, r22	; 5
+    32be:	65 b1       	in	r22, 0x05	; 5
+    32c0:	65 7f       	andi	r22, 0xF5	; 245
+    32c2:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    32c4:	65 b1       	in	r22, 0x05	; 5
+    32c6:	6a 60       	ori	r22, 0x0A	; 10
+    32c8:	65 b9       	out	0x05, r22	; 5
+    32ca:	65 b1       	in	r22, 0x05	; 5
+    32cc:	65 7f       	andi	r22, 0xF5	; 245
+    32ce:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    32d0:	f9 01       	movw	r30, r18
+    32d2:	f4 96       	adiw	r30, 0x34	; 52
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    32d4:	64 91       	lpm	r22, Z
+    32d6:	eb b1       	in	r30, 0x0b	; 11
+    32d8:	f4 e0       	ldi	r31, 0x04	; 4
+    32da:	6f 9f       	mul	r22, r31
+    32dc:	b0 01       	movw	r22, r0
+    32de:	11 24       	eor	r1, r1
+    32e0:	e3 70       	andi	r30, 0x03	; 3
+    32e2:	e6 2b       	or	r30, r22
+    32e4:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
     32e6:	65 b1       	in	r22, 0x05	; 5
     32e8:	6a 60       	ori	r22, 0x0A	; 10
@@ -6789,147 +8624,212 @@ private:
     32ec:	65 b1       	in	r22, 0x05	; 5
     32ee:	65 7f       	andi	r22, 0xF5	; 245
     32f0:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 11));
-    32f2:	b9 01       	movw	r22, r18
-    32f4:	65 5f       	subi	r22, 0xF5	; 245
-    32f6:	7f 4f       	sbci	r23, 0xFF	; 255
-    32f8:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    32fc:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3300:	e6 0f       	add	r30, r22
-    3302:	f7 1f       	adc	r31, r23
-    3304:	e4 91       	lpm	r30, Z
-    3306:	6b b1       	in	r22, 0x0b	; 11
-    3308:	74 e0       	ldi	r23, 0x04	; 4
-    330a:	e7 9f       	mul	r30, r23
-    330c:	f0 01       	movw	r30, r0
-    330e:	11 24       	eor	r1, r1
-    3310:	63 70       	andi	r22, 0x03	; 3
-    3312:	e6 2b       	or	r30, r22
-    3314:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    3316:	65 b1       	in	r22, 0x05	; 5
-    3318:	6a 60       	ori	r22, 0x0A	; 10
-    331a:	65 b9       	out	0x05, r22	; 5
-    331c:	65 b1       	in	r22, 0x05	; 5
-    331e:	65 7f       	andi	r22, 0xF5	; 245
-    3320:	65 b9       	out	0x05, r22	; 5
+    32f2:	65 b1       	in	r22, 0x05	; 5
+    32f4:	6a 60       	ori	r22, 0x0A	; 10
+    32f6:	65 b9       	out	0x05, r22	; 5
+    32f8:	65 b1       	in	r22, 0x05	; 5
+    32fa:	65 7f       	andi	r22, 0xF5	; 245
+    32fc:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    3322:	65 b1       	in	r22, 0x05	; 5
-    3324:	6a 60       	ori	r22, 0x0A	; 10
-    3326:	65 b9       	out	0x05, r22	; 5
-    3328:	65 b1       	in	r22, 0x05	; 5
-    332a:	65 7f       	andi	r22, 0xF5	; 245
-    332c:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 12));
-    332e:	b9 01       	movw	r22, r18
-    3330:	64 5f       	subi	r22, 0xF4	; 244
-    3332:	7f 4f       	sbci	r23, 0xFF	; 255
-    3334:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3338:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    333c:	e6 0f       	add	r30, r22
-    333e:	f7 1f       	adc	r31, r23
-    3340:	e4 91       	lpm	r30, Z
-    3342:	6b b1       	in	r22, 0x0b	; 11
-    3344:	74 e0       	ldi	r23, 0x04	; 4
-    3346:	e7 9f       	mul	r30, r23
-    3348:	f0 01       	movw	r30, r0
-    334a:	11 24       	eor	r1, r1
-    334c:	63 70       	andi	r22, 0x03	; 3
-    334e:	e6 2b       	or	r30, r22
-    3350:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    3352:	65 b1       	in	r22, 0x05	; 5
-    3354:	6a 60       	ori	r22, 0x0A	; 10
-    3356:	65 b9       	out	0x05, r22	; 5
-    3358:	65 b1       	in	r22, 0x05	; 5
-    335a:	65 7f       	andi	r22, 0xF5	; 245
-    335c:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    335e:	65 b1       	in	r22, 0x05	; 5
-    3360:	6a 60       	ori	r22, 0x0A	; 10
-    3362:	65 b9       	out	0x05, r22	; 5
-    3364:	65 b1       	in	r22, 0x05	; 5
-    3366:	65 7f       	andi	r22, 0xF5	; 245
-    3368:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 13));
-    336a:	b9 01       	movw	r22, r18
-    336c:	63 5f       	subi	r22, 0xF3	; 243
-    336e:	7f 4f       	sbci	r23, 0xFF	; 255
-    3370:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3374:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3378:	e6 0f       	add	r30, r22
-    337a:	f7 1f       	adc	r31, r23
-    337c:	e4 91       	lpm	r30, Z
-    337e:	6b b1       	in	r22, 0x0b	; 11
-    3380:	74 e0       	ldi	r23, 0x04	; 4
-    3382:	e7 9f       	mul	r30, r23
-    3384:	f0 01       	movw	r30, r0
-    3386:	11 24       	eor	r1, r1
-    3388:	63 70       	andi	r22, 0x03	; 3
-    338a:	e6 2b       	or	r30, r22
-    338c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    338e:	65 b1       	in	r22, 0x05	; 5
-    3390:	6a 60       	ori	r22, 0x0A	; 10
-    3392:	65 b9       	out	0x05, r22	; 5
-    3394:	65 b1       	in	r22, 0x05	; 5
-    3396:	65 7f       	andi	r22, 0xF5	; 245
-    3398:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    32fe:	f9 01       	movw	r30, r18
+    3300:	f5 96       	adiw	r30, 0x35	; 53
             PWCLK_GCLK;
-    339a:	65 b1       	in	r22, 0x05	; 5
-    339c:	6a 60       	ori	r22, 0x0A	; 10
-    339e:	65 b9       	out	0x05, r22	; 5
-    33a0:	65 b1       	in	r22, 0x05	; 5
-    33a2:	65 7f       	andi	r22, 0xF5	; 245
-    33a4:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 14));
-    33a6:	b9 01       	movw	r22, r18
-    33a8:	62 5f       	subi	r22, 0xF2	; 242
-    33aa:	7f 4f       	sbci	r23, 0xFF	; 255
-    33ac:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    33b0:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    33b4:	e6 0f       	add	r30, r22
-    33b6:	f7 1f       	adc	r31, r23
-    33b8:	e4 91       	lpm	r30, Z
-    33ba:	6b b1       	in	r22, 0x0b	; 11
-    33bc:	74 e0       	ldi	r23, 0x04	; 4
-    33be:	e7 9f       	mul	r30, r23
-    33c0:	f0 01       	movw	r30, r0
-    33c2:	11 24       	eor	r1, r1
-    33c4:	63 70       	andi	r22, 0x03	; 3
-    33c6:	e6 2b       	or	r30, r22
-    33c8:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    33ca:	65 b1       	in	r22, 0x05	; 5
-    33cc:	6a 60       	ori	r22, 0x0A	; 10
-    33ce:	65 b9       	out	0x05, r22	; 5
-    33d0:	65 b1       	in	r22, 0x05	; 5
-    33d2:	65 7f       	andi	r22, 0xF5	; 245
-    33d4:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    3302:	64 91       	lpm	r22, Z
+    3304:	eb b1       	in	r30, 0x0b	; 11
+    3306:	f4 e0       	ldi	r31, 0x04	; 4
+    3308:	6f 9f       	mul	r22, r31
+    330a:	b0 01       	movw	r22, r0
+    330c:	11 24       	eor	r1, r1
+    330e:	e3 70       	andi	r30, 0x03	; 3
+    3310:	e6 2b       	or	r30, r22
+    3312:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    33d6:	65 b1       	in	r22, 0x05	; 5
-    33d8:	6a 60       	ori	r22, 0x0A	; 10
-    33da:	65 b9       	out	0x05, r22	; 5
-    33dc:	65 b1       	in	r22, 0x05	; 5
-    33de:	65 7f       	andi	r22, 0xF5	; 245
-    33e0:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 15));
-    33e2:	b9 01       	movw	r22, r18
-    33e4:	61 5f       	subi	r22, 0xF1	; 241
-    33e6:	7f 4f       	sbci	r23, 0xFF	; 255
-    33e8:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    33ec:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    33f0:	e6 0f       	add	r30, r22
-    33f2:	f7 1f       	adc	r31, r23
-    33f4:	e4 91       	lpm	r30, Z
-    33f6:	6b b1       	in	r22, 0x0b	; 11
-    33f8:	74 e0       	ldi	r23, 0x04	; 4
-    33fa:	e7 9f       	mul	r30, r23
-    33fc:	f0 01       	movw	r30, r0
-    33fe:	11 24       	eor	r1, r1
-    3400:	63 70       	andi	r22, 0x03	; 3
-    3402:	e6 2b       	or	r30, r22
-    3404:	eb b9       	out	0x0b, r30	; 11
+    3314:	65 b1       	in	r22, 0x05	; 5
+    3316:	6a 60       	ori	r22, 0x0A	; 10
+    3318:	65 b9       	out	0x05, r22	; 5
+    331a:	65 b1       	in	r22, 0x05	; 5
+    331c:	65 7f       	andi	r22, 0xF5	; 245
+    331e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    3320:	65 b1       	in	r22, 0x05	; 5
+    3322:	6a 60       	ori	r22, 0x0A	; 10
+    3324:	65 b9       	out	0x05, r22	; 5
+    3326:	65 b1       	in	r22, 0x05	; 5
+    3328:	65 7f       	andi	r22, 0xF5	; 245
+    332a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    332c:	f9 01       	movw	r30, r18
+    332e:	f6 96       	adiw	r30, 0x36	; 54
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3330:	64 91       	lpm	r22, Z
+    3332:	eb b1       	in	r30, 0x0b	; 11
+    3334:	f4 e0       	ldi	r31, 0x04	; 4
+    3336:	6f 9f       	mul	r22, r31
+    3338:	b0 01       	movw	r22, r0
+    333a:	11 24       	eor	r1, r1
+    333c:	e3 70       	andi	r30, 0x03	; 3
+    333e:	e6 2b       	or	r30, r22
+    3340:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3342:	65 b1       	in	r22, 0x05	; 5
+    3344:	6a 60       	ori	r22, 0x0A	; 10
+    3346:	65 b9       	out	0x05, r22	; 5
+    3348:	65 b1       	in	r22, 0x05	; 5
+    334a:	65 7f       	andi	r22, 0xF5	; 245
+    334c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    334e:	65 b1       	in	r22, 0x05	; 5
+    3350:	6a 60       	ori	r22, 0x0A	; 10
+    3352:	65 b9       	out	0x05, r22	; 5
+    3354:	65 b1       	in	r22, 0x05	; 5
+    3356:	65 7f       	andi	r22, 0xF5	; 245
+    3358:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    335a:	f9 01       	movw	r30, r18
+    335c:	f7 96       	adiw	r30, 0x37	; 55
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    335e:	64 91       	lpm	r22, Z
+    3360:	eb b1       	in	r30, 0x0b	; 11
+    3362:	f4 e0       	ldi	r31, 0x04	; 4
+    3364:	6f 9f       	mul	r22, r31
+    3366:	b0 01       	movw	r22, r0
+    3368:	11 24       	eor	r1, r1
+    336a:	e3 70       	andi	r30, 0x03	; 3
+    336c:	e6 2b       	or	r30, r22
+    336e:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3370:	65 b1       	in	r22, 0x05	; 5
+    3372:	6a 60       	ori	r22, 0x0A	; 10
+    3374:	65 b9       	out	0x05, r22	; 5
+    3376:	65 b1       	in	r22, 0x05	; 5
+    3378:	65 7f       	andi	r22, 0xF5	; 245
+    337a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    337c:	65 b1       	in	r22, 0x05	; 5
+    337e:	6a 60       	ori	r22, 0x0A	; 10
+    3380:	65 b9       	out	0x05, r22	; 5
+    3382:	65 b1       	in	r22, 0x05	; 5
+    3384:	65 7f       	andi	r22, 0xF5	; 245
+    3386:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3388:	f9 01       	movw	r30, r18
+    338a:	f8 96       	adiw	r30, 0x38	; 56
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 7
+            SET_COLOR(pgm_read_byte(index++));
+    338c:	64 91       	lpm	r22, Z
+    338e:	eb b1       	in	r30, 0x0b	; 11
+    3390:	f4 e0       	ldi	r31, 0x04	; 4
+    3392:	6f 9f       	mul	r22, r31
+    3394:	b0 01       	movw	r22, r0
+    3396:	11 24       	eor	r1, r1
+    3398:	e3 70       	andi	r30, 0x03	; 3
+    339a:	e6 2b       	or	r30, r22
+    339c:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    339e:	65 b1       	in	r22, 0x05	; 5
+    33a0:	6a 60       	ori	r22, 0x0A	; 10
+    33a2:	65 b9       	out	0x05, r22	; 5
+    33a4:	65 b1       	in	r22, 0x05	; 5
+    33a6:	65 7f       	andi	r22, 0xF5	; 245
+    33a8:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    33aa:	65 b1       	in	r22, 0x05	; 5
+    33ac:	6a 60       	ori	r22, 0x0A	; 10
+    33ae:	65 b9       	out	0x05, r22	; 5
+    33b0:	65 b1       	in	r22, 0x05	; 5
+    33b2:	65 7f       	andi	r22, 0xF5	; 245
+    33b4:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 7
+            SET_COLOR(pgm_read_byte(index++));
+    33b6:	f9 01       	movw	r30, r18
+    33b8:	f9 96       	adiw	r30, 0x39	; 57
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    33ba:	64 91       	lpm	r22, Z
+    33bc:	eb b1       	in	r30, 0x0b	; 11
+    33be:	f4 e0       	ldi	r31, 0x04	; 4
+    33c0:	6f 9f       	mul	r22, r31
+    33c2:	b0 01       	movw	r22, r0
+    33c4:	11 24       	eor	r1, r1
+    33c6:	e3 70       	andi	r30, 0x03	; 3
+    33c8:	e6 2b       	or	r30, r22
+    33ca:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    33cc:	65 b1       	in	r22, 0x05	; 5
+    33ce:	6a 60       	ori	r22, 0x0A	; 10
+    33d0:	65 b9       	out	0x05, r22	; 5
+    33d2:	65 b1       	in	r22, 0x05	; 5
+    33d4:	65 7f       	andi	r22, 0xF5	; 245
+    33d6:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    33d8:	65 b1       	in	r22, 0x05	; 5
+    33da:	6a 60       	ori	r22, 0x0A	; 10
+    33dc:	65 b9       	out	0x05, r22	; 5
+    33de:	65 b1       	in	r22, 0x05	; 5
+    33e0:	65 7f       	andi	r22, 0xF5	; 245
+    33e2:	65 b9       	out	0x05, r22	; 5
+
+            // chip 7
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    33e4:	f9 01       	movw	r30, r18
+    33e6:	fa 96       	adiw	r30, 0x3a	; 58
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    33e8:	64 91       	lpm	r22, Z
+    33ea:	eb b1       	in	r30, 0x0b	; 11
+    33ec:	f4 e0       	ldi	r31, 0x04	; 4
+    33ee:	6f 9f       	mul	r22, r31
+    33f0:	b0 01       	movw	r22, r0
+    33f2:	11 24       	eor	r1, r1
+    33f4:	e3 70       	andi	r30, 0x03	; 3
+    33f6:	e6 2b       	or	r30, r22
+    33f8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    33fa:	65 b1       	in	r22, 0x05	; 5
+    33fc:	6a 60       	ori	r22, 0x0A	; 10
+    33fe:	65 b9       	out	0x05, r22	; 5
+    3400:	65 b1       	in	r22, 0x05	; 5
+    3402:	65 7f       	andi	r22, 0xF5	; 245
+    3404:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
     3406:	65 b1       	in	r22, 0x05	; 5
     3408:	6a 60       	ori	r22, 0x0A	; 10
@@ -6938,4567 +8838,3419 @@ private:
     340e:	65 7f       	andi	r22, 0xF5	; 245
     3410:	65 b9       	out	0x05, r22	; 5
             PWCLK_GCLK;
-    3412:	65 b1       	in	r22, 0x05	; 5
-    3414:	6a 60       	ori	r22, 0x0A	; 10
-    3416:	65 b9       	out	0x05, r22	; 5
-    3418:	65 b1       	in	r22, 0x05	; 5
-    341a:	65 7f       	andi	r22, 0xF5	; 245
-    341c:	65 b9       	out	0x05, r22	; 5
-
-            // chip 2
-            SET_COLOR(pgm_read_byte(buffer + index + 16));
-    341e:	b9 01       	movw	r22, r18
-    3420:	60 5f       	subi	r22, 0xF0	; 240
-    3422:	7f 4f       	sbci	r23, 0xFF	; 255
-    3424:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3428:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    342c:	e6 0f       	add	r30, r22
-    342e:	f7 1f       	adc	r31, r23
-    3430:	e4 91       	lpm	r30, Z
-    3432:	6b b1       	in	r22, 0x0b	; 11
-    3434:	74 e0       	ldi	r23, 0x04	; 4
-    3436:	e7 9f       	mul	r30, r23
-    3438:	f0 01       	movw	r30, r0
-    343a:	11 24       	eor	r1, r1
-    343c:	63 70       	andi	r22, 0x03	; 3
-    343e:	e6 2b       	or	r30, r22
-    3440:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    3442:	65 b1       	in	r22, 0x05	; 5
-    3444:	6a 60       	ori	r22, 0x0A	; 10
-    3446:	65 b9       	out	0x05, r22	; 5
-    3448:	65 b1       	in	r22, 0x05	; 5
-    344a:	65 7f       	andi	r22, 0xF5	; 245
-    344c:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    344e:	65 b1       	in	r22, 0x05	; 5
-    3450:	6a 60       	ori	r22, 0x0A	; 10
-    3452:	65 b9       	out	0x05, r22	; 5
-    3454:	65 b1       	in	r22, 0x05	; 5
-    3456:	65 7f       	andi	r22, 0xF5	; 245
-    3458:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 17));
-    345a:	b9 01       	movw	r22, r18
-    345c:	6f 5e       	subi	r22, 0xEF	; 239
-    345e:	7f 4f       	sbci	r23, 0xFF	; 255
-    3460:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3464:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3468:	e6 0f       	add	r30, r22
-    346a:	f7 1f       	adc	r31, r23
-    346c:	e4 91       	lpm	r30, Z
-    346e:	6b b1       	in	r22, 0x0b	; 11
-    3470:	74 e0       	ldi	r23, 0x04	; 4
-    3472:	e7 9f       	mul	r30, r23
-    3474:	f0 01       	movw	r30, r0
-    3476:	11 24       	eor	r1, r1
-    3478:	63 70       	andi	r22, 0x03	; 3
-    347a:	e6 2b       	or	r30, r22
-    347c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    347e:	65 b1       	in	r22, 0x05	; 5
-    3480:	6a 60       	ori	r22, 0x0A	; 10
-    3482:	65 b9       	out	0x05, r22	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    3412:	f9 01       	movw	r30, r18
+    3414:	fb 96       	adiw	r30, 0x3b	; 59
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3416:	64 91       	lpm	r22, Z
+    3418:	eb b1       	in	r30, 0x0b	; 11
+    341a:	f4 e0       	ldi	r31, 0x04	; 4
+    341c:	6f 9f       	mul	r22, r31
+    341e:	b0 01       	movw	r22, r0
+    3420:	11 24       	eor	r1, r1
+    3422:	e3 70       	andi	r30, 0x03	; 3
+    3424:	e6 2b       	or	r30, r22
+    3426:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3428:	65 b1       	in	r22, 0x05	; 5
+    342a:	6a 60       	ori	r22, 0x0A	; 10
+    342c:	65 b9       	out	0x05, r22	; 5
+    342e:	65 b1       	in	r22, 0x05	; 5
+    3430:	65 7f       	andi	r22, 0xF5	; 245
+    3432:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    3434:	65 b1       	in	r22, 0x05	; 5
+    3436:	6a 60       	ori	r22, 0x0A	; 10
+    3438:	65 b9       	out	0x05, r22	; 5
+    343a:	65 b1       	in	r22, 0x05	; 5
+    343c:	65 7f       	andi	r22, 0xF5	; 245
+    343e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3440:	f9 01       	movw	r30, r18
+    3442:	fc 96       	adiw	r30, 0x3c	; 60
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3444:	64 91       	lpm	r22, Z
+    3446:	eb b1       	in	r30, 0x0b	; 11
+    3448:	f4 e0       	ldi	r31, 0x04	; 4
+    344a:	6f 9f       	mul	r22, r31
+    344c:	b0 01       	movw	r22, r0
+    344e:	11 24       	eor	r1, r1
+    3450:	e3 70       	andi	r30, 0x03	; 3
+    3452:	e6 2b       	or	r30, r22
+    3454:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3456:	65 b1       	in	r22, 0x05	; 5
+    3458:	6a 60       	ori	r22, 0x0A	; 10
+    345a:	65 b9       	out	0x05, r22	; 5
+    345c:	65 b1       	in	r22, 0x05	; 5
+    345e:	65 7f       	andi	r22, 0xF5	; 245
+    3460:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    3462:	65 b1       	in	r22, 0x05	; 5
+    3464:	6a 60       	ori	r22, 0x0A	; 10
+    3466:	65 b9       	out	0x05, r22	; 5
+    3468:	65 b1       	in	r22, 0x05	; 5
+    346a:	65 7f       	andi	r22, 0xF5	; 245
+    346c:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    346e:	f9 01       	movw	r30, r18
+    3470:	fd 96       	adiw	r30, 0x3d	; 61
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3472:	64 91       	lpm	r22, Z
+    3474:	eb b1       	in	r30, 0x0b	; 11
+    3476:	f4 e0       	ldi	r31, 0x04	; 4
+    3478:	6f 9f       	mul	r22, r31
+    347a:	b0 01       	movw	r22, r0
+    347c:	11 24       	eor	r1, r1
+    347e:	e3 70       	andi	r30, 0x03	; 3
+    3480:	e6 2b       	or	r30, r22
+    3482:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
     3484:	65 b1       	in	r22, 0x05	; 5
-    3486:	65 7f       	andi	r22, 0xF5	; 245
+    3486:	6a 60       	ori	r22, 0x0A	; 10
     3488:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
     348a:	65 b1       	in	r22, 0x05	; 5
-    348c:	6a 60       	ori	r22, 0x0A	; 10
+    348c:	65 7f       	andi	r22, 0xF5	; 245
     348e:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
     3490:	65 b1       	in	r22, 0x05	; 5
-    3492:	65 7f       	andi	r22, 0xF5	; 245
+    3492:	6a 60       	ori	r22, 0x0A	; 10
     3494:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 18));
-    3496:	b9 01       	movw	r22, r18
-    3498:	6e 5e       	subi	r22, 0xEE	; 238
-    349a:	7f 4f       	sbci	r23, 0xFF	; 255
-    349c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    34a0:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    34a4:	e6 0f       	add	r30, r22
-    34a6:	f7 1f       	adc	r31, r23
-    34a8:	e4 91       	lpm	r30, Z
-    34aa:	6b b1       	in	r22, 0x0b	; 11
-    34ac:	74 e0       	ldi	r23, 0x04	; 4
-    34ae:	e7 9f       	mul	r30, r23
-    34b0:	f0 01       	movw	r30, r0
-    34b2:	11 24       	eor	r1, r1
-    34b4:	63 70       	andi	r22, 0x03	; 3
-    34b6:	e6 2b       	or	r30, r22
-    34b8:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    34ba:	65 b1       	in	r22, 0x05	; 5
-    34bc:	6a 60       	ori	r22, 0x0A	; 10
-    34be:	65 b9       	out	0x05, r22	; 5
-    34c0:	65 b1       	in	r22, 0x05	; 5
-    34c2:	65 7f       	andi	r22, 0xF5	; 245
-    34c4:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    34c6:	65 b1       	in	r22, 0x05	; 5
-    34c8:	6a 60       	ori	r22, 0x0A	; 10
-    34ca:	65 b9       	out	0x05, r22	; 5
-    34cc:	65 b1       	in	r22, 0x05	; 5
-    34ce:	65 7f       	andi	r22, 0xF5	; 245
-    34d0:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 19));
-    34d2:	b9 01       	movw	r22, r18
-    34d4:	6d 5e       	subi	r22, 0xED	; 237
-    34d6:	7f 4f       	sbci	r23, 0xFF	; 255
-    34d8:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    34dc:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    34e0:	e6 0f       	add	r30, r22
-    34e2:	f7 1f       	adc	r31, r23
-    34e4:	e4 91       	lpm	r30, Z
-    34e6:	6b b1       	in	r22, 0x0b	; 11
-    34e8:	74 e0       	ldi	r23, 0x04	; 4
-    34ea:	e7 9f       	mul	r30, r23
-    34ec:	f0 01       	movw	r30, r0
-    34ee:	11 24       	eor	r1, r1
-    34f0:	63 70       	andi	r22, 0x03	; 3
-    34f2:	e6 2b       	or	r30, r22
-    34f4:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    34f6:	65 b1       	in	r22, 0x05	; 5
-    34f8:	6a 60       	ori	r22, 0x0A	; 10
-    34fa:	65 b9       	out	0x05, r22	; 5
-    34fc:	65 b1       	in	r22, 0x05	; 5
-    34fe:	65 7f       	andi	r22, 0xF5	; 245
-    3500:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3502:	65 b1       	in	r22, 0x05	; 5
-    3504:	6a 60       	ori	r22, 0x0A	; 10
-    3506:	65 b9       	out	0x05, r22	; 5
-    3508:	65 b1       	in	r22, 0x05	; 5
-    350a:	65 7f       	andi	r22, 0xF5	; 245
-    350c:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 20));
-    350e:	b9 01       	movw	r22, r18
-    3510:	6c 5e       	subi	r22, 0xEC	; 236
-    3512:	7f 4f       	sbci	r23, 0xFF	; 255
-    3514:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3518:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    351c:	e6 0f       	add	r30, r22
-    351e:	f7 1f       	adc	r31, r23
-    3520:	e4 91       	lpm	r30, Z
-    3522:	6b b1       	in	r22, 0x0b	; 11
-    3524:	74 e0       	ldi	r23, 0x04	; 4
-    3526:	e7 9f       	mul	r30, r23
-    3528:	f0 01       	movw	r30, r0
-    352a:	11 24       	eor	r1, r1
-    352c:	63 70       	andi	r22, 0x03	; 3
-    352e:	e6 2b       	or	r30, r22
-    3530:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3532:	65 b1       	in	r22, 0x05	; 5
-    3534:	6a 60       	ori	r22, 0x0A	; 10
-    3536:	65 b9       	out	0x05, r22	; 5
-    3538:	65 b1       	in	r22, 0x05	; 5
-    353a:	65 7f       	andi	r22, 0xF5	; 245
-    353c:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    353e:	65 b1       	in	r22, 0x05	; 5
-    3540:	6a 60       	ori	r22, 0x0A	; 10
-    3542:	65 b9       	out	0x05, r22	; 5
-    3544:	65 b1       	in	r22, 0x05	; 5
-    3546:	65 7f       	andi	r22, 0xF5	; 245
-    3548:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 21));
-    354a:	b9 01       	movw	r22, r18
-    354c:	6b 5e       	subi	r22, 0xEB	; 235
-    354e:	7f 4f       	sbci	r23, 0xFF	; 255
-    3550:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3554:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3558:	e6 0f       	add	r30, r22
-    355a:	f7 1f       	adc	r31, r23
-    355c:	e4 91       	lpm	r30, Z
-    355e:	6b b1       	in	r22, 0x0b	; 11
-    3560:	74 e0       	ldi	r23, 0x04	; 4
-    3562:	e7 9f       	mul	r30, r23
-    3564:	f0 01       	movw	r30, r0
-    3566:	11 24       	eor	r1, r1
-    3568:	63 70       	andi	r22, 0x03	; 3
-    356a:	e6 2b       	or	r30, r22
-    356c:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    356e:	65 b1       	in	r22, 0x05	; 5
-    3570:	6a 60       	ori	r22, 0x0A	; 10
-    3572:	65 b9       	out	0x05, r22	; 5
-    3574:	65 b1       	in	r22, 0x05	; 5
-    3576:	65 7f       	andi	r22, 0xF5	; 245
-    3578:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    357a:	65 b1       	in	r22, 0x05	; 5
-    357c:	6a 60       	ori	r22, 0x0A	; 10
-    357e:	65 b9       	out	0x05, r22	; 5
-    3580:	65 b1       	in	r22, 0x05	; 5
-    3582:	65 7f       	andi	r22, 0xF5	; 245
-    3584:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 22));
-    3586:	b9 01       	movw	r22, r18
-    3588:	6a 5e       	subi	r22, 0xEA	; 234
-    358a:	7f 4f       	sbci	r23, 0xFF	; 255
-    358c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3590:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3594:	e6 0f       	add	r30, r22
-    3596:	f7 1f       	adc	r31, r23
-    3598:	e4 91       	lpm	r30, Z
-    359a:	6b b1       	in	r22, 0x0b	; 11
-    359c:	74 e0       	ldi	r23, 0x04	; 4
-    359e:	e7 9f       	mul	r30, r23
-    35a0:	f0 01       	movw	r30, r0
-    35a2:	11 24       	eor	r1, r1
-    35a4:	63 70       	andi	r22, 0x03	; 3
-    35a6:	e6 2b       	or	r30, r22
-    35a8:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    35aa:	65 b1       	in	r22, 0x05	; 5
-    35ac:	6a 60       	ori	r22, 0x0A	; 10
-    35ae:	65 b9       	out	0x05, r22	; 5
-    35b0:	65 b1       	in	r22, 0x05	; 5
-    35b2:	65 7f       	andi	r22, 0xF5	; 245
-    35b4:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    35b6:	65 b1       	in	r22, 0x05	; 5
-    35b8:	6a 60       	ori	r22, 0x0A	; 10
-    35ba:	65 b9       	out	0x05, r22	; 5
-    35bc:	65 b1       	in	r22, 0x05	; 5
-    35be:	65 7f       	andi	r22, 0xF5	; 245
-    35c0:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 23));
-    35c2:	b9 01       	movw	r22, r18
-    35c4:	69 5e       	subi	r22, 0xE9	; 233
-    35c6:	7f 4f       	sbci	r23, 0xFF	; 255
-    35c8:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    35cc:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    35d0:	e6 0f       	add	r30, r22
-    35d2:	f7 1f       	adc	r31, r23
-    35d4:	e4 91       	lpm	r30, Z
-    35d6:	6b b1       	in	r22, 0x0b	; 11
-    35d8:	74 e0       	ldi	r23, 0x04	; 4
-    35da:	e7 9f       	mul	r30, r23
-    35dc:	f0 01       	movw	r30, r0
-    35de:	11 24       	eor	r1, r1
-    35e0:	63 70       	andi	r22, 0x03	; 3
-    35e2:	e6 2b       	or	r30, r22
-    35e4:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    35e6:	65 b1       	in	r22, 0x05	; 5
-    35e8:	6a 60       	ori	r22, 0x0A	; 10
-    35ea:	65 b9       	out	0x05, r22	; 5
-    35ec:	65 b1       	in	r22, 0x05	; 5
-    35ee:	65 7f       	andi	r22, 0xF5	; 245
-    35f0:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    35f2:	65 b1       	in	r22, 0x05	; 5
-    35f4:	6a 60       	ori	r22, 0x0A	; 10
-    35f6:	65 b9       	out	0x05, r22	; 5
-    35f8:	65 b1       	in	r22, 0x05	; 5
-    35fa:	65 7f       	andi	r22, 0xF5	; 245
-    35fc:	65 b9       	out	0x05, r22	; 5
-
-            // chip 3
-            SET_COLOR(pgm_read_byte(buffer + index + 24));
-    35fe:	b9 01       	movw	r22, r18
-    3600:	68 5e       	subi	r22, 0xE8	; 232
-    3602:	7f 4f       	sbci	r23, 0xFF	; 255
-    3604:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3608:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    360c:	e6 0f       	add	r30, r22
-    360e:	f7 1f       	adc	r31, r23
-    3610:	e4 91       	lpm	r30, Z
-    3612:	6b b1       	in	r22, 0x0b	; 11
-    3614:	74 e0       	ldi	r23, 0x04	; 4
-    3616:	e7 9f       	mul	r30, r23
-    3618:	f0 01       	movw	r30, r0
-    361a:	11 24       	eor	r1, r1
-    361c:	63 70       	andi	r22, 0x03	; 3
-    361e:	e6 2b       	or	r30, r22
-    3620:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3622:	65 b1       	in	r22, 0x05	; 5
-    3624:	6a 60       	ori	r22, 0x0A	; 10
-    3626:	65 b9       	out	0x05, r22	; 5
-    3628:	65 b1       	in	r22, 0x05	; 5
-    362a:	65 7f       	andi	r22, 0xF5	; 245
-    362c:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    362e:	65 b1       	in	r22, 0x05	; 5
-    3630:	6a 60       	ori	r22, 0x0A	; 10
-    3632:	65 b9       	out	0x05, r22	; 5
-    3634:	65 b1       	in	r22, 0x05	; 5
-    3636:	65 7f       	andi	r22, 0xF5	; 245
-    3638:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 25));
-    363a:	b9 01       	movw	r22, r18
-    363c:	67 5e       	subi	r22, 0xE7	; 231
-    363e:	7f 4f       	sbci	r23, 0xFF	; 255
-    3640:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3644:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3648:	e6 0f       	add	r30, r22
-    364a:	f7 1f       	adc	r31, r23
-    364c:	e4 91       	lpm	r30, Z
-    364e:	6b b1       	in	r22, 0x0b	; 11
-    3650:	74 e0       	ldi	r23, 0x04	; 4
-    3652:	e7 9f       	mul	r30, r23
-    3654:	f0 01       	movw	r30, r0
-    3656:	11 24       	eor	r1, r1
-    3658:	63 70       	andi	r22, 0x03	; 3
-    365a:	e6 2b       	or	r30, r22
-    365c:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    365e:	65 b1       	in	r22, 0x05	; 5
-    3660:	6a 60       	ori	r22, 0x0A	; 10
-    3662:	65 b9       	out	0x05, r22	; 5
-    3664:	65 b1       	in	r22, 0x05	; 5
-    3666:	65 7f       	andi	r22, 0xF5	; 245
-    3668:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    366a:	65 b1       	in	r22, 0x05	; 5
-    366c:	6a 60       	ori	r22, 0x0A	; 10
-    366e:	65 b9       	out	0x05, r22	; 5
-    3670:	65 b1       	in	r22, 0x05	; 5
-    3672:	65 7f       	andi	r22, 0xF5	; 245
-    3674:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 26));
-    3676:	b9 01       	movw	r22, r18
-    3678:	66 5e       	subi	r22, 0xE6	; 230
-    367a:	7f 4f       	sbci	r23, 0xFF	; 255
-    367c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3680:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3684:	e6 0f       	add	r30, r22
-    3686:	f7 1f       	adc	r31, r23
-    3688:	e4 91       	lpm	r30, Z
-    368a:	6b b1       	in	r22, 0x0b	; 11
-    368c:	74 e0       	ldi	r23, 0x04	; 4
-    368e:	e7 9f       	mul	r30, r23
-    3690:	f0 01       	movw	r30, r0
-    3692:	11 24       	eor	r1, r1
-    3694:	63 70       	andi	r22, 0x03	; 3
-    3696:	e6 2b       	or	r30, r22
-    3698:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    369a:	65 b1       	in	r22, 0x05	; 5
-    369c:	6a 60       	ori	r22, 0x0A	; 10
-    369e:	65 b9       	out	0x05, r22	; 5
-    36a0:	65 b1       	in	r22, 0x05	; 5
-    36a2:	65 7f       	andi	r22, 0xF5	; 245
-    36a4:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    36a6:	65 b1       	in	r22, 0x05	; 5
-    36a8:	6a 60       	ori	r22, 0x0A	; 10
-    36aa:	65 b9       	out	0x05, r22	; 5
-    36ac:	65 b1       	in	r22, 0x05	; 5
-    36ae:	65 7f       	andi	r22, 0xF5	; 245
-    36b0:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 27));
-    36b2:	b9 01       	movw	r22, r18
-    36b4:	65 5e       	subi	r22, 0xE5	; 229
-    36b6:	7f 4f       	sbci	r23, 0xFF	; 255
-    36b8:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    36bc:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    36c0:	e6 0f       	add	r30, r22
-    36c2:	f7 1f       	adc	r31, r23
-    36c4:	e4 91       	lpm	r30, Z
-    36c6:	6b b1       	in	r22, 0x0b	; 11
-    36c8:	74 e0       	ldi	r23, 0x04	; 4
-    36ca:	e7 9f       	mul	r30, r23
-    36cc:	f0 01       	movw	r30, r0
-    36ce:	11 24       	eor	r1, r1
-    36d0:	63 70       	andi	r22, 0x03	; 3
-    36d2:	e6 2b       	or	r30, r22
-    36d4:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    36d6:	65 b1       	in	r22, 0x05	; 5
-    36d8:	6a 60       	ori	r22, 0x0A	; 10
-    36da:	65 b9       	out	0x05, r22	; 5
-    36dc:	65 b1       	in	r22, 0x05	; 5
-    36de:	65 7f       	andi	r22, 0xF5	; 245
-    36e0:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    36e2:	65 b1       	in	r22, 0x05	; 5
-    36e4:	6a 60       	ori	r22, 0x0A	; 10
-    36e6:	65 b9       	out	0x05, r22	; 5
-    36e8:	65 b1       	in	r22, 0x05	; 5
-    36ea:	65 7f       	andi	r22, 0xF5	; 245
-    36ec:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 28));
-    36ee:	b9 01       	movw	r22, r18
-    36f0:	64 5e       	subi	r22, 0xE4	; 228
-    36f2:	7f 4f       	sbci	r23, 0xFF	; 255
-    36f4:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    36f8:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    36fc:	e6 0f       	add	r30, r22
-    36fe:	f7 1f       	adc	r31, r23
-    3700:	e4 91       	lpm	r30, Z
-    3702:	6b b1       	in	r22, 0x0b	; 11
-    3704:	74 e0       	ldi	r23, 0x04	; 4
-    3706:	e7 9f       	mul	r30, r23
-    3708:	f0 01       	movw	r30, r0
-    370a:	11 24       	eor	r1, r1
-    370c:	63 70       	andi	r22, 0x03	; 3
-    370e:	e6 2b       	or	r30, r22
-    3710:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3712:	65 b1       	in	r22, 0x05	; 5
-    3714:	6a 60       	ori	r22, 0x0A	; 10
-    3716:	65 b9       	out	0x05, r22	; 5
-    3718:	65 b1       	in	r22, 0x05	; 5
-    371a:	65 7f       	andi	r22, 0xF5	; 245
-    371c:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    371e:	65 b1       	in	r22, 0x05	; 5
-    3720:	6a 60       	ori	r22, 0x0A	; 10
-    3722:	65 b9       	out	0x05, r22	; 5
-    3724:	65 b1       	in	r22, 0x05	; 5
-    3726:	65 7f       	andi	r22, 0xF5	; 245
-    3728:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 29));
-    372a:	b9 01       	movw	r22, r18
-    372c:	63 5e       	subi	r22, 0xE3	; 227
-    372e:	7f 4f       	sbci	r23, 0xFF	; 255
-    3730:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3734:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3738:	e6 0f       	add	r30, r22
-    373a:	f7 1f       	adc	r31, r23
-    373c:	e4 91       	lpm	r30, Z
-    373e:	6b b1       	in	r22, 0x0b	; 11
-    3740:	74 e0       	ldi	r23, 0x04	; 4
-    3742:	e7 9f       	mul	r30, r23
-    3744:	f0 01       	movw	r30, r0
-    3746:	11 24       	eor	r1, r1
-    3748:	63 70       	andi	r22, 0x03	; 3
-    374a:	e6 2b       	or	r30, r22
-    374c:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    374e:	65 b1       	in	r22, 0x05	; 5
-    3750:	6a 60       	ori	r22, 0x0A	; 10
-    3752:	65 b9       	out	0x05, r22	; 5
-    3754:	65 b1       	in	r22, 0x05	; 5
-    3756:	65 7f       	andi	r22, 0xF5	; 245
-    3758:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    375a:	65 b1       	in	r22, 0x05	; 5
-    375c:	6a 60       	ori	r22, 0x0A	; 10
-    375e:	65 b9       	out	0x05, r22	; 5
-    3760:	65 b1       	in	r22, 0x05	; 5
-    3762:	65 7f       	andi	r22, 0xF5	; 245
-    3764:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 30));
-    3766:	b9 01       	movw	r22, r18
-    3768:	62 5e       	subi	r22, 0xE2	; 226
-    376a:	7f 4f       	sbci	r23, 0xFF	; 255
-    376c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3770:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3774:	e6 0f       	add	r30, r22
-    3776:	f7 1f       	adc	r31, r23
-    3778:	e4 91       	lpm	r30, Z
-    377a:	6b b1       	in	r22, 0x0b	; 11
-    377c:	74 e0       	ldi	r23, 0x04	; 4
-    377e:	e7 9f       	mul	r30, r23
-    3780:	f0 01       	movw	r30, r0
-    3782:	11 24       	eor	r1, r1
-    3784:	63 70       	andi	r22, 0x03	; 3
-    3786:	e6 2b       	or	r30, r22
-    3788:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    378a:	65 b1       	in	r22, 0x05	; 5
-    378c:	6a 60       	ori	r22, 0x0A	; 10
-    378e:	65 b9       	out	0x05, r22	; 5
-    3790:	65 b1       	in	r22, 0x05	; 5
-    3792:	65 7f       	andi	r22, 0xF5	; 245
-    3794:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3796:	65 b1       	in	r22, 0x05	; 5
-    3798:	6a 60       	ori	r22, 0x0A	; 10
-    379a:	65 b9       	out	0x05, r22	; 5
-    379c:	65 b1       	in	r22, 0x05	; 5
-    379e:	65 7f       	andi	r22, 0xF5	; 245
-    37a0:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 31));
-    37a2:	b9 01       	movw	r22, r18
-    37a4:	61 5e       	subi	r22, 0xE1	; 225
-    37a6:	7f 4f       	sbci	r23, 0xFF	; 255
-    37a8:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    37ac:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    37b0:	e6 0f       	add	r30, r22
-    37b2:	f7 1f       	adc	r31, r23
-    37b4:	e4 91       	lpm	r30, Z
-    37b6:	6b b1       	in	r22, 0x0b	; 11
-    37b8:	74 e0       	ldi	r23, 0x04	; 4
-    37ba:	e7 9f       	mul	r30, r23
-    37bc:	f0 01       	movw	r30, r0
-    37be:	11 24       	eor	r1, r1
-    37c0:	63 70       	andi	r22, 0x03	; 3
-    37c2:	e6 2b       	or	r30, r22
-    37c4:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    37c6:	65 b1       	in	r22, 0x05	; 5
-    37c8:	6a 60       	ori	r22, 0x0A	; 10
-    37ca:	65 b9       	out	0x05, r22	; 5
-    37cc:	65 b1       	in	r22, 0x05	; 5
-    37ce:	65 7f       	andi	r22, 0xF5	; 245
-    37d0:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    37d2:	65 b1       	in	r22, 0x05	; 5
-    37d4:	6a 60       	ori	r22, 0x0A	; 10
-    37d6:	65 b9       	out	0x05, r22	; 5
-    37d8:	65 b1       	in	r22, 0x05	; 5
-    37da:	65 7f       	andi	r22, 0xF5	; 245
-    37dc:	65 b9       	out	0x05, r22	; 5
-
-            // chip 4
-            SET_COLOR(pgm_read_byte(buffer + index + 32));
-    37de:	b9 01       	movw	r22, r18
-    37e0:	60 5e       	subi	r22, 0xE0	; 224
-    37e2:	7f 4f       	sbci	r23, 0xFF	; 255
-    37e4:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    37e8:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    37ec:	e6 0f       	add	r30, r22
-    37ee:	f7 1f       	adc	r31, r23
-    37f0:	e4 91       	lpm	r30, Z
-    37f2:	6b b1       	in	r22, 0x0b	; 11
-    37f4:	74 e0       	ldi	r23, 0x04	; 4
-    37f6:	e7 9f       	mul	r30, r23
-    37f8:	f0 01       	movw	r30, r0
-    37fa:	11 24       	eor	r1, r1
-    37fc:	63 70       	andi	r22, 0x03	; 3
-    37fe:	e6 2b       	or	r30, r22
-    3800:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3802:	65 b1       	in	r22, 0x05	; 5
-    3804:	6a 60       	ori	r22, 0x0A	; 10
-    3806:	65 b9       	out	0x05, r22	; 5
-    3808:	65 b1       	in	r22, 0x05	; 5
-    380a:	65 7f       	andi	r22, 0xF5	; 245
-    380c:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    380e:	65 b1       	in	r22, 0x05	; 5
-    3810:	6a 60       	ori	r22, 0x0A	; 10
-    3812:	65 b9       	out	0x05, r22	; 5
-    3814:	65 b1       	in	r22, 0x05	; 5
-    3816:	65 7f       	andi	r22, 0xF5	; 245
-    3818:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 33));
-    381a:	b9 01       	movw	r22, r18
-    381c:	6f 5d       	subi	r22, 0xDF	; 223
-    381e:	7f 4f       	sbci	r23, 0xFF	; 255
-    3820:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3824:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3828:	e6 0f       	add	r30, r22
-    382a:	f7 1f       	adc	r31, r23
-    382c:	e4 91       	lpm	r30, Z
-    382e:	6b b1       	in	r22, 0x0b	; 11
-    3830:	74 e0       	ldi	r23, 0x04	; 4
-    3832:	e7 9f       	mul	r30, r23
-    3834:	f0 01       	movw	r30, r0
-    3836:	11 24       	eor	r1, r1
-    3838:	63 70       	andi	r22, 0x03	; 3
-    383a:	e6 2b       	or	r30, r22
-    383c:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    383e:	65 b1       	in	r22, 0x05	; 5
-    3840:	6a 60       	ori	r22, 0x0A	; 10
-    3842:	65 b9       	out	0x05, r22	; 5
-    3844:	65 b1       	in	r22, 0x05	; 5
-    3846:	65 7f       	andi	r22, 0xF5	; 245
-    3848:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    384a:	65 b1       	in	r22, 0x05	; 5
-    384c:	6a 60       	ori	r22, 0x0A	; 10
-    384e:	65 b9       	out	0x05, r22	; 5
-    3850:	65 b1       	in	r22, 0x05	; 5
-    3852:	65 7f       	andi	r22, 0xF5	; 245
-    3854:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 34));
-    3856:	b9 01       	movw	r22, r18
-    3858:	6e 5d       	subi	r22, 0xDE	; 222
-    385a:	7f 4f       	sbci	r23, 0xFF	; 255
-    385c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3860:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3864:	e6 0f       	add	r30, r22
-    3866:	f7 1f       	adc	r31, r23
-    3868:	e4 91       	lpm	r30, Z
-    386a:	6b b1       	in	r22, 0x0b	; 11
-    386c:	74 e0       	ldi	r23, 0x04	; 4
-    386e:	e7 9f       	mul	r30, r23
-    3870:	f0 01       	movw	r30, r0
-    3872:	11 24       	eor	r1, r1
-    3874:	63 70       	andi	r22, 0x03	; 3
-    3876:	e6 2b       	or	r30, r22
-    3878:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    387a:	65 b1       	in	r22, 0x05	; 5
-    387c:	6a 60       	ori	r22, 0x0A	; 10
-    387e:	65 b9       	out	0x05, r22	; 5
-    3880:	65 b1       	in	r22, 0x05	; 5
-    3882:	65 7f       	andi	r22, 0xF5	; 245
-    3884:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3886:	65 b1       	in	r22, 0x05	; 5
-    3888:	6a 60       	ori	r22, 0x0A	; 10
-    388a:	65 b9       	out	0x05, r22	; 5
-    388c:	65 b1       	in	r22, 0x05	; 5
-    388e:	65 7f       	andi	r22, 0xF5	; 245
-    3890:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 35));
-    3892:	b9 01       	movw	r22, r18
-    3894:	6d 5d       	subi	r22, 0xDD	; 221
-    3896:	7f 4f       	sbci	r23, 0xFF	; 255
-    3898:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    389c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    38a0:	e6 0f       	add	r30, r22
-    38a2:	f7 1f       	adc	r31, r23
-    38a4:	e4 91       	lpm	r30, Z
-    38a6:	6b b1       	in	r22, 0x0b	; 11
-    38a8:	74 e0       	ldi	r23, 0x04	; 4
-    38aa:	e7 9f       	mul	r30, r23
-    38ac:	f0 01       	movw	r30, r0
-    38ae:	11 24       	eor	r1, r1
-    38b0:	63 70       	andi	r22, 0x03	; 3
-    38b2:	e6 2b       	or	r30, r22
-    38b4:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    38b6:	65 b1       	in	r22, 0x05	; 5
-    38b8:	6a 60       	ori	r22, 0x0A	; 10
-    38ba:	65 b9       	out	0x05, r22	; 5
-    38bc:	65 b1       	in	r22, 0x05	; 5
-    38be:	65 7f       	andi	r22, 0xF5	; 245
-    38c0:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    38c2:	65 b1       	in	r22, 0x05	; 5
-    38c4:	6a 60       	ori	r22, 0x0A	; 10
-    38c6:	65 b9       	out	0x05, r22	; 5
-    38c8:	65 b1       	in	r22, 0x05	; 5
-    38ca:	65 7f       	andi	r22, 0xF5	; 245
-    38cc:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 36));
-    38ce:	b9 01       	movw	r22, r18
-    38d0:	6c 5d       	subi	r22, 0xDC	; 220
-    38d2:	7f 4f       	sbci	r23, 0xFF	; 255
-    38d4:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    38d8:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    38dc:	e6 0f       	add	r30, r22
-    38de:	f7 1f       	adc	r31, r23
-    38e0:	e4 91       	lpm	r30, Z
-    38e2:	6b b1       	in	r22, 0x0b	; 11
-    38e4:	74 e0       	ldi	r23, 0x04	; 4
-    38e6:	e7 9f       	mul	r30, r23
-    38e8:	f0 01       	movw	r30, r0
-    38ea:	11 24       	eor	r1, r1
-    38ec:	63 70       	andi	r22, 0x03	; 3
-    38ee:	e6 2b       	or	r30, r22
-    38f0:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    38f2:	65 b1       	in	r22, 0x05	; 5
-    38f4:	6a 60       	ori	r22, 0x0A	; 10
-    38f6:	65 b9       	out	0x05, r22	; 5
-    38f8:	65 b1       	in	r22, 0x05	; 5
-    38fa:	65 7f       	andi	r22, 0xF5	; 245
-    38fc:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    38fe:	65 b1       	in	r22, 0x05	; 5
-    3900:	6a 60       	ori	r22, 0x0A	; 10
-    3902:	65 b9       	out	0x05, r22	; 5
-    3904:	65 b1       	in	r22, 0x05	; 5
-    3906:	65 7f       	andi	r22, 0xF5	; 245
-    3908:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 37));
-    390a:	b9 01       	movw	r22, r18
-    390c:	6b 5d       	subi	r22, 0xDB	; 219
-    390e:	7f 4f       	sbci	r23, 0xFF	; 255
-    3910:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3914:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3918:	e6 0f       	add	r30, r22
-    391a:	f7 1f       	adc	r31, r23
-    391c:	e4 91       	lpm	r30, Z
-    391e:	6b b1       	in	r22, 0x0b	; 11
-    3920:	74 e0       	ldi	r23, 0x04	; 4
-    3922:	e7 9f       	mul	r30, r23
-    3924:	f0 01       	movw	r30, r0
-    3926:	11 24       	eor	r1, r1
-    3928:	63 70       	andi	r22, 0x03	; 3
-    392a:	e6 2b       	or	r30, r22
-    392c:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    392e:	65 b1       	in	r22, 0x05	; 5
-    3930:	6a 60       	ori	r22, 0x0A	; 10
-    3932:	65 b9       	out	0x05, r22	; 5
-    3934:	65 b1       	in	r22, 0x05	; 5
-    3936:	65 7f       	andi	r22, 0xF5	; 245
-    3938:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    393a:	65 b1       	in	r22, 0x05	; 5
-    393c:	6a 60       	ori	r22, 0x0A	; 10
-    393e:	65 b9       	out	0x05, r22	; 5
-    3940:	65 b1       	in	r22, 0x05	; 5
-    3942:	65 7f       	andi	r22, 0xF5	; 245
-    3944:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 38));
-    3946:	b9 01       	movw	r22, r18
-    3948:	6a 5d       	subi	r22, 0xDA	; 218
-    394a:	7f 4f       	sbci	r23, 0xFF	; 255
-    394c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3950:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3954:	e6 0f       	add	r30, r22
-    3956:	f7 1f       	adc	r31, r23
-    3958:	e4 91       	lpm	r30, Z
-    395a:	6b b1       	in	r22, 0x0b	; 11
-    395c:	74 e0       	ldi	r23, 0x04	; 4
-    395e:	e7 9f       	mul	r30, r23
-    3960:	f0 01       	movw	r30, r0
-    3962:	11 24       	eor	r1, r1
-    3964:	63 70       	andi	r22, 0x03	; 3
-    3966:	e6 2b       	or	r30, r22
-    3968:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    396a:	65 b1       	in	r22, 0x05	; 5
-    396c:	6a 60       	ori	r22, 0x0A	; 10
-    396e:	65 b9       	out	0x05, r22	; 5
-    3970:	65 b1       	in	r22, 0x05	; 5
-    3972:	65 7f       	andi	r22, 0xF5	; 245
-    3974:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3976:	65 b1       	in	r22, 0x05	; 5
-    3978:	6a 60       	ori	r22, 0x0A	; 10
-    397a:	65 b9       	out	0x05, r22	; 5
-    397c:	65 b1       	in	r22, 0x05	; 5
-    397e:	65 7f       	andi	r22, 0xF5	; 245
-    3980:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 39));
-    3982:	b9 01       	movw	r22, r18
-    3984:	69 5d       	subi	r22, 0xD9	; 217
-    3986:	7f 4f       	sbci	r23, 0xFF	; 255
-    3988:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    398c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3990:	e6 0f       	add	r30, r22
-    3992:	f7 1f       	adc	r31, r23
-    3994:	e4 91       	lpm	r30, Z
-    3996:	6b b1       	in	r22, 0x0b	; 11
-    3998:	74 e0       	ldi	r23, 0x04	; 4
-    399a:	e7 9f       	mul	r30, r23
-    399c:	f0 01       	movw	r30, r0
-    399e:	11 24       	eor	r1, r1
-    39a0:	63 70       	andi	r22, 0x03	; 3
-    39a2:	e6 2b       	or	r30, r22
-    39a4:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    39a6:	65 b1       	in	r22, 0x05	; 5
-    39a8:	6a 60       	ori	r22, 0x0A	; 10
-    39aa:	65 b9       	out	0x05, r22	; 5
-    39ac:	65 b1       	in	r22, 0x05	; 5
-    39ae:	65 7f       	andi	r22, 0xF5	; 245
-    39b0:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    39b2:	65 b1       	in	r22, 0x05	; 5
-    39b4:	6a 60       	ori	r22, 0x0A	; 10
-    39b6:	65 b9       	out	0x05, r22	; 5
-    39b8:	65 b1       	in	r22, 0x05	; 5
-    39ba:	65 7f       	andi	r22, 0xF5	; 245
-    39bc:	65 b9       	out	0x05, r22	; 5
-
-            // chip 5
-            SET_COLOR(pgm_read_byte(buffer + index + 40));
-    39be:	b9 01       	movw	r22, r18
-    39c0:	68 5d       	subi	r22, 0xD8	; 216
-    39c2:	7f 4f       	sbci	r23, 0xFF	; 255
-    39c4:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    39c8:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    39cc:	e6 0f       	add	r30, r22
-    39ce:	f7 1f       	adc	r31, r23
-    39d0:	e4 91       	lpm	r30, Z
-    39d2:	6b b1       	in	r22, 0x0b	; 11
-    39d4:	74 e0       	ldi	r23, 0x04	; 4
-    39d6:	e7 9f       	mul	r30, r23
-    39d8:	f0 01       	movw	r30, r0
-    39da:	11 24       	eor	r1, r1
-    39dc:	63 70       	andi	r22, 0x03	; 3
-    39de:	e6 2b       	or	r30, r22
-    39e0:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    39e2:	65 b1       	in	r22, 0x05	; 5
-    39e4:	6a 60       	ori	r22, 0x0A	; 10
-    39e6:	65 b9       	out	0x05, r22	; 5
-    39e8:	65 b1       	in	r22, 0x05	; 5
-    39ea:	65 7f       	andi	r22, 0xF5	; 245
-    39ec:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    39ee:	65 b1       	in	r22, 0x05	; 5
-    39f0:	6a 60       	ori	r22, 0x0A	; 10
-    39f2:	65 b9       	out	0x05, r22	; 5
-    39f4:	65 b1       	in	r22, 0x05	; 5
-    39f6:	65 7f       	andi	r22, 0xF5	; 245
-    39f8:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 41));
-    39fa:	b9 01       	movw	r22, r18
-    39fc:	67 5d       	subi	r22, 0xD7	; 215
-    39fe:	7f 4f       	sbci	r23, 0xFF	; 255
-    3a00:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3a04:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3a08:	e6 0f       	add	r30, r22
-    3a0a:	f7 1f       	adc	r31, r23
-    3a0c:	e4 91       	lpm	r30, Z
-    3a0e:	6b b1       	in	r22, 0x0b	; 11
-    3a10:	74 e0       	ldi	r23, 0x04	; 4
-    3a12:	e7 9f       	mul	r30, r23
-    3a14:	f0 01       	movw	r30, r0
-    3a16:	11 24       	eor	r1, r1
-    3a18:	63 70       	andi	r22, 0x03	; 3
-    3a1a:	e6 2b       	or	r30, r22
-    3a1c:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3a1e:	65 b1       	in	r22, 0x05	; 5
-    3a20:	6a 60       	ori	r22, 0x0A	; 10
-    3a22:	65 b9       	out	0x05, r22	; 5
-    3a24:	65 b1       	in	r22, 0x05	; 5
-    3a26:	65 7f       	andi	r22, 0xF5	; 245
-    3a28:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3a2a:	65 b1       	in	r22, 0x05	; 5
-    3a2c:	6a 60       	ori	r22, 0x0A	; 10
-    3a2e:	65 b9       	out	0x05, r22	; 5
-    3a30:	65 b1       	in	r22, 0x05	; 5
-    3a32:	65 7f       	andi	r22, 0xF5	; 245
-    3a34:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 42));
-    3a36:	b9 01       	movw	r22, r18
-    3a38:	66 5d       	subi	r22, 0xD6	; 214
-    3a3a:	7f 4f       	sbci	r23, 0xFF	; 255
-    3a3c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3a40:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3a44:	e6 0f       	add	r30, r22
-    3a46:	f7 1f       	adc	r31, r23
-    3a48:	e4 91       	lpm	r30, Z
-    3a4a:	6b b1       	in	r22, 0x0b	; 11
-    3a4c:	74 e0       	ldi	r23, 0x04	; 4
-    3a4e:	e7 9f       	mul	r30, r23
-    3a50:	f0 01       	movw	r30, r0
-    3a52:	11 24       	eor	r1, r1
-    3a54:	63 70       	andi	r22, 0x03	; 3
-    3a56:	e6 2b       	or	r30, r22
-    3a58:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3a5a:	65 b1       	in	r22, 0x05	; 5
-    3a5c:	6a 60       	ori	r22, 0x0A	; 10
-    3a5e:	65 b9       	out	0x05, r22	; 5
-    3a60:	65 b1       	in	r22, 0x05	; 5
-    3a62:	65 7f       	andi	r22, 0xF5	; 245
-    3a64:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3a66:	65 b1       	in	r22, 0x05	; 5
-    3a68:	6a 60       	ori	r22, 0x0A	; 10
-    3a6a:	65 b9       	out	0x05, r22	; 5
-    3a6c:	65 b1       	in	r22, 0x05	; 5
-    3a6e:	65 7f       	andi	r22, 0xF5	; 245
-    3a70:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 43));
-    3a72:	b9 01       	movw	r22, r18
-    3a74:	65 5d       	subi	r22, 0xD5	; 213
-    3a76:	7f 4f       	sbci	r23, 0xFF	; 255
-    3a78:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3a7c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3a80:	e6 0f       	add	r30, r22
-    3a82:	f7 1f       	adc	r31, r23
-    3a84:	e4 91       	lpm	r30, Z
-    3a86:	6b b1       	in	r22, 0x0b	; 11
-    3a88:	74 e0       	ldi	r23, 0x04	; 4
-    3a8a:	e7 9f       	mul	r30, r23
-    3a8c:	f0 01       	movw	r30, r0
-    3a8e:	11 24       	eor	r1, r1
-    3a90:	63 70       	andi	r22, 0x03	; 3
-    3a92:	e6 2b       	or	r30, r22
-    3a94:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3a96:	65 b1       	in	r22, 0x05	; 5
-    3a98:	6a 60       	ori	r22, 0x0A	; 10
-    3a9a:	65 b9       	out	0x05, r22	; 5
-    3a9c:	65 b1       	in	r22, 0x05	; 5
-    3a9e:	65 7f       	andi	r22, 0xF5	; 245
-    3aa0:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3aa2:	65 b1       	in	r22, 0x05	; 5
-    3aa4:	6a 60       	ori	r22, 0x0A	; 10
-    3aa6:	65 b9       	out	0x05, r22	; 5
-    3aa8:	65 b1       	in	r22, 0x05	; 5
-    3aaa:	65 7f       	andi	r22, 0xF5	; 245
-    3aac:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 44));
-    3aae:	b9 01       	movw	r22, r18
-    3ab0:	64 5d       	subi	r22, 0xD4	; 212
-    3ab2:	7f 4f       	sbci	r23, 0xFF	; 255
-    3ab4:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3ab8:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3abc:	e6 0f       	add	r30, r22
-    3abe:	f7 1f       	adc	r31, r23
-    3ac0:	e4 91       	lpm	r30, Z
-    3ac2:	6b b1       	in	r22, 0x0b	; 11
-    3ac4:	74 e0       	ldi	r23, 0x04	; 4
-    3ac6:	e7 9f       	mul	r30, r23
-    3ac8:	f0 01       	movw	r30, r0
-    3aca:	11 24       	eor	r1, r1
-    3acc:	63 70       	andi	r22, 0x03	; 3
-    3ace:	e6 2b       	or	r30, r22
-    3ad0:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3ad2:	65 b1       	in	r22, 0x05	; 5
-    3ad4:	6a 60       	ori	r22, 0x0A	; 10
-    3ad6:	65 b9       	out	0x05, r22	; 5
-    3ad8:	65 b1       	in	r22, 0x05	; 5
-    3ada:	65 7f       	andi	r22, 0xF5	; 245
-    3adc:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3ade:	65 b1       	in	r22, 0x05	; 5
-    3ae0:	6a 60       	ori	r22, 0x0A	; 10
-    3ae2:	65 b9       	out	0x05, r22	; 5
-    3ae4:	65 b1       	in	r22, 0x05	; 5
-    3ae6:	65 7f       	andi	r22, 0xF5	; 245
-    3ae8:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 45));
-    3aea:	b9 01       	movw	r22, r18
-    3aec:	63 5d       	subi	r22, 0xD3	; 211
-    3aee:	7f 4f       	sbci	r23, 0xFF	; 255
-    3af0:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3af4:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3af8:	e6 0f       	add	r30, r22
-    3afa:	f7 1f       	adc	r31, r23
-    3afc:	e4 91       	lpm	r30, Z
-    3afe:	6b b1       	in	r22, 0x0b	; 11
-    3b00:	74 e0       	ldi	r23, 0x04	; 4
-    3b02:	e7 9f       	mul	r30, r23
-    3b04:	f0 01       	movw	r30, r0
-    3b06:	11 24       	eor	r1, r1
-    3b08:	63 70       	andi	r22, 0x03	; 3
-    3b0a:	e6 2b       	or	r30, r22
-    3b0c:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3b0e:	65 b1       	in	r22, 0x05	; 5
-    3b10:	6a 60       	ori	r22, 0x0A	; 10
-    3b12:	65 b9       	out	0x05, r22	; 5
-    3b14:	65 b1       	in	r22, 0x05	; 5
-    3b16:	65 7f       	andi	r22, 0xF5	; 245
-    3b18:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3b1a:	65 b1       	in	r22, 0x05	; 5
-    3b1c:	6a 60       	ori	r22, 0x0A	; 10
-    3b1e:	65 b9       	out	0x05, r22	; 5
-    3b20:	65 b1       	in	r22, 0x05	; 5
-    3b22:	65 7f       	andi	r22, 0xF5	; 245
-    3b24:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 46));
-    3b26:	b9 01       	movw	r22, r18
-    3b28:	62 5d       	subi	r22, 0xD2	; 210
-    3b2a:	7f 4f       	sbci	r23, 0xFF	; 255
-    3b2c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3b30:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3b34:	e6 0f       	add	r30, r22
-    3b36:	f7 1f       	adc	r31, r23
-    3b38:	e4 91       	lpm	r30, Z
-    3b3a:	6b b1       	in	r22, 0x0b	; 11
-    3b3c:	74 e0       	ldi	r23, 0x04	; 4
-    3b3e:	e7 9f       	mul	r30, r23
-    3b40:	f0 01       	movw	r30, r0
-    3b42:	11 24       	eor	r1, r1
-    3b44:	63 70       	andi	r22, 0x03	; 3
-    3b46:	e6 2b       	or	r30, r22
-    3b48:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3b4a:	65 b1       	in	r22, 0x05	; 5
-    3b4c:	6a 60       	ori	r22, 0x0A	; 10
-    3b4e:	65 b9       	out	0x05, r22	; 5
-    3b50:	65 b1       	in	r22, 0x05	; 5
-    3b52:	65 7f       	andi	r22, 0xF5	; 245
-    3b54:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3b56:	65 b1       	in	r22, 0x05	; 5
-    3b58:	6a 60       	ori	r22, 0x0A	; 10
-    3b5a:	65 b9       	out	0x05, r22	; 5
-    3b5c:	65 b1       	in	r22, 0x05	; 5
-    3b5e:	65 7f       	andi	r22, 0xF5	; 245
-    3b60:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 47));
-    3b62:	b9 01       	movw	r22, r18
-    3b64:	61 5d       	subi	r22, 0xD1	; 209
-    3b66:	7f 4f       	sbci	r23, 0xFF	; 255
-    3b68:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3b6c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3b70:	e6 0f       	add	r30, r22
-    3b72:	f7 1f       	adc	r31, r23
-    3b74:	e4 91       	lpm	r30, Z
-    3b76:	6b b1       	in	r22, 0x0b	; 11
-    3b78:	74 e0       	ldi	r23, 0x04	; 4
-    3b7a:	e7 9f       	mul	r30, r23
-    3b7c:	f0 01       	movw	r30, r0
-    3b7e:	11 24       	eor	r1, r1
-    3b80:	63 70       	andi	r22, 0x03	; 3
-    3b82:	e6 2b       	or	r30, r22
-    3b84:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3b86:	65 b1       	in	r22, 0x05	; 5
-    3b88:	6a 60       	ori	r22, 0x0A	; 10
-    3b8a:	65 b9       	out	0x05, r22	; 5
-    3b8c:	65 b1       	in	r22, 0x05	; 5
-    3b8e:	65 7f       	andi	r22, 0xF5	; 245
-    3b90:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3b92:	65 b1       	in	r22, 0x05	; 5
-    3b94:	6a 60       	ori	r22, 0x0A	; 10
-    3b96:	65 b9       	out	0x05, r22	; 5
-    3b98:	65 b1       	in	r22, 0x05	; 5
-    3b9a:	65 7f       	andi	r22, 0xF5	; 245
-    3b9c:	65 b9       	out	0x05, r22	; 5
-
-            // chip 6
-            SET_COLOR(pgm_read_byte(buffer + index + 48));
-    3b9e:	b9 01       	movw	r22, r18
-    3ba0:	60 5d       	subi	r22, 0xD0	; 208
-    3ba2:	7f 4f       	sbci	r23, 0xFF	; 255
-    3ba4:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3ba8:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3bac:	e6 0f       	add	r30, r22
-    3bae:	f7 1f       	adc	r31, r23
-    3bb0:	e4 91       	lpm	r30, Z
-    3bb2:	6b b1       	in	r22, 0x0b	; 11
-    3bb4:	74 e0       	ldi	r23, 0x04	; 4
-    3bb6:	e7 9f       	mul	r30, r23
-    3bb8:	f0 01       	movw	r30, r0
-    3bba:	11 24       	eor	r1, r1
-    3bbc:	63 70       	andi	r22, 0x03	; 3
-    3bbe:	e6 2b       	or	r30, r22
-    3bc0:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3bc2:	65 b1       	in	r22, 0x05	; 5
-    3bc4:	6a 60       	ori	r22, 0x0A	; 10
-    3bc6:	65 b9       	out	0x05, r22	; 5
-    3bc8:	65 b1       	in	r22, 0x05	; 5
-    3bca:	65 7f       	andi	r22, 0xF5	; 245
-    3bcc:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3bce:	65 b1       	in	r22, 0x05	; 5
-    3bd0:	6a 60       	ori	r22, 0x0A	; 10
-    3bd2:	65 b9       	out	0x05, r22	; 5
-    3bd4:	65 b1       	in	r22, 0x05	; 5
-    3bd6:	65 7f       	andi	r22, 0xF5	; 245
-    3bd8:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 49));
-    3bda:	b9 01       	movw	r22, r18
-    3bdc:	6f 5c       	subi	r22, 0xCF	; 207
-    3bde:	7f 4f       	sbci	r23, 0xFF	; 255
-    3be0:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3be4:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3be8:	e6 0f       	add	r30, r22
-    3bea:	f7 1f       	adc	r31, r23
-    3bec:	e4 91       	lpm	r30, Z
-    3bee:	6b b1       	in	r22, 0x0b	; 11
-    3bf0:	74 e0       	ldi	r23, 0x04	; 4
-    3bf2:	e7 9f       	mul	r30, r23
-    3bf4:	f0 01       	movw	r30, r0
-    3bf6:	11 24       	eor	r1, r1
-    3bf8:	63 70       	andi	r22, 0x03	; 3
-    3bfa:	e6 2b       	or	r30, r22
-    3bfc:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3bfe:	65 b1       	in	r22, 0x05	; 5
-    3c00:	6a 60       	ori	r22, 0x0A	; 10
-    3c02:	65 b9       	out	0x05, r22	; 5
-    3c04:	65 b1       	in	r22, 0x05	; 5
-    3c06:	65 7f       	andi	r22, 0xF5	; 245
-    3c08:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3c0a:	65 b1       	in	r22, 0x05	; 5
-    3c0c:	6a 60       	ori	r22, 0x0A	; 10
-    3c0e:	65 b9       	out	0x05, r22	; 5
-    3c10:	65 b1       	in	r22, 0x05	; 5
-    3c12:	65 7f       	andi	r22, 0xF5	; 245
-    3c14:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 50));
-    3c16:	b9 01       	movw	r22, r18
-    3c18:	6e 5c       	subi	r22, 0xCE	; 206
-    3c1a:	7f 4f       	sbci	r23, 0xFF	; 255
-    3c1c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3c20:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3c24:	e6 0f       	add	r30, r22
-    3c26:	f7 1f       	adc	r31, r23
-    3c28:	e4 91       	lpm	r30, Z
-    3c2a:	6b b1       	in	r22, 0x0b	; 11
-    3c2c:	74 e0       	ldi	r23, 0x04	; 4
-    3c2e:	e7 9f       	mul	r30, r23
-    3c30:	f0 01       	movw	r30, r0
-    3c32:	11 24       	eor	r1, r1
-    3c34:	63 70       	andi	r22, 0x03	; 3
-    3c36:	e6 2b       	or	r30, r22
-    3c38:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3c3a:	65 b1       	in	r22, 0x05	; 5
-    3c3c:	6a 60       	ori	r22, 0x0A	; 10
-    3c3e:	65 b9       	out	0x05, r22	; 5
-    3c40:	65 b1       	in	r22, 0x05	; 5
-    3c42:	65 7f       	andi	r22, 0xF5	; 245
-    3c44:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3c46:	65 b1       	in	r22, 0x05	; 5
-    3c48:	6a 60       	ori	r22, 0x0A	; 10
-    3c4a:	65 b9       	out	0x05, r22	; 5
-    3c4c:	65 b1       	in	r22, 0x05	; 5
-    3c4e:	65 7f       	andi	r22, 0xF5	; 245
-    3c50:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 51));
-    3c52:	b9 01       	movw	r22, r18
-    3c54:	6d 5c       	subi	r22, 0xCD	; 205
-    3c56:	7f 4f       	sbci	r23, 0xFF	; 255
-    3c58:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3c5c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3c60:	e6 0f       	add	r30, r22
-    3c62:	f7 1f       	adc	r31, r23
-    3c64:	e4 91       	lpm	r30, Z
-    3c66:	6b b1       	in	r22, 0x0b	; 11
-    3c68:	74 e0       	ldi	r23, 0x04	; 4
-    3c6a:	e7 9f       	mul	r30, r23
-    3c6c:	f0 01       	movw	r30, r0
-    3c6e:	11 24       	eor	r1, r1
-    3c70:	63 70       	andi	r22, 0x03	; 3
-    3c72:	e6 2b       	or	r30, r22
-    3c74:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3c76:	65 b1       	in	r22, 0x05	; 5
-    3c78:	6a 60       	ori	r22, 0x0A	; 10
-    3c7a:	65 b9       	out	0x05, r22	; 5
-    3c7c:	65 b1       	in	r22, 0x05	; 5
-    3c7e:	65 7f       	andi	r22, 0xF5	; 245
-    3c80:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3c82:	65 b1       	in	r22, 0x05	; 5
-    3c84:	6a 60       	ori	r22, 0x0A	; 10
-    3c86:	65 b9       	out	0x05, r22	; 5
-    3c88:	65 b1       	in	r22, 0x05	; 5
-    3c8a:	65 7f       	andi	r22, 0xF5	; 245
-    3c8c:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 52));
-    3c8e:	b9 01       	movw	r22, r18
-    3c90:	6c 5c       	subi	r22, 0xCC	; 204
-    3c92:	7f 4f       	sbci	r23, 0xFF	; 255
-    3c94:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3c98:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3c9c:	e6 0f       	add	r30, r22
-    3c9e:	f7 1f       	adc	r31, r23
-    3ca0:	e4 91       	lpm	r30, Z
-    3ca2:	6b b1       	in	r22, 0x0b	; 11
-    3ca4:	74 e0       	ldi	r23, 0x04	; 4
-    3ca6:	e7 9f       	mul	r30, r23
-    3ca8:	f0 01       	movw	r30, r0
-    3caa:	11 24       	eor	r1, r1
-    3cac:	63 70       	andi	r22, 0x03	; 3
-    3cae:	e6 2b       	or	r30, r22
-    3cb0:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3cb2:	65 b1       	in	r22, 0x05	; 5
-    3cb4:	6a 60       	ori	r22, 0x0A	; 10
-    3cb6:	65 b9       	out	0x05, r22	; 5
-    3cb8:	65 b1       	in	r22, 0x05	; 5
-    3cba:	65 7f       	andi	r22, 0xF5	; 245
-    3cbc:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3cbe:	65 b1       	in	r22, 0x05	; 5
-    3cc0:	6a 60       	ori	r22, 0x0A	; 10
-    3cc2:	65 b9       	out	0x05, r22	; 5
-    3cc4:	65 b1       	in	r22, 0x05	; 5
-    3cc6:	65 7f       	andi	r22, 0xF5	; 245
-    3cc8:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 53));
-    3cca:	b9 01       	movw	r22, r18
-    3ccc:	6b 5c       	subi	r22, 0xCB	; 203
-    3cce:	7f 4f       	sbci	r23, 0xFF	; 255
-    3cd0:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3cd4:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3cd8:	e6 0f       	add	r30, r22
-    3cda:	f7 1f       	adc	r31, r23
-    3cdc:	e4 91       	lpm	r30, Z
-    3cde:	6b b1       	in	r22, 0x0b	; 11
-    3ce0:	74 e0       	ldi	r23, 0x04	; 4
-    3ce2:	e7 9f       	mul	r30, r23
-    3ce4:	f0 01       	movw	r30, r0
-    3ce6:	11 24       	eor	r1, r1
-    3ce8:	63 70       	andi	r22, 0x03	; 3
-    3cea:	e6 2b       	or	r30, r22
-    3cec:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3cee:	65 b1       	in	r22, 0x05	; 5
-    3cf0:	6a 60       	ori	r22, 0x0A	; 10
-    3cf2:	65 b9       	out	0x05, r22	; 5
-    3cf4:	65 b1       	in	r22, 0x05	; 5
-    3cf6:	65 7f       	andi	r22, 0xF5	; 245
-    3cf8:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3cfa:	65 b1       	in	r22, 0x05	; 5
-    3cfc:	6a 60       	ori	r22, 0x0A	; 10
-    3cfe:	65 b9       	out	0x05, r22	; 5
-    3d00:	65 b1       	in	r22, 0x05	; 5
-    3d02:	65 7f       	andi	r22, 0xF5	; 245
-    3d04:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 54));
-    3d06:	b9 01       	movw	r22, r18
-    3d08:	6a 5c       	subi	r22, 0xCA	; 202
-    3d0a:	7f 4f       	sbci	r23, 0xFF	; 255
-    3d0c:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3d10:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3d14:	e6 0f       	add	r30, r22
-    3d16:	f7 1f       	adc	r31, r23
-    3d18:	e4 91       	lpm	r30, Z
-    3d1a:	6b b1       	in	r22, 0x0b	; 11
-    3d1c:	74 e0       	ldi	r23, 0x04	; 4
-    3d1e:	e7 9f       	mul	r30, r23
-    3d20:	f0 01       	movw	r30, r0
-    3d22:	11 24       	eor	r1, r1
-    3d24:	63 70       	andi	r22, 0x03	; 3
-    3d26:	e6 2b       	or	r30, r22
-    3d28:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3d2a:	65 b1       	in	r22, 0x05	; 5
-    3d2c:	6a 60       	ori	r22, 0x0A	; 10
-    3d2e:	65 b9       	out	0x05, r22	; 5
-    3d30:	65 b1       	in	r22, 0x05	; 5
-    3d32:	65 7f       	andi	r22, 0xF5	; 245
-    3d34:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3d36:	65 b1       	in	r22, 0x05	; 5
-    3d38:	6a 60       	ori	r22, 0x0A	; 10
-    3d3a:	65 b9       	out	0x05, r22	; 5
-    3d3c:	65 b1       	in	r22, 0x05	; 5
-    3d3e:	65 7f       	andi	r22, 0xF5	; 245
-    3d40:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 55));
-    3d42:	b9 01       	movw	r22, r18
-    3d44:	69 5c       	subi	r22, 0xC9	; 201
-    3d46:	7f 4f       	sbci	r23, 0xFF	; 255
-    3d48:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3d4c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3d50:	e6 0f       	add	r30, r22
-    3d52:	f7 1f       	adc	r31, r23
-    3d54:	e4 91       	lpm	r30, Z
-    3d56:	6b b1       	in	r22, 0x0b	; 11
-    3d58:	74 e0       	ldi	r23, 0x04	; 4
-    3d5a:	e7 9f       	mul	r30, r23
-    3d5c:	f0 01       	movw	r30, r0
-    3d5e:	11 24       	eor	r1, r1
-    3d60:	63 70       	andi	r22, 0x03	; 3
-    3d62:	e6 2b       	or	r30, r22
-    3d64:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3d66:	65 b1       	in	r22, 0x05	; 5
-    3d68:	6a 60       	ori	r22, 0x0A	; 10
-    3d6a:	65 b9       	out	0x05, r22	; 5
-    3d6c:	65 b1       	in	r22, 0x05	; 5
-    3d6e:	65 7f       	andi	r22, 0xF5	; 245
-    3d70:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3d72:	65 b1       	in	r22, 0x05	; 5
-    3d74:	6a 60       	ori	r22, 0x0A	; 10
-    3d76:	65 b9       	out	0x05, r22	; 5
-    3d78:	65 b1       	in	r22, 0x05	; 5
-    3d7a:	65 7f       	andi	r22, 0xF5	; 245
-    3d7c:	65 b9       	out	0x05, r22	; 5
-
-            // chip 7
-            SET_COLOR(pgm_read_byte(buffer + index + 56));
-    3d7e:	b9 01       	movw	r22, r18
-    3d80:	68 5c       	subi	r22, 0xC8	; 200
-    3d82:	7f 4f       	sbci	r23, 0xFF	; 255
-    3d84:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3d88:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3d8c:	e6 0f       	add	r30, r22
-    3d8e:	f7 1f       	adc	r31, r23
-    3d90:	e4 91       	lpm	r30, Z
-    3d92:	6b b1       	in	r22, 0x0b	; 11
-    3d94:	74 e0       	ldi	r23, 0x04	; 4
-    3d96:	e7 9f       	mul	r30, r23
-    3d98:	f0 01       	movw	r30, r0
-    3d9a:	11 24       	eor	r1, r1
-    3d9c:	63 70       	andi	r22, 0x03	; 3
-    3d9e:	e6 2b       	or	r30, r22
-    3da0:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3da2:	65 b1       	in	r22, 0x05	; 5
-    3da4:	6a 60       	ori	r22, 0x0A	; 10
-    3da6:	65 b9       	out	0x05, r22	; 5
-    3da8:	65 b1       	in	r22, 0x05	; 5
-    3daa:	65 7f       	andi	r22, 0xF5	; 245
-    3dac:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3dae:	65 b1       	in	r22, 0x05	; 5
-    3db0:	6a 60       	ori	r22, 0x0A	; 10
-    3db2:	65 b9       	out	0x05, r22	; 5
-    3db4:	65 b1       	in	r22, 0x05	; 5
-    3db6:	65 7f       	andi	r22, 0xF5	; 245
-    3db8:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 57));
-    3dba:	b9 01       	movw	r22, r18
-    3dbc:	67 5c       	subi	r22, 0xC7	; 199
-    3dbe:	7f 4f       	sbci	r23, 0xFF	; 255
-    3dc0:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3dc4:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3dc8:	e6 0f       	add	r30, r22
-    3dca:	f7 1f       	adc	r31, r23
-    3dcc:	e4 91       	lpm	r30, Z
-    3dce:	6b b1       	in	r22, 0x0b	; 11
-    3dd0:	74 e0       	ldi	r23, 0x04	; 4
-    3dd2:	e7 9f       	mul	r30, r23
-    3dd4:	f0 01       	movw	r30, r0
-    3dd6:	11 24       	eor	r1, r1
-    3dd8:	63 70       	andi	r22, 0x03	; 3
-    3dda:	e6 2b       	or	r30, r22
-    3ddc:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3dde:	65 b1       	in	r22, 0x05	; 5
-    3de0:	6a 60       	ori	r22, 0x0A	; 10
-    3de2:	65 b9       	out	0x05, r22	; 5
-    3de4:	65 b1       	in	r22, 0x05	; 5
-    3de6:	65 7f       	andi	r22, 0xF5	; 245
-    3de8:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3dea:	65 b1       	in	r22, 0x05	; 5
-    3dec:	6a 60       	ori	r22, 0x0A	; 10
-    3dee:	65 b9       	out	0x05, r22	; 5
-    3df0:	65 b1       	in	r22, 0x05	; 5
-    3df2:	65 7f       	andi	r22, 0xF5	; 245
-    3df4:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 58));
-    3df6:	b9 01       	movw	r22, r18
-    3df8:	66 5c       	subi	r22, 0xC6	; 198
-    3dfa:	7f 4f       	sbci	r23, 0xFF	; 255
-    3dfc:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3e00:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3e04:	e6 0f       	add	r30, r22
-    3e06:	f7 1f       	adc	r31, r23
-    3e08:	e4 91       	lpm	r30, Z
-    3e0a:	6b b1       	in	r22, 0x0b	; 11
-    3e0c:	74 e0       	ldi	r23, 0x04	; 4
-    3e0e:	e7 9f       	mul	r30, r23
-    3e10:	f0 01       	movw	r30, r0
-    3e12:	11 24       	eor	r1, r1
-    3e14:	63 70       	andi	r22, 0x03	; 3
-    3e16:	e6 2b       	or	r30, r22
-    3e18:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3e1a:	65 b1       	in	r22, 0x05	; 5
-    3e1c:	6a 60       	ori	r22, 0x0A	; 10
-    3e1e:	65 b9       	out	0x05, r22	; 5
-    3e20:	65 b1       	in	r22, 0x05	; 5
-    3e22:	65 7f       	andi	r22, 0xF5	; 245
-    3e24:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3e26:	65 b1       	in	r22, 0x05	; 5
-    3e28:	6a 60       	ori	r22, 0x0A	; 10
-    3e2a:	65 b9       	out	0x05, r22	; 5
-    3e2c:	65 b1       	in	r22, 0x05	; 5
-    3e2e:	65 7f       	andi	r22, 0xF5	; 245
-    3e30:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 59));
-    3e32:	b9 01       	movw	r22, r18
-    3e34:	65 5c       	subi	r22, 0xC5	; 197
-    3e36:	7f 4f       	sbci	r23, 0xFF	; 255
-    3e38:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3e3c:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3e40:	e6 0f       	add	r30, r22
-    3e42:	f7 1f       	adc	r31, r23
-    3e44:	e4 91       	lpm	r30, Z
-    3e46:	6b b1       	in	r22, 0x0b	; 11
-    3e48:	74 e0       	ldi	r23, 0x04	; 4
-    3e4a:	e7 9f       	mul	r30, r23
-    3e4c:	f0 01       	movw	r30, r0
-    3e4e:	11 24       	eor	r1, r1
-    3e50:	63 70       	andi	r22, 0x03	; 3
-    3e52:	e6 2b       	or	r30, r22
-    3e54:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3e56:	65 b1       	in	r22, 0x05	; 5
-    3e58:	6a 60       	ori	r22, 0x0A	; 10
-    3e5a:	65 b9       	out	0x05, r22	; 5
-    3e5c:	65 b1       	in	r22, 0x05	; 5
-    3e5e:	65 7f       	andi	r22, 0xF5	; 245
-    3e60:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3e62:	65 b1       	in	r22, 0x05	; 5
-    3e64:	6a 60       	ori	r22, 0x0A	; 10
-    3e66:	65 b9       	out	0x05, r22	; 5
-    3e68:	65 b1       	in	r22, 0x05	; 5
-    3e6a:	65 7f       	andi	r22, 0xF5	; 245
-    3e6c:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 60));
-    3e6e:	b9 01       	movw	r22, r18
-    3e70:	64 5c       	subi	r22, 0xC4	; 196
-    3e72:	7f 4f       	sbci	r23, 0xFF	; 255
-    3e74:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3e78:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3e7c:	e6 0f       	add	r30, r22
-    3e7e:	f7 1f       	adc	r31, r23
-    3e80:	e4 91       	lpm	r30, Z
-    3e82:	6b b1       	in	r22, 0x0b	; 11
-    3e84:	74 e0       	ldi	r23, 0x04	; 4
-    3e86:	e7 9f       	mul	r30, r23
-    3e88:	f0 01       	movw	r30, r0
-    3e8a:	11 24       	eor	r1, r1
-    3e8c:	63 70       	andi	r22, 0x03	; 3
-    3e8e:	e6 2b       	or	r30, r22
-    3e90:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3e92:	65 b1       	in	r22, 0x05	; 5
-    3e94:	6a 60       	ori	r22, 0x0A	; 10
-    3e96:	65 b9       	out	0x05, r22	; 5
-    3e98:	65 b1       	in	r22, 0x05	; 5
-    3e9a:	65 7f       	andi	r22, 0xF5	; 245
-    3e9c:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3e9e:	65 b1       	in	r22, 0x05	; 5
-    3ea0:	6a 60       	ori	r22, 0x0A	; 10
-    3ea2:	65 b9       	out	0x05, r22	; 5
-    3ea4:	65 b1       	in	r22, 0x05	; 5
-    3ea6:	65 7f       	andi	r22, 0xF5	; 245
-    3ea8:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 61));
-    3eaa:	b9 01       	movw	r22, r18
-    3eac:	63 5c       	subi	r22, 0xC3	; 195
-    3eae:	7f 4f       	sbci	r23, 0xFF	; 255
-    3eb0:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3eb4:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3eb8:	e6 0f       	add	r30, r22
-    3eba:	f7 1f       	adc	r31, r23
-    3ebc:	e4 91       	lpm	r30, Z
-    3ebe:	6b b1       	in	r22, 0x0b	; 11
-    3ec0:	74 e0       	ldi	r23, 0x04	; 4
-    3ec2:	e7 9f       	mul	r30, r23
-    3ec4:	f0 01       	movw	r30, r0
-    3ec6:	11 24       	eor	r1, r1
-    3ec8:	63 70       	andi	r22, 0x03	; 3
-    3eca:	e6 2b       	or	r30, r22
-    3ecc:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3ece:	65 b1       	in	r22, 0x05	; 5
-    3ed0:	6a 60       	ori	r22, 0x0A	; 10
-    3ed2:	65 b9       	out	0x05, r22	; 5
-    3ed4:	65 b1       	in	r22, 0x05	; 5
-    3ed6:	65 7f       	andi	r22, 0xF5	; 245
-    3ed8:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3eda:	65 b1       	in	r22, 0x05	; 5
-    3edc:	6a 60       	ori	r22, 0x0A	; 10
-    3ede:	65 b9       	out	0x05, r22	; 5
-    3ee0:	65 b1       	in	r22, 0x05	; 5
-    3ee2:	65 7f       	andi	r22, 0xF5	; 245
-    3ee4:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 62));
-    3ee6:	b9 01       	movw	r22, r18
-    3ee8:	62 5c       	subi	r22, 0xC2	; 194
-    3eea:	7f 4f       	sbci	r23, 0xFF	; 255
-    3eec:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3ef0:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3ef4:	e6 0f       	add	r30, r22
-    3ef6:	f7 1f       	adc	r31, r23
-    3ef8:	e4 91       	lpm	r30, Z
-    3efa:	6b b1       	in	r22, 0x0b	; 11
-    3efc:	74 e0       	ldi	r23, 0x04	; 4
-    3efe:	e7 9f       	mul	r30, r23
-    3f00:	f0 01       	movw	r30, r0
-    3f02:	11 24       	eor	r1, r1
-    3f04:	63 70       	andi	r22, 0x03	; 3
-    3f06:	e6 2b       	or	r30, r22
-    3f08:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3f0a:	65 b1       	in	r22, 0x05	; 5
-    3f0c:	6a 60       	ori	r22, 0x0A	; 10
-    3f0e:	65 b9       	out	0x05, r22	; 5
-    3f10:	65 b1       	in	r22, 0x05	; 5
-    3f12:	65 7f       	andi	r22, 0xF5	; 245
-    3f14:	65 b9       	out	0x05, r22	; 5
-            PWCLK_GCLK;
-    3f16:	65 b1       	in	r22, 0x05	; 5
-    3f18:	6a 60       	ori	r22, 0x0A	; 10
-    3f1a:	65 b9       	out	0x05, r22	; 5
-    3f1c:	65 b1       	in	r22, 0x05	; 5
-    3f1e:	65 7f       	andi	r22, 0xF5	; 245
-    3f20:	65 b9       	out	0x05, r22	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 63));
-    3f22:	21 5c       	subi	r18, 0xC1	; 193
-    3f24:	3f 4f       	sbci	r19, 0xFF	; 255
-    3f26:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3f2a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3f2e:	e2 0f       	add	r30, r18
-    3f30:	f3 1f       	adc	r31, r19
-    3f32:	24 91       	lpm	r18, Z
-    3f34:	3b b1       	in	r19, 0x0b	; 11
-    3f36:	64 e0       	ldi	r22, 0x04	; 4
-    3f38:	26 9f       	mul	r18, r22
-    3f3a:	f0 01       	movw	r30, r0
-    3f3c:	11 24       	eor	r1, r1
-    3f3e:	33 70       	andi	r19, 0x03	; 3
-    3f40:	e3 2b       	or	r30, r19
-    3f42:	eb b9       	out	0x0b, r30	; 11
-            PWCLK_GCLK;
-    3f44:	25 b1       	in	r18, 0x05	; 5
-    3f46:	2a 60       	ori	r18, 0x0A	; 10
-    3f48:	25 b9       	out	0x05, r18	; 5
-    3f4a:	25 b1       	in	r18, 0x05	; 5
-    3f4c:	25 7f       	andi	r18, 0xF5	; 245
-    3f4e:	25 b9       	out	0x05, r18	; 5
+    3496:	65 b1       	in	r22, 0x05	; 5
+    3498:	65 7f       	andi	r22, 0xF5	; 245
+    349a:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    349c:	f9 01       	movw	r30, r18
+    349e:	fe 96       	adiw	r30, 0x3e	; 62
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    34a0:	64 91       	lpm	r22, Z
+    34a2:	eb b1       	in	r30, 0x0b	; 11
+    34a4:	f4 e0       	ldi	r31, 0x04	; 4
+    34a6:	6f 9f       	mul	r22, r31
+    34a8:	b0 01       	movw	r22, r0
+    34aa:	11 24       	eor	r1, r1
+    34ac:	e3 70       	andi	r30, 0x03	; 3
+    34ae:	e6 2b       	or	r30, r22
+    34b0:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    34b2:	65 b1       	in	r22, 0x05	; 5
+    34b4:	6a 60       	ori	r22, 0x0A	; 10
+    34b6:	65 b9       	out	0x05, r22	; 5
+    34b8:	65 b1       	in	r22, 0x05	; 5
+    34ba:	65 7f       	andi	r22, 0xF5	; 245
+    34bc:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+    34be:	65 b1       	in	r22, 0x05	; 5
+    34c0:	6a 60       	ori	r22, 0x0A	; 10
+    34c2:	65 b9       	out	0x05, r22	; 5
+    34c4:	65 b1       	in	r22, 0x05	; 5
+    34c6:	65 7f       	andi	r22, 0xF5	; 245
+    34c8:	65 b9       	out	0x05, r22	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    34ca:	f9 01       	movw	r30, r18
+    34cc:	ff 96       	adiw	r30, 0x3f	; 63
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    34ce:	e4 91       	lpm	r30, Z
+    34d0:	2b b1       	in	r18, 0x0b	; 11
+    34d2:	34 e0       	ldi	r19, 0x04	; 4
+    34d4:	e3 9f       	mul	r30, r19
+    34d6:	f0 01       	movw	r30, r0
+    34d8:	11 24       	eor	r1, r1
+    34da:	23 70       	andi	r18, 0x03	; 3
+    34dc:	e2 2b       	or	r30, r18
+    34de:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    34e0:	25 b1       	in	r18, 0x05	; 5
+    34e2:	2a 60       	ori	r18, 0x0A	; 10
+    34e4:	25 b9       	out	0x05, r18	; 5
+    34e6:	25 b1       	in	r18, 0x05	; 5
+    34e8:	25 7f       	andi	r18, 0xF5	; 245
+    34ea:	25 b9       	out	0x05, r18	; 5
 
             // shift data into buffers
             HIGH_LAT;
-    3f50:	2a 9a       	sbi	0x05, 2	; 5
+    34ec:	2a 9a       	sbi	0x05, 2	; 5
             PWCLK_GCLK;
-    3f52:	25 b1       	in	r18, 0x05	; 5
-    3f54:	2a 60       	ori	r18, 0x0A	; 10
-    3f56:	25 b9       	out	0x05, r18	; 5
-    3f58:	25 b1       	in	r18, 0x05	; 5
-    3f5a:	25 7f       	andi	r18, 0xF5	; 245
-    3f5c:	25 b9       	out	0x05, r18	; 5
+    34ee:	25 b1       	in	r18, 0x05	; 5
+    34f0:	2a 60       	ori	r18, 0x0A	; 10
+    34f2:	25 b9       	out	0x05, r18	; 5
+    34f4:	25 b1       	in	r18, 0x05	; 5
+    34f6:	25 7f       	andi	r18, 0xF5	; 245
+    34f8:	25 b9       	out	0x05, r18	; 5
             CLEAR_LAT;
-    3f5e:	2a 98       	cbi	0x05, 2	; 5
+    34fa:	2a 98       	cbi	0x05, 2	; 5
 
 #pragma endregion // LSB
 
             index = ((y & ~1) << 5) + (PANEL_BUFFERSIZE * 3 / 4); // advance index to next section
-    3f60:	94 5f       	subi	r25, 0xF4	; 244
+    34fc:	94 5f       	subi	r25, 0xF4	; 244
 
 #pragma region LLSB
             // chip 0
-            SET_COLOR(pgm_read_byte(buffer + index + 0));
-    3f62:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3f66:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3f6a:	e8 0f       	add	r30, r24
-    3f6c:	f9 1f       	adc	r31, r25
-    3f6e:	e4 91       	lpm	r30, Z
-    3f70:	2b b1       	in	r18, 0x0b	; 11
-    3f72:	74 e0       	ldi	r23, 0x04	; 4
-    3f74:	e7 9f       	mul	r30, r23
-    3f76:	f0 01       	movw	r30, r0
-    3f78:	11 24       	eor	r1, r1
-    3f7a:	23 70       	andi	r18, 0x03	; 3
-    3f7c:	e2 2b       	or	r30, r18
-    3f7e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    34fe:	fc 01       	movw	r30, r24
+    3500:	64 91       	lpm	r22, Z
+    3502:	2b b1       	in	r18, 0x0b	; 11
+    3504:	f4 e0       	ldi	r31, 0x04	; 4
+    3506:	6f 9f       	mul	r22, r31
+    3508:	b0 01       	movw	r22, r0
+    350a:	11 24       	eor	r1, r1
+    350c:	23 70       	andi	r18, 0x03	; 3
+    350e:	26 2b       	or	r18, r22
+    3510:	2b b9       	out	0x0b, r18	; 11
             PWCLK_GCLK;
-    3f80:	25 b1       	in	r18, 0x05	; 5
-    3f82:	2a 60       	ori	r18, 0x0A	; 10
-    3f84:	25 b9       	out	0x05, r18	; 5
-    3f86:	25 b1       	in	r18, 0x05	; 5
-    3f88:	25 7f       	andi	r18, 0xF5	; 245
-    3f8a:	25 b9       	out	0x05, r18	; 5
+    3512:	25 b1       	in	r18, 0x05	; 5
+    3514:	2a 60       	ori	r18, 0x0A	; 10
+    3516:	25 b9       	out	0x05, r18	; 5
+    3518:	25 b1       	in	r18, 0x05	; 5
+    351a:	25 7f       	andi	r18, 0xF5	; 245
+    351c:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    3f8c:	25 b1       	in	r18, 0x05	; 5
-    3f8e:	2a 60       	ori	r18, 0x0A	; 10
-    3f90:	25 b9       	out	0x05, r18	; 5
-    3f92:	25 b1       	in	r18, 0x05	; 5
-    3f94:	25 7f       	andi	r18, 0xF5	; 245
-    3f96:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 1));
-    3f98:	9c 01       	movw	r18, r24
-    3f9a:	2f 5f       	subi	r18, 0xFF	; 255
-    3f9c:	3f 4f       	sbci	r19, 0xFF	; 255
-    3f9e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3fa2:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3fa6:	e2 0f       	add	r30, r18
-    3fa8:	f3 1f       	adc	r31, r19
-    3faa:	e4 91       	lpm	r30, Z
-    3fac:	2b b1       	in	r18, 0x0b	; 11
-    3fae:	34 e0       	ldi	r19, 0x04	; 4
-    3fb0:	e3 9f       	mul	r30, r19
-    3fb2:	f0 01       	movw	r30, r0
-    3fb4:	11 24       	eor	r1, r1
-    3fb6:	23 70       	andi	r18, 0x03	; 3
-    3fb8:	e2 2b       	or	r30, r18
-    3fba:	eb b9       	out	0x0b, r30	; 11
+    351e:	25 b1       	in	r18, 0x05	; 5
+    3520:	2a 60       	ori	r18, 0x0A	; 10
+    3522:	25 b9       	out	0x05, r18	; 5
+    3524:	25 b1       	in	r18, 0x05	; 5
+    3526:	25 7f       	andi	r18, 0xF5	; 245
+    3528:	25 b9       	out	0x05, r18	; 5
+
+            index = ((y & ~1) << 5) + (PANEL_BUFFERSIZE * 3 / 4); // advance index to next section
+
+#pragma region LLSB
+            // chip 0
+            SET_COLOR(pgm_read_byte(index++));
+    352a:	fc 01       	movw	r30, r24
+    352c:	31 96       	adiw	r30, 0x01	; 1
             PWCLK_GCLK;
-    3fbc:	25 b1       	in	r18, 0x05	; 5
-    3fbe:	2a 60       	ori	r18, 0x0A	; 10
-    3fc0:	25 b9       	out	0x05, r18	; 5
-    3fc2:	25 b1       	in	r18, 0x05	; 5
-    3fc4:	25 7f       	andi	r18, 0xF5	; 245
-    3fc6:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    3fc8:	25 b1       	in	r18, 0x05	; 5
-    3fca:	2a 60       	ori	r18, 0x0A	; 10
-    3fcc:	25 b9       	out	0x05, r18	; 5
-    3fce:	25 b1       	in	r18, 0x05	; 5
-    3fd0:	25 7f       	andi	r18, 0xF5	; 245
-    3fd2:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 2));
-    3fd4:	9c 01       	movw	r18, r24
-    3fd6:	2e 5f       	subi	r18, 0xFE	; 254
-    3fd8:	3f 4f       	sbci	r19, 0xFF	; 255
-    3fda:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    3fde:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    3fe2:	e2 0f       	add	r30, r18
-    3fe4:	f3 1f       	adc	r31, r19
-    3fe6:	e4 91       	lpm	r30, Z
-    3fe8:	2b b1       	in	r18, 0x0b	; 11
-    3fea:	64 e0       	ldi	r22, 0x04	; 4
-    3fec:	e6 9f       	mul	r30, r22
-    3fee:	f0 01       	movw	r30, r0
-    3ff0:	11 24       	eor	r1, r1
-    3ff2:	23 70       	andi	r18, 0x03	; 3
-    3ff4:	e2 2b       	or	r30, r18
-    3ff6:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    352e:	24 91       	lpm	r18, Z
+    3530:	eb b1       	in	r30, 0x0b	; 11
+    3532:	64 e0       	ldi	r22, 0x04	; 4
+    3534:	26 9f       	mul	r18, r22
+    3536:	90 01       	movw	r18, r0
+    3538:	11 24       	eor	r1, r1
+    353a:	e3 70       	andi	r30, 0x03	; 3
+    353c:	e2 2b       	or	r30, r18
+    353e:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    3ff8:	25 b1       	in	r18, 0x05	; 5
-    3ffa:	2a 60       	ori	r18, 0x0A	; 10
-    3ffc:	25 b9       	out	0x05, r18	; 5
-    3ffe:	25 b1       	in	r18, 0x05	; 5
-    4000:	25 7f       	andi	r18, 0xF5	; 245
-    4002:	25 b9       	out	0x05, r18	; 5
+    3540:	25 b1       	in	r18, 0x05	; 5
+    3542:	2a 60       	ori	r18, 0x0A	; 10
+    3544:	25 b9       	out	0x05, r18	; 5
+    3546:	25 b1       	in	r18, 0x05	; 5
+    3548:	25 7f       	andi	r18, 0xF5	; 245
+    354a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4004:	25 b1       	in	r18, 0x05	; 5
-    4006:	2a 60       	ori	r18, 0x0A	; 10
-    4008:	25 b9       	out	0x05, r18	; 5
-    400a:	25 b1       	in	r18, 0x05	; 5
-    400c:	25 7f       	andi	r18, 0xF5	; 245
-    400e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 3));
-    4010:	9c 01       	movw	r18, r24
-    4012:	2d 5f       	subi	r18, 0xFD	; 253
-    4014:	3f 4f       	sbci	r19, 0xFF	; 255
-    4016:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    401a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    401e:	e2 0f       	add	r30, r18
-    4020:	f3 1f       	adc	r31, r19
-    4022:	e4 91       	lpm	r30, Z
-    4024:	2b b1       	in	r18, 0x0b	; 11
-    4026:	74 e0       	ldi	r23, 0x04	; 4
-    4028:	e7 9f       	mul	r30, r23
-    402a:	f0 01       	movw	r30, r0
-    402c:	11 24       	eor	r1, r1
-    402e:	23 70       	andi	r18, 0x03	; 3
-    4030:	e2 2b       	or	r30, r18
-    4032:	eb b9       	out	0x0b, r30	; 11
+    354c:	25 b1       	in	r18, 0x05	; 5
+    354e:	2a 60       	ori	r18, 0x0A	; 10
+    3550:	25 b9       	out	0x05, r18	; 5
+    3552:	25 b1       	in	r18, 0x05	; 5
+    3554:	25 7f       	andi	r18, 0xF5	; 245
+    3556:	25 b9       	out	0x05, r18	; 5
+#pragma region LLSB
+            // chip 0
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    4034:	25 b1       	in	r18, 0x05	; 5
-    4036:	2a 60       	ori	r18, 0x0A	; 10
-    4038:	25 b9       	out	0x05, r18	; 5
-    403a:	25 b1       	in	r18, 0x05	; 5
-    403c:	25 7f       	andi	r18, 0xF5	; 245
-    403e:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4040:	25 b1       	in	r18, 0x05	; 5
-    4042:	2a 60       	ori	r18, 0x0A	; 10
-    4044:	25 b9       	out	0x05, r18	; 5
-    4046:	25 b1       	in	r18, 0x05	; 5
-    4048:	25 7f       	andi	r18, 0xF5	; 245
-    404a:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 4));
-    404c:	9c 01       	movw	r18, r24
-    404e:	2c 5f       	subi	r18, 0xFC	; 252
-    4050:	3f 4f       	sbci	r19, 0xFF	; 255
-    4052:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4056:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    405a:	e2 0f       	add	r30, r18
-    405c:	f3 1f       	adc	r31, r19
-    405e:	e4 91       	lpm	r30, Z
-    4060:	2b b1       	in	r18, 0x0b	; 11
-    4062:	34 e0       	ldi	r19, 0x04	; 4
-    4064:	e3 9f       	mul	r30, r19
-    4066:	f0 01       	movw	r30, r0
-    4068:	11 24       	eor	r1, r1
-    406a:	23 70       	andi	r18, 0x03	; 3
-    406c:	e2 2b       	or	r30, r18
-    406e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3558:	fc 01       	movw	r30, r24
+    355a:	32 96       	adiw	r30, 0x02	; 2
             PWCLK_GCLK;
-    4070:	25 b1       	in	r18, 0x05	; 5
-    4072:	2a 60       	ori	r18, 0x0A	; 10
-    4074:	25 b9       	out	0x05, r18	; 5
-    4076:	25 b1       	in	r18, 0x05	; 5
-    4078:	25 7f       	andi	r18, 0xF5	; 245
-    407a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    407c:	25 b1       	in	r18, 0x05	; 5
-    407e:	2a 60       	ori	r18, 0x0A	; 10
-    4080:	25 b9       	out	0x05, r18	; 5
-    4082:	25 b1       	in	r18, 0x05	; 5
-    4084:	25 7f       	andi	r18, 0xF5	; 245
-    4086:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 5));
-    4088:	9c 01       	movw	r18, r24
-    408a:	2b 5f       	subi	r18, 0xFB	; 251
-    408c:	3f 4f       	sbci	r19, 0xFF	; 255
-    408e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4092:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4096:	e2 0f       	add	r30, r18
-    4098:	f3 1f       	adc	r31, r19
-    409a:	e4 91       	lpm	r30, Z
-    409c:	2b b1       	in	r18, 0x0b	; 11
-    409e:	64 e0       	ldi	r22, 0x04	; 4
-    40a0:	e6 9f       	mul	r30, r22
-    40a2:	f0 01       	movw	r30, r0
-    40a4:	11 24       	eor	r1, r1
-    40a6:	23 70       	andi	r18, 0x03	; 3
-    40a8:	e2 2b       	or	r30, r18
-    40aa:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    355c:	24 91       	lpm	r18, Z
+    355e:	eb b1       	in	r30, 0x0b	; 11
+    3560:	74 e0       	ldi	r23, 0x04	; 4
+    3562:	27 9f       	mul	r18, r23
+    3564:	90 01       	movw	r18, r0
+    3566:	11 24       	eor	r1, r1
+    3568:	e3 70       	andi	r30, 0x03	; 3
+    356a:	e2 2b       	or	r30, r18
+    356c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    40ac:	25 b1       	in	r18, 0x05	; 5
-    40ae:	2a 60       	ori	r18, 0x0A	; 10
-    40b0:	25 b9       	out	0x05, r18	; 5
-    40b2:	25 b1       	in	r18, 0x05	; 5
-    40b4:	25 7f       	andi	r18, 0xF5	; 245
-    40b6:	25 b9       	out	0x05, r18	; 5
+    356e:	25 b1       	in	r18, 0x05	; 5
+    3570:	2a 60       	ori	r18, 0x0A	; 10
+    3572:	25 b9       	out	0x05, r18	; 5
+    3574:	25 b1       	in	r18, 0x05	; 5
+    3576:	25 7f       	andi	r18, 0xF5	; 245
+    3578:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    40b8:	25 b1       	in	r18, 0x05	; 5
-    40ba:	2a 60       	ori	r18, 0x0A	; 10
-    40bc:	25 b9       	out	0x05, r18	; 5
-    40be:	25 b1       	in	r18, 0x05	; 5
-    40c0:	25 7f       	andi	r18, 0xF5	; 245
-    40c2:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 6));
-    40c4:	9c 01       	movw	r18, r24
-    40c6:	2a 5f       	subi	r18, 0xFA	; 250
-    40c8:	3f 4f       	sbci	r19, 0xFF	; 255
-    40ca:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    40ce:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    40d2:	e2 0f       	add	r30, r18
-    40d4:	f3 1f       	adc	r31, r19
-    40d6:	e4 91       	lpm	r30, Z
-    40d8:	2b b1       	in	r18, 0x0b	; 11
-    40da:	74 e0       	ldi	r23, 0x04	; 4
-    40dc:	e7 9f       	mul	r30, r23
-    40de:	f0 01       	movw	r30, r0
-    40e0:	11 24       	eor	r1, r1
-    40e2:	23 70       	andi	r18, 0x03	; 3
-    40e4:	e2 2b       	or	r30, r18
-    40e6:	eb b9       	out	0x0b, r30	; 11
+    357a:	25 b1       	in	r18, 0x05	; 5
+    357c:	2a 60       	ori	r18, 0x0A	; 10
+    357e:	25 b9       	out	0x05, r18	; 5
+    3580:	25 b1       	in	r18, 0x05	; 5
+    3582:	25 7f       	andi	r18, 0xF5	; 245
+    3584:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    40e8:	25 b1       	in	r18, 0x05	; 5
-    40ea:	2a 60       	ori	r18, 0x0A	; 10
-    40ec:	25 b9       	out	0x05, r18	; 5
-    40ee:	25 b1       	in	r18, 0x05	; 5
-    40f0:	25 7f       	andi	r18, 0xF5	; 245
-    40f2:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    40f4:	25 b1       	in	r18, 0x05	; 5
-    40f6:	2a 60       	ori	r18, 0x0A	; 10
-    40f8:	25 b9       	out	0x05, r18	; 5
-    40fa:	25 b1       	in	r18, 0x05	; 5
-    40fc:	25 7f       	andi	r18, 0xF5	; 245
-    40fe:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 7));
-    4100:	9c 01       	movw	r18, r24
-    4102:	29 5f       	subi	r18, 0xF9	; 249
-    4104:	3f 4f       	sbci	r19, 0xFF	; 255
-    4106:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    410a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    410e:	e2 0f       	add	r30, r18
-    4110:	f3 1f       	adc	r31, r19
-    4112:	e4 91       	lpm	r30, Z
-    4114:	2b b1       	in	r18, 0x0b	; 11
-    4116:	34 e0       	ldi	r19, 0x04	; 4
-    4118:	e3 9f       	mul	r30, r19
-    411a:	f0 01       	movw	r30, r0
-    411c:	11 24       	eor	r1, r1
-    411e:	23 70       	andi	r18, 0x03	; 3
-    4120:	e2 2b       	or	r30, r18
-    4122:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    4124:	25 b1       	in	r18, 0x05	; 5
-    4126:	2a 60       	ori	r18, 0x0A	; 10
-    4128:	25 b9       	out	0x05, r18	; 5
-    412a:	25 b1       	in	r18, 0x05	; 5
-    412c:	25 7f       	andi	r18, 0xF5	; 245
-    412e:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4130:	25 b1       	in	r18, 0x05	; 5
-    4132:	2a 60       	ori	r18, 0x0A	; 10
-    4134:	25 b9       	out	0x05, r18	; 5
-    4136:	25 b1       	in	r18, 0x05	; 5
-    4138:	25 7f       	andi	r18, 0xF5	; 245
-    413a:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+    3586:	fc 01       	movw	r30, r24
+    3588:	33 96       	adiw	r30, 0x03	; 3
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    358a:	24 91       	lpm	r18, Z
+    358c:	eb b1       	in	r30, 0x0b	; 11
+    358e:	f4 e0       	ldi	r31, 0x04	; 4
+    3590:	2f 9f       	mul	r18, r31
+    3592:	90 01       	movw	r18, r0
+    3594:	11 24       	eor	r1, r1
+    3596:	e3 70       	andi	r30, 0x03	; 3
+    3598:	e2 2b       	or	r30, r18
+    359a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    359c:	25 b1       	in	r18, 0x05	; 5
+    359e:	2a 60       	ori	r18, 0x0A	; 10
+    35a0:	25 b9       	out	0x05, r18	; 5
+    35a2:	25 b1       	in	r18, 0x05	; 5
+    35a4:	25 7f       	andi	r18, 0xF5	; 245
+    35a6:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    35a8:	25 b1       	in	r18, 0x05	; 5
+    35aa:	2a 60       	ori	r18, 0x0A	; 10
+    35ac:	25 b9       	out	0x05, r18	; 5
+    35ae:	25 b1       	in	r18, 0x05	; 5
+    35b0:	25 7f       	andi	r18, 0xF5	; 245
+    35b2:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    35b4:	fc 01       	movw	r30, r24
+    35b6:	34 96       	adiw	r30, 0x04	; 4
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    35b8:	24 91       	lpm	r18, Z
+    35ba:	eb b1       	in	r30, 0x0b	; 11
+    35bc:	64 e0       	ldi	r22, 0x04	; 4
+    35be:	26 9f       	mul	r18, r22
+    35c0:	90 01       	movw	r18, r0
+    35c2:	11 24       	eor	r1, r1
+    35c4:	e3 70       	andi	r30, 0x03	; 3
+    35c6:	e2 2b       	or	r30, r18
+    35c8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    35ca:	25 b1       	in	r18, 0x05	; 5
+    35cc:	2a 60       	ori	r18, 0x0A	; 10
+    35ce:	25 b9       	out	0x05, r18	; 5
+    35d0:	25 b1       	in	r18, 0x05	; 5
+    35d2:	25 7f       	andi	r18, 0xF5	; 245
+    35d4:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    35d6:	25 b1       	in	r18, 0x05	; 5
+    35d8:	2a 60       	ori	r18, 0x0A	; 10
+    35da:	25 b9       	out	0x05, r18	; 5
+    35dc:	25 b1       	in	r18, 0x05	; 5
+    35de:	25 7f       	andi	r18, 0xF5	; 245
+    35e0:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    35e2:	fc 01       	movw	r30, r24
+    35e4:	35 96       	adiw	r30, 0x05	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    35e6:	24 91       	lpm	r18, Z
+    35e8:	eb b1       	in	r30, 0x0b	; 11
+    35ea:	74 e0       	ldi	r23, 0x04	; 4
+    35ec:	27 9f       	mul	r18, r23
+    35ee:	90 01       	movw	r18, r0
+    35f0:	11 24       	eor	r1, r1
+    35f2:	e3 70       	andi	r30, 0x03	; 3
+    35f4:	e2 2b       	or	r30, r18
+    35f6:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    35f8:	25 b1       	in	r18, 0x05	; 5
+    35fa:	2a 60       	ori	r18, 0x0A	; 10
+    35fc:	25 b9       	out	0x05, r18	; 5
+    35fe:	25 b1       	in	r18, 0x05	; 5
+    3600:	25 7f       	andi	r18, 0xF5	; 245
+    3602:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3604:	25 b1       	in	r18, 0x05	; 5
+    3606:	2a 60       	ori	r18, 0x0A	; 10
+    3608:	25 b9       	out	0x05, r18	; 5
+    360a:	25 b1       	in	r18, 0x05	; 5
+    360c:	25 7f       	andi	r18, 0xF5	; 245
+    360e:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3610:	fc 01       	movw	r30, r24
+    3612:	36 96       	adiw	r30, 0x06	; 6
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3614:	24 91       	lpm	r18, Z
+    3616:	eb b1       	in	r30, 0x0b	; 11
+    3618:	f4 e0       	ldi	r31, 0x04	; 4
+    361a:	2f 9f       	mul	r18, r31
+    361c:	90 01       	movw	r18, r0
+    361e:	11 24       	eor	r1, r1
+    3620:	e3 70       	andi	r30, 0x03	; 3
+    3622:	e2 2b       	or	r30, r18
+    3624:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3626:	25 b1       	in	r18, 0x05	; 5
+    3628:	2a 60       	ori	r18, 0x0A	; 10
+    362a:	25 b9       	out	0x05, r18	; 5
+    362c:	25 b1       	in	r18, 0x05	; 5
+    362e:	25 7f       	andi	r18, 0xF5	; 245
+    3630:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3632:	25 b1       	in	r18, 0x05	; 5
+    3634:	2a 60       	ori	r18, 0x0A	; 10
+    3636:	25 b9       	out	0x05, r18	; 5
+    3638:	25 b1       	in	r18, 0x05	; 5
+    363a:	25 7f       	andi	r18, 0xF5	; 245
+    363c:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    363e:	fc 01       	movw	r30, r24
+    3640:	37 96       	adiw	r30, 0x07	; 7
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3642:	24 91       	lpm	r18, Z
+    3644:	eb b1       	in	r30, 0x0b	; 11
+    3646:	64 e0       	ldi	r22, 0x04	; 4
+    3648:	26 9f       	mul	r18, r22
+    364a:	90 01       	movw	r18, r0
+    364c:	11 24       	eor	r1, r1
+    364e:	e3 70       	andi	r30, 0x03	; 3
+    3650:	e2 2b       	or	r30, r18
+    3652:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3654:	25 b1       	in	r18, 0x05	; 5
+    3656:	2a 60       	ori	r18, 0x0A	; 10
+    3658:	25 b9       	out	0x05, r18	; 5
+    365a:	25 b1       	in	r18, 0x05	; 5
+    365c:	25 7f       	andi	r18, 0xF5	; 245
+    365e:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3660:	25 b1       	in	r18, 0x05	; 5
+    3662:	2a 60       	ori	r18, 0x0A	; 10
+    3664:	25 b9       	out	0x05, r18	; 5
+    3666:	25 b1       	in	r18, 0x05	; 5
+    3668:	25 7f       	andi	r18, 0xF5	; 245
+    366a:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    366c:	fc 01       	movw	r30, r24
+    366e:	38 96       	adiw	r30, 0x08	; 8
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 1
-            SET_COLOR(pgm_read_byte(buffer + index + 8));
-    413c:	9c 01       	movw	r18, r24
-    413e:	28 5f       	subi	r18, 0xF8	; 248
-    4140:	3f 4f       	sbci	r19, 0xFF	; 255
-    4142:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4146:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    414a:	e2 0f       	add	r30, r18
-    414c:	f3 1f       	adc	r31, r19
-    414e:	e4 91       	lpm	r30, Z
-    4150:	2b b1       	in	r18, 0x0b	; 11
-    4152:	64 e0       	ldi	r22, 0x04	; 4
-    4154:	e6 9f       	mul	r30, r22
-    4156:	f0 01       	movw	r30, r0
-    4158:	11 24       	eor	r1, r1
-    415a:	23 70       	andi	r18, 0x03	; 3
-    415c:	e2 2b       	or	r30, r18
-    415e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3670:	24 91       	lpm	r18, Z
+    3672:	eb b1       	in	r30, 0x0b	; 11
+    3674:	74 e0       	ldi	r23, 0x04	; 4
+    3676:	27 9f       	mul	r18, r23
+    3678:	90 01       	movw	r18, r0
+    367a:	11 24       	eor	r1, r1
+    367c:	e3 70       	andi	r30, 0x03	; 3
+    367e:	e2 2b       	or	r30, r18
+    3680:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4160:	25 b1       	in	r18, 0x05	; 5
-    4162:	2a 60       	ori	r18, 0x0A	; 10
-    4164:	25 b9       	out	0x05, r18	; 5
-    4166:	25 b1       	in	r18, 0x05	; 5
-    4168:	25 7f       	andi	r18, 0xF5	; 245
-    416a:	25 b9       	out	0x05, r18	; 5
+    3682:	25 b1       	in	r18, 0x05	; 5
+    3684:	2a 60       	ori	r18, 0x0A	; 10
+    3686:	25 b9       	out	0x05, r18	; 5
+    3688:	25 b1       	in	r18, 0x05	; 5
+    368a:	25 7f       	andi	r18, 0xF5	; 245
+    368c:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    416c:	25 b1       	in	r18, 0x05	; 5
-    416e:	2a 60       	ori	r18, 0x0A	; 10
-    4170:	25 b9       	out	0x05, r18	; 5
-    4172:	25 b1       	in	r18, 0x05	; 5
-    4174:	25 7f       	andi	r18, 0xF5	; 245
-    4176:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 9));
-    4178:	9c 01       	movw	r18, r24
-    417a:	27 5f       	subi	r18, 0xF7	; 247
-    417c:	3f 4f       	sbci	r19, 0xFF	; 255
-    417e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4182:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4186:	e2 0f       	add	r30, r18
-    4188:	f3 1f       	adc	r31, r19
-    418a:	e4 91       	lpm	r30, Z
-    418c:	2b b1       	in	r18, 0x0b	; 11
-    418e:	74 e0       	ldi	r23, 0x04	; 4
-    4190:	e7 9f       	mul	r30, r23
-    4192:	f0 01       	movw	r30, r0
-    4194:	11 24       	eor	r1, r1
-    4196:	23 70       	andi	r18, 0x03	; 3
-    4198:	e2 2b       	or	r30, r18
-    419a:	eb b9       	out	0x0b, r30	; 11
+    368e:	25 b1       	in	r18, 0x05	; 5
+    3690:	2a 60       	ori	r18, 0x0A	; 10
+    3692:	25 b9       	out	0x05, r18	; 5
+    3694:	25 b1       	in	r18, 0x05	; 5
+    3696:	25 7f       	andi	r18, 0xF5	; 245
+    3698:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    419c:	25 b1       	in	r18, 0x05	; 5
-    419e:	2a 60       	ori	r18, 0x0A	; 10
-    41a0:	25 b9       	out	0x05, r18	; 5
-    41a2:	25 b1       	in	r18, 0x05	; 5
-    41a4:	25 7f       	andi	r18, 0xF5	; 245
-    41a6:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    41a8:	25 b1       	in	r18, 0x05	; 5
-    41aa:	2a 60       	ori	r18, 0x0A	; 10
-    41ac:	25 b9       	out	0x05, r18	; 5
-    41ae:	25 b1       	in	r18, 0x05	; 5
-    41b0:	25 7f       	andi	r18, 0xF5	; 245
-    41b2:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 10));
-    41b4:	9c 01       	movw	r18, r24
-    41b6:	26 5f       	subi	r18, 0xF6	; 246
-    41b8:	3f 4f       	sbci	r19, 0xFF	; 255
-    41ba:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    41be:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    41c2:	e2 0f       	add	r30, r18
-    41c4:	f3 1f       	adc	r31, r19
-    41c6:	e4 91       	lpm	r30, Z
-    41c8:	2b b1       	in	r18, 0x0b	; 11
-    41ca:	34 e0       	ldi	r19, 0x04	; 4
-    41cc:	e3 9f       	mul	r30, r19
-    41ce:	f0 01       	movw	r30, r0
-    41d0:	11 24       	eor	r1, r1
-    41d2:	23 70       	andi	r18, 0x03	; 3
-    41d4:	e2 2b       	or	r30, r18
-    41d6:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 1
+            SET_COLOR(pgm_read_byte(index++));
+    369a:	fc 01       	movw	r30, r24
+    369c:	39 96       	adiw	r30, 0x09	; 9
             PWCLK_GCLK;
-    41d8:	25 b1       	in	r18, 0x05	; 5
-    41da:	2a 60       	ori	r18, 0x0A	; 10
-    41dc:	25 b9       	out	0x05, r18	; 5
-    41de:	25 b1       	in	r18, 0x05	; 5
-    41e0:	25 7f       	andi	r18, 0xF5	; 245
-    41e2:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    41e4:	25 b1       	in	r18, 0x05	; 5
-    41e6:	2a 60       	ori	r18, 0x0A	; 10
-    41e8:	25 b9       	out	0x05, r18	; 5
-    41ea:	25 b1       	in	r18, 0x05	; 5
-    41ec:	25 7f       	andi	r18, 0xF5	; 245
-    41ee:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 11));
-    41f0:	9c 01       	movw	r18, r24
-    41f2:	25 5f       	subi	r18, 0xF5	; 245
-    41f4:	3f 4f       	sbci	r19, 0xFF	; 255
-    41f6:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    41fa:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    41fe:	e2 0f       	add	r30, r18
-    4200:	f3 1f       	adc	r31, r19
-    4202:	e4 91       	lpm	r30, Z
-    4204:	2b b1       	in	r18, 0x0b	; 11
-    4206:	64 e0       	ldi	r22, 0x04	; 4
-    4208:	e6 9f       	mul	r30, r22
-    420a:	f0 01       	movw	r30, r0
-    420c:	11 24       	eor	r1, r1
-    420e:	23 70       	andi	r18, 0x03	; 3
-    4210:	e2 2b       	or	r30, r18
-    4212:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    369e:	24 91       	lpm	r18, Z
+    36a0:	eb b1       	in	r30, 0x0b	; 11
+    36a2:	f4 e0       	ldi	r31, 0x04	; 4
+    36a4:	2f 9f       	mul	r18, r31
+    36a6:	90 01       	movw	r18, r0
+    36a8:	11 24       	eor	r1, r1
+    36aa:	e3 70       	andi	r30, 0x03	; 3
+    36ac:	e2 2b       	or	r30, r18
+    36ae:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4214:	25 b1       	in	r18, 0x05	; 5
-    4216:	2a 60       	ori	r18, 0x0A	; 10
-    4218:	25 b9       	out	0x05, r18	; 5
-    421a:	25 b1       	in	r18, 0x05	; 5
-    421c:	25 7f       	andi	r18, 0xF5	; 245
-    421e:	25 b9       	out	0x05, r18	; 5
+    36b0:	25 b1       	in	r18, 0x05	; 5
+    36b2:	2a 60       	ori	r18, 0x0A	; 10
+    36b4:	25 b9       	out	0x05, r18	; 5
+    36b6:	25 b1       	in	r18, 0x05	; 5
+    36b8:	25 7f       	andi	r18, 0xF5	; 245
+    36ba:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4220:	25 b1       	in	r18, 0x05	; 5
-    4222:	2a 60       	ori	r18, 0x0A	; 10
-    4224:	25 b9       	out	0x05, r18	; 5
-    4226:	25 b1       	in	r18, 0x05	; 5
-    4228:	25 7f       	andi	r18, 0xF5	; 245
-    422a:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 12));
-    422c:	9c 01       	movw	r18, r24
-    422e:	24 5f       	subi	r18, 0xF4	; 244
-    4230:	3f 4f       	sbci	r19, 0xFF	; 255
-    4232:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4236:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    423a:	e2 0f       	add	r30, r18
-    423c:	f3 1f       	adc	r31, r19
-    423e:	e4 91       	lpm	r30, Z
-    4240:	2b b1       	in	r18, 0x0b	; 11
-    4242:	74 e0       	ldi	r23, 0x04	; 4
-    4244:	e7 9f       	mul	r30, r23
-    4246:	f0 01       	movw	r30, r0
-    4248:	11 24       	eor	r1, r1
-    424a:	23 70       	andi	r18, 0x03	; 3
-    424c:	e2 2b       	or	r30, r18
-    424e:	eb b9       	out	0x0b, r30	; 11
+    36bc:	25 b1       	in	r18, 0x05	; 5
+    36be:	2a 60       	ori	r18, 0x0A	; 10
+    36c0:	25 b9       	out	0x05, r18	; 5
+    36c2:	25 b1       	in	r18, 0x05	; 5
+    36c4:	25 7f       	andi	r18, 0xF5	; 245
+    36c6:	25 b9       	out	0x05, r18	; 5
+
+            // chip 1
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    4250:	25 b1       	in	r18, 0x05	; 5
-    4252:	2a 60       	ori	r18, 0x0A	; 10
-    4254:	25 b9       	out	0x05, r18	; 5
-    4256:	25 b1       	in	r18, 0x05	; 5
-    4258:	25 7f       	andi	r18, 0xF5	; 245
-    425a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    425c:	25 b1       	in	r18, 0x05	; 5
-    425e:	2a 60       	ori	r18, 0x0A	; 10
-    4260:	25 b9       	out	0x05, r18	; 5
-    4262:	25 b1       	in	r18, 0x05	; 5
-    4264:	25 7f       	andi	r18, 0xF5	; 245
-    4266:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 13));
-    4268:	9c 01       	movw	r18, r24
-    426a:	23 5f       	subi	r18, 0xF3	; 243
-    426c:	3f 4f       	sbci	r19, 0xFF	; 255
-    426e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4272:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4276:	e2 0f       	add	r30, r18
-    4278:	f3 1f       	adc	r31, r19
-    427a:	e4 91       	lpm	r30, Z
-    427c:	2b b1       	in	r18, 0x0b	; 11
-    427e:	34 e0       	ldi	r19, 0x04	; 4
-    4280:	e3 9f       	mul	r30, r19
-    4282:	f0 01       	movw	r30, r0
-    4284:	11 24       	eor	r1, r1
-    4286:	23 70       	andi	r18, 0x03	; 3
-    4288:	e2 2b       	or	r30, r18
-    428a:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    36c8:	fc 01       	movw	r30, r24
+    36ca:	3a 96       	adiw	r30, 0x0a	; 10
             PWCLK_GCLK;
-    428c:	25 b1       	in	r18, 0x05	; 5
-    428e:	2a 60       	ori	r18, 0x0A	; 10
-    4290:	25 b9       	out	0x05, r18	; 5
-    4292:	25 b1       	in	r18, 0x05	; 5
-    4294:	25 7f       	andi	r18, 0xF5	; 245
-    4296:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4298:	25 b1       	in	r18, 0x05	; 5
-    429a:	2a 60       	ori	r18, 0x0A	; 10
-    429c:	25 b9       	out	0x05, r18	; 5
-    429e:	25 b1       	in	r18, 0x05	; 5
-    42a0:	25 7f       	andi	r18, 0xF5	; 245
-    42a2:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 14));
-    42a4:	9c 01       	movw	r18, r24
-    42a6:	22 5f       	subi	r18, 0xF2	; 242
-    42a8:	3f 4f       	sbci	r19, 0xFF	; 255
-    42aa:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    42ae:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    42b2:	e2 0f       	add	r30, r18
-    42b4:	f3 1f       	adc	r31, r19
-    42b6:	e4 91       	lpm	r30, Z
-    42b8:	2b b1       	in	r18, 0x0b	; 11
-    42ba:	64 e0       	ldi	r22, 0x04	; 4
-    42bc:	e6 9f       	mul	r30, r22
-    42be:	f0 01       	movw	r30, r0
-    42c0:	11 24       	eor	r1, r1
-    42c2:	23 70       	andi	r18, 0x03	; 3
-    42c4:	e2 2b       	or	r30, r18
-    42c6:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    36cc:	24 91       	lpm	r18, Z
+    36ce:	eb b1       	in	r30, 0x0b	; 11
+    36d0:	64 e0       	ldi	r22, 0x04	; 4
+    36d2:	26 9f       	mul	r18, r22
+    36d4:	90 01       	movw	r18, r0
+    36d6:	11 24       	eor	r1, r1
+    36d8:	e3 70       	andi	r30, 0x03	; 3
+    36da:	e2 2b       	or	r30, r18
+    36dc:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    42c8:	25 b1       	in	r18, 0x05	; 5
-    42ca:	2a 60       	ori	r18, 0x0A	; 10
-    42cc:	25 b9       	out	0x05, r18	; 5
-    42ce:	25 b1       	in	r18, 0x05	; 5
-    42d0:	25 7f       	andi	r18, 0xF5	; 245
-    42d2:	25 b9       	out	0x05, r18	; 5
+    36de:	25 b1       	in	r18, 0x05	; 5
+    36e0:	2a 60       	ori	r18, 0x0A	; 10
+    36e2:	25 b9       	out	0x05, r18	; 5
+    36e4:	25 b1       	in	r18, 0x05	; 5
+    36e6:	25 7f       	andi	r18, 0xF5	; 245
+    36e8:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    42d4:	25 b1       	in	r18, 0x05	; 5
-    42d6:	2a 60       	ori	r18, 0x0A	; 10
-    42d8:	25 b9       	out	0x05, r18	; 5
-    42da:	25 b1       	in	r18, 0x05	; 5
-    42dc:	25 7f       	andi	r18, 0xF5	; 245
-    42de:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 15));
-    42e0:	9c 01       	movw	r18, r24
-    42e2:	21 5f       	subi	r18, 0xF1	; 241
-    42e4:	3f 4f       	sbci	r19, 0xFF	; 255
-    42e6:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    42ea:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    42ee:	e2 0f       	add	r30, r18
-    42f0:	f3 1f       	adc	r31, r19
-    42f2:	e4 91       	lpm	r30, Z
-    42f4:	2b b1       	in	r18, 0x0b	; 11
-    42f6:	74 e0       	ldi	r23, 0x04	; 4
-    42f8:	e7 9f       	mul	r30, r23
-    42fa:	f0 01       	movw	r30, r0
-    42fc:	11 24       	eor	r1, r1
-    42fe:	23 70       	andi	r18, 0x03	; 3
-    4300:	e2 2b       	or	r30, r18
-    4302:	eb b9       	out	0x0b, r30	; 11
+    36ea:	25 b1       	in	r18, 0x05	; 5
+    36ec:	2a 60       	ori	r18, 0x0A	; 10
+    36ee:	25 b9       	out	0x05, r18	; 5
+    36f0:	25 b1       	in	r18, 0x05	; 5
+    36f2:	25 7f       	andi	r18, 0xF5	; 245
+    36f4:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4304:	25 b1       	in	r18, 0x05	; 5
-    4306:	2a 60       	ori	r18, 0x0A	; 10
-    4308:	25 b9       	out	0x05, r18	; 5
-    430a:	25 b1       	in	r18, 0x05	; 5
-    430c:	25 7f       	andi	r18, 0xF5	; 245
-    430e:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4310:	25 b1       	in	r18, 0x05	; 5
-    4312:	2a 60       	ori	r18, 0x0A	; 10
-    4314:	25 b9       	out	0x05, r18	; 5
-    4316:	25 b1       	in	r18, 0x05	; 5
-    4318:	25 7f       	andi	r18, 0xF5	; 245
-    431a:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    36f6:	fc 01       	movw	r30, r24
+    36f8:	3b 96       	adiw	r30, 0x0b	; 11
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    36fa:	24 91       	lpm	r18, Z
+    36fc:	eb b1       	in	r30, 0x0b	; 11
+    36fe:	74 e0       	ldi	r23, 0x04	; 4
+    3700:	27 9f       	mul	r18, r23
+    3702:	90 01       	movw	r18, r0
+    3704:	11 24       	eor	r1, r1
+    3706:	e3 70       	andi	r30, 0x03	; 3
+    3708:	e2 2b       	or	r30, r18
+    370a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    370c:	25 b1       	in	r18, 0x05	; 5
+    370e:	2a 60       	ori	r18, 0x0A	; 10
+    3710:	25 b9       	out	0x05, r18	; 5
+    3712:	25 b1       	in	r18, 0x05	; 5
+    3714:	25 7f       	andi	r18, 0xF5	; 245
+    3716:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3718:	25 b1       	in	r18, 0x05	; 5
+    371a:	2a 60       	ori	r18, 0x0A	; 10
+    371c:	25 b9       	out	0x05, r18	; 5
+    371e:	25 b1       	in	r18, 0x05	; 5
+    3720:	25 7f       	andi	r18, 0xF5	; 245
+    3722:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3724:	fc 01       	movw	r30, r24
+    3726:	3c 96       	adiw	r30, 0x0c	; 12
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3728:	24 91       	lpm	r18, Z
+    372a:	eb b1       	in	r30, 0x0b	; 11
+    372c:	f4 e0       	ldi	r31, 0x04	; 4
+    372e:	2f 9f       	mul	r18, r31
+    3730:	90 01       	movw	r18, r0
+    3732:	11 24       	eor	r1, r1
+    3734:	e3 70       	andi	r30, 0x03	; 3
+    3736:	e2 2b       	or	r30, r18
+    3738:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    373a:	25 b1       	in	r18, 0x05	; 5
+    373c:	2a 60       	ori	r18, 0x0A	; 10
+    373e:	25 b9       	out	0x05, r18	; 5
+    3740:	25 b1       	in	r18, 0x05	; 5
+    3742:	25 7f       	andi	r18, 0xF5	; 245
+    3744:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3746:	25 b1       	in	r18, 0x05	; 5
+    3748:	2a 60       	ori	r18, 0x0A	; 10
+    374a:	25 b9       	out	0x05, r18	; 5
+    374c:	25 b1       	in	r18, 0x05	; 5
+    374e:	25 7f       	andi	r18, 0xF5	; 245
+    3750:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3752:	fc 01       	movw	r30, r24
+    3754:	3d 96       	adiw	r30, 0x0d	; 13
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3756:	24 91       	lpm	r18, Z
+    3758:	eb b1       	in	r30, 0x0b	; 11
+    375a:	64 e0       	ldi	r22, 0x04	; 4
+    375c:	26 9f       	mul	r18, r22
+    375e:	90 01       	movw	r18, r0
+    3760:	11 24       	eor	r1, r1
+    3762:	e3 70       	andi	r30, 0x03	; 3
+    3764:	e2 2b       	or	r30, r18
+    3766:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3768:	25 b1       	in	r18, 0x05	; 5
+    376a:	2a 60       	ori	r18, 0x0A	; 10
+    376c:	25 b9       	out	0x05, r18	; 5
+    376e:	25 b1       	in	r18, 0x05	; 5
+    3770:	25 7f       	andi	r18, 0xF5	; 245
+    3772:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3774:	25 b1       	in	r18, 0x05	; 5
+    3776:	2a 60       	ori	r18, 0x0A	; 10
+    3778:	25 b9       	out	0x05, r18	; 5
+    377a:	25 b1       	in	r18, 0x05	; 5
+    377c:	25 7f       	andi	r18, 0xF5	; 245
+    377e:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3780:	fc 01       	movw	r30, r24
+    3782:	3e 96       	adiw	r30, 0x0e	; 14
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3784:	24 91       	lpm	r18, Z
+    3786:	eb b1       	in	r30, 0x0b	; 11
+    3788:	74 e0       	ldi	r23, 0x04	; 4
+    378a:	27 9f       	mul	r18, r23
+    378c:	90 01       	movw	r18, r0
+    378e:	11 24       	eor	r1, r1
+    3790:	e3 70       	andi	r30, 0x03	; 3
+    3792:	e2 2b       	or	r30, r18
+    3794:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3796:	25 b1       	in	r18, 0x05	; 5
+    3798:	2a 60       	ori	r18, 0x0A	; 10
+    379a:	25 b9       	out	0x05, r18	; 5
+    379c:	25 b1       	in	r18, 0x05	; 5
+    379e:	25 7f       	andi	r18, 0xF5	; 245
+    37a0:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    37a2:	25 b1       	in	r18, 0x05	; 5
+    37a4:	2a 60       	ori	r18, 0x0A	; 10
+    37a6:	25 b9       	out	0x05, r18	; 5
+    37a8:	25 b1       	in	r18, 0x05	; 5
+    37aa:	25 7f       	andi	r18, 0xF5	; 245
+    37ac:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    37ae:	fc 01       	movw	r30, r24
+    37b0:	3f 96       	adiw	r30, 0x0f	; 15
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    37b2:	24 91       	lpm	r18, Z
+    37b4:	eb b1       	in	r30, 0x0b	; 11
+    37b6:	f4 e0       	ldi	r31, 0x04	; 4
+    37b8:	2f 9f       	mul	r18, r31
+    37ba:	90 01       	movw	r18, r0
+    37bc:	11 24       	eor	r1, r1
+    37be:	e3 70       	andi	r30, 0x03	; 3
+    37c0:	e2 2b       	or	r30, r18
+    37c2:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    37c4:	25 b1       	in	r18, 0x05	; 5
+    37c6:	2a 60       	ori	r18, 0x0A	; 10
+    37c8:	25 b9       	out	0x05, r18	; 5
+    37ca:	25 b1       	in	r18, 0x05	; 5
+    37cc:	25 7f       	andi	r18, 0xF5	; 245
+    37ce:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    37d0:	25 b1       	in	r18, 0x05	; 5
+    37d2:	2a 60       	ori	r18, 0x0A	; 10
+    37d4:	25 b9       	out	0x05, r18	; 5
+    37d6:	25 b1       	in	r18, 0x05	; 5
+    37d8:	25 7f       	andi	r18, 0xF5	; 245
+    37da:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    37dc:	fc 01       	movw	r30, r24
+    37de:	70 96       	adiw	r30, 0x10	; 16
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 2
-            SET_COLOR(pgm_read_byte(buffer + index + 16));
-    431c:	9c 01       	movw	r18, r24
-    431e:	20 5f       	subi	r18, 0xF0	; 240
-    4320:	3f 4f       	sbci	r19, 0xFF	; 255
-    4322:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4326:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    432a:	e2 0f       	add	r30, r18
-    432c:	f3 1f       	adc	r31, r19
-    432e:	e4 91       	lpm	r30, Z
-    4330:	2b b1       	in	r18, 0x0b	; 11
-    4332:	34 e0       	ldi	r19, 0x04	; 4
-    4334:	e3 9f       	mul	r30, r19
-    4336:	f0 01       	movw	r30, r0
-    4338:	11 24       	eor	r1, r1
-    433a:	23 70       	andi	r18, 0x03	; 3
-    433c:	e2 2b       	or	r30, r18
-    433e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    37e0:	24 91       	lpm	r18, Z
+    37e2:	eb b1       	in	r30, 0x0b	; 11
+    37e4:	64 e0       	ldi	r22, 0x04	; 4
+    37e6:	26 9f       	mul	r18, r22
+    37e8:	90 01       	movw	r18, r0
+    37ea:	11 24       	eor	r1, r1
+    37ec:	e3 70       	andi	r30, 0x03	; 3
+    37ee:	e2 2b       	or	r30, r18
+    37f0:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4340:	25 b1       	in	r18, 0x05	; 5
-    4342:	2a 60       	ori	r18, 0x0A	; 10
-    4344:	25 b9       	out	0x05, r18	; 5
-    4346:	25 b1       	in	r18, 0x05	; 5
-    4348:	25 7f       	andi	r18, 0xF5	; 245
-    434a:	25 b9       	out	0x05, r18	; 5
+    37f2:	25 b1       	in	r18, 0x05	; 5
+    37f4:	2a 60       	ori	r18, 0x0A	; 10
+    37f6:	25 b9       	out	0x05, r18	; 5
+    37f8:	25 b1       	in	r18, 0x05	; 5
+    37fa:	25 7f       	andi	r18, 0xF5	; 245
+    37fc:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    434c:	25 b1       	in	r18, 0x05	; 5
-    434e:	2a 60       	ori	r18, 0x0A	; 10
-    4350:	25 b9       	out	0x05, r18	; 5
-    4352:	25 b1       	in	r18, 0x05	; 5
-    4354:	25 7f       	andi	r18, 0xF5	; 245
-    4356:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 17));
-    4358:	9c 01       	movw	r18, r24
-    435a:	2f 5e       	subi	r18, 0xEF	; 239
-    435c:	3f 4f       	sbci	r19, 0xFF	; 255
-    435e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4362:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4366:	e2 0f       	add	r30, r18
-    4368:	f3 1f       	adc	r31, r19
-    436a:	e4 91       	lpm	r30, Z
-    436c:	2b b1       	in	r18, 0x0b	; 11
-    436e:	64 e0       	ldi	r22, 0x04	; 4
-    4370:	e6 9f       	mul	r30, r22
-    4372:	f0 01       	movw	r30, r0
-    4374:	11 24       	eor	r1, r1
-    4376:	23 70       	andi	r18, 0x03	; 3
-    4378:	e2 2b       	or	r30, r18
-    437a:	eb b9       	out	0x0b, r30	; 11
+    37fe:	25 b1       	in	r18, 0x05	; 5
+    3800:	2a 60       	ori	r18, 0x0A	; 10
+    3802:	25 b9       	out	0x05, r18	; 5
+    3804:	25 b1       	in	r18, 0x05	; 5
+    3806:	25 7f       	andi	r18, 0xF5	; 245
+    3808:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    437c:	25 b1       	in	r18, 0x05	; 5
-    437e:	2a 60       	ori	r18, 0x0A	; 10
-    4380:	25 b9       	out	0x05, r18	; 5
-    4382:	25 b1       	in	r18, 0x05	; 5
-    4384:	25 7f       	andi	r18, 0xF5	; 245
-    4386:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4388:	25 b1       	in	r18, 0x05	; 5
-    438a:	2a 60       	ori	r18, 0x0A	; 10
-    438c:	25 b9       	out	0x05, r18	; 5
-    438e:	25 b1       	in	r18, 0x05	; 5
-    4390:	25 7f       	andi	r18, 0xF5	; 245
-    4392:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 18));
-    4394:	9c 01       	movw	r18, r24
-    4396:	2e 5e       	subi	r18, 0xEE	; 238
-    4398:	3f 4f       	sbci	r19, 0xFF	; 255
-    439a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    439e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    43a2:	e2 0f       	add	r30, r18
-    43a4:	f3 1f       	adc	r31, r19
-    43a6:	e4 91       	lpm	r30, Z
-    43a8:	2b b1       	in	r18, 0x0b	; 11
-    43aa:	74 e0       	ldi	r23, 0x04	; 4
-    43ac:	e7 9f       	mul	r30, r23
-    43ae:	f0 01       	movw	r30, r0
-    43b0:	11 24       	eor	r1, r1
-    43b2:	23 70       	andi	r18, 0x03	; 3
-    43b4:	e2 2b       	or	r30, r18
-    43b6:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
+    380a:	fc 01       	movw	r30, r24
+    380c:	71 96       	adiw	r30, 0x11	; 17
             PWCLK_GCLK;
-    43b8:	25 b1       	in	r18, 0x05	; 5
-    43ba:	2a 60       	ori	r18, 0x0A	; 10
-    43bc:	25 b9       	out	0x05, r18	; 5
-    43be:	25 b1       	in	r18, 0x05	; 5
-    43c0:	25 7f       	andi	r18, 0xF5	; 245
-    43c2:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    43c4:	25 b1       	in	r18, 0x05	; 5
-    43c6:	2a 60       	ori	r18, 0x0A	; 10
-    43c8:	25 b9       	out	0x05, r18	; 5
-    43ca:	25 b1       	in	r18, 0x05	; 5
-    43cc:	25 7f       	andi	r18, 0xF5	; 245
-    43ce:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 19));
-    43d0:	9c 01       	movw	r18, r24
-    43d2:	2d 5e       	subi	r18, 0xED	; 237
-    43d4:	3f 4f       	sbci	r19, 0xFF	; 255
-    43d6:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    43da:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    43de:	e2 0f       	add	r30, r18
-    43e0:	f3 1f       	adc	r31, r19
-    43e2:	e4 91       	lpm	r30, Z
-    43e4:	2b b1       	in	r18, 0x0b	; 11
-    43e6:	34 e0       	ldi	r19, 0x04	; 4
-    43e8:	e3 9f       	mul	r30, r19
-    43ea:	f0 01       	movw	r30, r0
-    43ec:	11 24       	eor	r1, r1
-    43ee:	23 70       	andi	r18, 0x03	; 3
-    43f0:	e2 2b       	or	r30, r18
-    43f2:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    380e:	24 91       	lpm	r18, Z
+    3810:	eb b1       	in	r30, 0x0b	; 11
+    3812:	74 e0       	ldi	r23, 0x04	; 4
+    3814:	27 9f       	mul	r18, r23
+    3816:	90 01       	movw	r18, r0
+    3818:	11 24       	eor	r1, r1
+    381a:	e3 70       	andi	r30, 0x03	; 3
+    381c:	e2 2b       	or	r30, r18
+    381e:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    43f4:	25 b1       	in	r18, 0x05	; 5
-    43f6:	2a 60       	ori	r18, 0x0A	; 10
-    43f8:	25 b9       	out	0x05, r18	; 5
-    43fa:	25 b1       	in	r18, 0x05	; 5
-    43fc:	25 7f       	andi	r18, 0xF5	; 245
-    43fe:	25 b9       	out	0x05, r18	; 5
+    3820:	25 b1       	in	r18, 0x05	; 5
+    3822:	2a 60       	ori	r18, 0x0A	; 10
+    3824:	25 b9       	out	0x05, r18	; 5
+    3826:	25 b1       	in	r18, 0x05	; 5
+    3828:	25 7f       	andi	r18, 0xF5	; 245
+    382a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4400:	25 b1       	in	r18, 0x05	; 5
-    4402:	2a 60       	ori	r18, 0x0A	; 10
-    4404:	25 b9       	out	0x05, r18	; 5
-    4406:	25 b1       	in	r18, 0x05	; 5
-    4408:	25 7f       	andi	r18, 0xF5	; 245
-    440a:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 20));
-    440c:	9c 01       	movw	r18, r24
-    440e:	2c 5e       	subi	r18, 0xEC	; 236
-    4410:	3f 4f       	sbci	r19, 0xFF	; 255
-    4412:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4416:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    441a:	e2 0f       	add	r30, r18
-    441c:	f3 1f       	adc	r31, r19
-    441e:	e4 91       	lpm	r30, Z
-    4420:	2b b1       	in	r18, 0x0b	; 11
-    4422:	64 e0       	ldi	r22, 0x04	; 4
-    4424:	e6 9f       	mul	r30, r22
-    4426:	f0 01       	movw	r30, r0
-    4428:	11 24       	eor	r1, r1
-    442a:	23 70       	andi	r18, 0x03	; 3
-    442c:	e2 2b       	or	r30, r18
-    442e:	eb b9       	out	0x0b, r30	; 11
+    382c:	25 b1       	in	r18, 0x05	; 5
+    382e:	2a 60       	ori	r18, 0x0A	; 10
+    3830:	25 b9       	out	0x05, r18	; 5
+    3832:	25 b1       	in	r18, 0x05	; 5
+    3834:	25 7f       	andi	r18, 0xF5	; 245
+    3836:	25 b9       	out	0x05, r18	; 5
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    4430:	25 b1       	in	r18, 0x05	; 5
-    4432:	2a 60       	ori	r18, 0x0A	; 10
-    4434:	25 b9       	out	0x05, r18	; 5
-    4436:	25 b1       	in	r18, 0x05	; 5
-    4438:	25 7f       	andi	r18, 0xF5	; 245
-    443a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    443c:	25 b1       	in	r18, 0x05	; 5
-    443e:	2a 60       	ori	r18, 0x0A	; 10
-    4440:	25 b9       	out	0x05, r18	; 5
-    4442:	25 b1       	in	r18, 0x05	; 5
-    4444:	25 7f       	andi	r18, 0xF5	; 245
-    4446:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 21));
-    4448:	9c 01       	movw	r18, r24
-    444a:	2b 5e       	subi	r18, 0xEB	; 235
-    444c:	3f 4f       	sbci	r19, 0xFF	; 255
-    444e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4452:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4456:	e2 0f       	add	r30, r18
-    4458:	f3 1f       	adc	r31, r19
-    445a:	e4 91       	lpm	r30, Z
-    445c:	2b b1       	in	r18, 0x0b	; 11
-    445e:	74 e0       	ldi	r23, 0x04	; 4
-    4460:	e7 9f       	mul	r30, r23
-    4462:	f0 01       	movw	r30, r0
-    4464:	11 24       	eor	r1, r1
-    4466:	23 70       	andi	r18, 0x03	; 3
-    4468:	e2 2b       	or	r30, r18
-    446a:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3838:	fc 01       	movw	r30, r24
+    383a:	72 96       	adiw	r30, 0x12	; 18
             PWCLK_GCLK;
-    446c:	25 b1       	in	r18, 0x05	; 5
-    446e:	2a 60       	ori	r18, 0x0A	; 10
-    4470:	25 b9       	out	0x05, r18	; 5
-    4472:	25 b1       	in	r18, 0x05	; 5
-    4474:	25 7f       	andi	r18, 0xF5	; 245
-    4476:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4478:	25 b1       	in	r18, 0x05	; 5
-    447a:	2a 60       	ori	r18, 0x0A	; 10
-    447c:	25 b9       	out	0x05, r18	; 5
-    447e:	25 b1       	in	r18, 0x05	; 5
-    4480:	25 7f       	andi	r18, 0xF5	; 245
-    4482:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 22));
-    4484:	9c 01       	movw	r18, r24
-    4486:	2a 5e       	subi	r18, 0xEA	; 234
-    4488:	3f 4f       	sbci	r19, 0xFF	; 255
-    448a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    448e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4492:	e2 0f       	add	r30, r18
-    4494:	f3 1f       	adc	r31, r19
-    4496:	e4 91       	lpm	r30, Z
-    4498:	2b b1       	in	r18, 0x0b	; 11
-    449a:	34 e0       	ldi	r19, 0x04	; 4
-    449c:	e3 9f       	mul	r30, r19
-    449e:	f0 01       	movw	r30, r0
-    44a0:	11 24       	eor	r1, r1
-    44a2:	23 70       	andi	r18, 0x03	; 3
-    44a4:	e2 2b       	or	r30, r18
-    44a6:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    383c:	24 91       	lpm	r18, Z
+    383e:	eb b1       	in	r30, 0x0b	; 11
+    3840:	f4 e0       	ldi	r31, 0x04	; 4
+    3842:	2f 9f       	mul	r18, r31
+    3844:	90 01       	movw	r18, r0
+    3846:	11 24       	eor	r1, r1
+    3848:	e3 70       	andi	r30, 0x03	; 3
+    384a:	e2 2b       	or	r30, r18
+    384c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    44a8:	25 b1       	in	r18, 0x05	; 5
-    44aa:	2a 60       	ori	r18, 0x0A	; 10
-    44ac:	25 b9       	out	0x05, r18	; 5
-    44ae:	25 b1       	in	r18, 0x05	; 5
-    44b0:	25 7f       	andi	r18, 0xF5	; 245
-    44b2:	25 b9       	out	0x05, r18	; 5
+    384e:	25 b1       	in	r18, 0x05	; 5
+    3850:	2a 60       	ori	r18, 0x0A	; 10
+    3852:	25 b9       	out	0x05, r18	; 5
+    3854:	25 b1       	in	r18, 0x05	; 5
+    3856:	25 7f       	andi	r18, 0xF5	; 245
+    3858:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    44b4:	25 b1       	in	r18, 0x05	; 5
-    44b6:	2a 60       	ori	r18, 0x0A	; 10
-    44b8:	25 b9       	out	0x05, r18	; 5
-    44ba:	25 b1       	in	r18, 0x05	; 5
-    44bc:	25 7f       	andi	r18, 0xF5	; 245
-    44be:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 23));
-    44c0:	9c 01       	movw	r18, r24
-    44c2:	29 5e       	subi	r18, 0xE9	; 233
-    44c4:	3f 4f       	sbci	r19, 0xFF	; 255
-    44c6:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    44ca:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    44ce:	e2 0f       	add	r30, r18
-    44d0:	f3 1f       	adc	r31, r19
-    44d2:	e4 91       	lpm	r30, Z
-    44d4:	2b b1       	in	r18, 0x0b	; 11
-    44d6:	64 e0       	ldi	r22, 0x04	; 4
-    44d8:	e6 9f       	mul	r30, r22
-    44da:	f0 01       	movw	r30, r0
-    44dc:	11 24       	eor	r1, r1
-    44de:	23 70       	andi	r18, 0x03	; 3
-    44e0:	e2 2b       	or	r30, r18
-    44e2:	eb b9       	out	0x0b, r30	; 11
+    385a:	25 b1       	in	r18, 0x05	; 5
+    385c:	2a 60       	ori	r18, 0x0A	; 10
+    385e:	25 b9       	out	0x05, r18	; 5
+    3860:	25 b1       	in	r18, 0x05	; 5
+    3862:	25 7f       	andi	r18, 0xF5	; 245
+    3864:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    44e4:	25 b1       	in	r18, 0x05	; 5
-    44e6:	2a 60       	ori	r18, 0x0A	; 10
-    44e8:	25 b9       	out	0x05, r18	; 5
-    44ea:	25 b1       	in	r18, 0x05	; 5
-    44ec:	25 7f       	andi	r18, 0xF5	; 245
-    44ee:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    44f0:	25 b1       	in	r18, 0x05	; 5
-    44f2:	2a 60       	ori	r18, 0x0A	; 10
-    44f4:	25 b9       	out	0x05, r18	; 5
-    44f6:	25 b1       	in	r18, 0x05	; 5
-    44f8:	25 7f       	andi	r18, 0xF5	; 245
-    44fa:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3866:	fc 01       	movw	r30, r24
+    3868:	73 96       	adiw	r30, 0x13	; 19
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    386a:	24 91       	lpm	r18, Z
+    386c:	eb b1       	in	r30, 0x0b	; 11
+    386e:	64 e0       	ldi	r22, 0x04	; 4
+    3870:	26 9f       	mul	r18, r22
+    3872:	90 01       	movw	r18, r0
+    3874:	11 24       	eor	r1, r1
+    3876:	e3 70       	andi	r30, 0x03	; 3
+    3878:	e2 2b       	or	r30, r18
+    387a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    387c:	25 b1       	in	r18, 0x05	; 5
+    387e:	2a 60       	ori	r18, 0x0A	; 10
+    3880:	25 b9       	out	0x05, r18	; 5
+    3882:	25 b1       	in	r18, 0x05	; 5
+    3884:	25 7f       	andi	r18, 0xF5	; 245
+    3886:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3888:	25 b1       	in	r18, 0x05	; 5
+    388a:	2a 60       	ori	r18, 0x0A	; 10
+    388c:	25 b9       	out	0x05, r18	; 5
+    388e:	25 b1       	in	r18, 0x05	; 5
+    3890:	25 7f       	andi	r18, 0xF5	; 245
+    3892:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3894:	fc 01       	movw	r30, r24
+    3896:	74 96       	adiw	r30, 0x14	; 20
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3898:	24 91       	lpm	r18, Z
+    389a:	eb b1       	in	r30, 0x0b	; 11
+    389c:	74 e0       	ldi	r23, 0x04	; 4
+    389e:	27 9f       	mul	r18, r23
+    38a0:	90 01       	movw	r18, r0
+    38a2:	11 24       	eor	r1, r1
+    38a4:	e3 70       	andi	r30, 0x03	; 3
+    38a6:	e2 2b       	or	r30, r18
+    38a8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    38aa:	25 b1       	in	r18, 0x05	; 5
+    38ac:	2a 60       	ori	r18, 0x0A	; 10
+    38ae:	25 b9       	out	0x05, r18	; 5
+    38b0:	25 b1       	in	r18, 0x05	; 5
+    38b2:	25 7f       	andi	r18, 0xF5	; 245
+    38b4:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    38b6:	25 b1       	in	r18, 0x05	; 5
+    38b8:	2a 60       	ori	r18, 0x0A	; 10
+    38ba:	25 b9       	out	0x05, r18	; 5
+    38bc:	25 b1       	in	r18, 0x05	; 5
+    38be:	25 7f       	andi	r18, 0xF5	; 245
+    38c0:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    38c2:	fc 01       	movw	r30, r24
+    38c4:	75 96       	adiw	r30, 0x15	; 21
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    38c6:	24 91       	lpm	r18, Z
+    38c8:	eb b1       	in	r30, 0x0b	; 11
+    38ca:	f4 e0       	ldi	r31, 0x04	; 4
+    38cc:	2f 9f       	mul	r18, r31
+    38ce:	90 01       	movw	r18, r0
+    38d0:	11 24       	eor	r1, r1
+    38d2:	e3 70       	andi	r30, 0x03	; 3
+    38d4:	e2 2b       	or	r30, r18
+    38d6:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    38d8:	25 b1       	in	r18, 0x05	; 5
+    38da:	2a 60       	ori	r18, 0x0A	; 10
+    38dc:	25 b9       	out	0x05, r18	; 5
+    38de:	25 b1       	in	r18, 0x05	; 5
+    38e0:	25 7f       	andi	r18, 0xF5	; 245
+    38e2:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    38e4:	25 b1       	in	r18, 0x05	; 5
+    38e6:	2a 60       	ori	r18, 0x0A	; 10
+    38e8:	25 b9       	out	0x05, r18	; 5
+    38ea:	25 b1       	in	r18, 0x05	; 5
+    38ec:	25 7f       	andi	r18, 0xF5	; 245
+    38ee:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    38f0:	fc 01       	movw	r30, r24
+    38f2:	76 96       	adiw	r30, 0x16	; 22
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    38f4:	24 91       	lpm	r18, Z
+    38f6:	eb b1       	in	r30, 0x0b	; 11
+    38f8:	64 e0       	ldi	r22, 0x04	; 4
+    38fa:	26 9f       	mul	r18, r22
+    38fc:	90 01       	movw	r18, r0
+    38fe:	11 24       	eor	r1, r1
+    3900:	e3 70       	andi	r30, 0x03	; 3
+    3902:	e2 2b       	or	r30, r18
+    3904:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3906:	25 b1       	in	r18, 0x05	; 5
+    3908:	2a 60       	ori	r18, 0x0A	; 10
+    390a:	25 b9       	out	0x05, r18	; 5
+    390c:	25 b1       	in	r18, 0x05	; 5
+    390e:	25 7f       	andi	r18, 0xF5	; 245
+    3910:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3912:	25 b1       	in	r18, 0x05	; 5
+    3914:	2a 60       	ori	r18, 0x0A	; 10
+    3916:	25 b9       	out	0x05, r18	; 5
+    3918:	25 b1       	in	r18, 0x05	; 5
+    391a:	25 7f       	andi	r18, 0xF5	; 245
+    391c:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    391e:	fc 01       	movw	r30, r24
+    3920:	77 96       	adiw	r30, 0x17	; 23
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3922:	24 91       	lpm	r18, Z
+    3924:	eb b1       	in	r30, 0x0b	; 11
+    3926:	74 e0       	ldi	r23, 0x04	; 4
+    3928:	27 9f       	mul	r18, r23
+    392a:	90 01       	movw	r18, r0
+    392c:	11 24       	eor	r1, r1
+    392e:	e3 70       	andi	r30, 0x03	; 3
+    3930:	e2 2b       	or	r30, r18
+    3932:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3934:	25 b1       	in	r18, 0x05	; 5
+    3936:	2a 60       	ori	r18, 0x0A	; 10
+    3938:	25 b9       	out	0x05, r18	; 5
+    393a:	25 b1       	in	r18, 0x05	; 5
+    393c:	25 7f       	andi	r18, 0xF5	; 245
+    393e:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3940:	25 b1       	in	r18, 0x05	; 5
+    3942:	2a 60       	ori	r18, 0x0A	; 10
+    3944:	25 b9       	out	0x05, r18	; 5
+    3946:	25 b1       	in	r18, 0x05	; 5
+    3948:	25 7f       	andi	r18, 0xF5	; 245
+    394a:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    394c:	fc 01       	movw	r30, r24
+    394e:	78 96       	adiw	r30, 0x18	; 24
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 3
-            SET_COLOR(pgm_read_byte(buffer + index + 24));
-    44fc:	9c 01       	movw	r18, r24
-    44fe:	28 5e       	subi	r18, 0xE8	; 232
-    4500:	3f 4f       	sbci	r19, 0xFF	; 255
-    4502:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4506:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    450a:	e2 0f       	add	r30, r18
-    450c:	f3 1f       	adc	r31, r19
-    450e:	e4 91       	lpm	r30, Z
-    4510:	2b b1       	in	r18, 0x0b	; 11
-    4512:	74 e0       	ldi	r23, 0x04	; 4
-    4514:	e7 9f       	mul	r30, r23
-    4516:	f0 01       	movw	r30, r0
-    4518:	11 24       	eor	r1, r1
-    451a:	23 70       	andi	r18, 0x03	; 3
-    451c:	e2 2b       	or	r30, r18
-    451e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3950:	24 91       	lpm	r18, Z
+    3952:	eb b1       	in	r30, 0x0b	; 11
+    3954:	f4 e0       	ldi	r31, 0x04	; 4
+    3956:	2f 9f       	mul	r18, r31
+    3958:	90 01       	movw	r18, r0
+    395a:	11 24       	eor	r1, r1
+    395c:	e3 70       	andi	r30, 0x03	; 3
+    395e:	e2 2b       	or	r30, r18
+    3960:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4520:	25 b1       	in	r18, 0x05	; 5
-    4522:	2a 60       	ori	r18, 0x0A	; 10
-    4524:	25 b9       	out	0x05, r18	; 5
-    4526:	25 b1       	in	r18, 0x05	; 5
-    4528:	25 7f       	andi	r18, 0xF5	; 245
-    452a:	25 b9       	out	0x05, r18	; 5
+    3962:	25 b1       	in	r18, 0x05	; 5
+    3964:	2a 60       	ori	r18, 0x0A	; 10
+    3966:	25 b9       	out	0x05, r18	; 5
+    3968:	25 b1       	in	r18, 0x05	; 5
+    396a:	25 7f       	andi	r18, 0xF5	; 245
+    396c:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    452c:	25 b1       	in	r18, 0x05	; 5
-    452e:	2a 60       	ori	r18, 0x0A	; 10
-    4530:	25 b9       	out	0x05, r18	; 5
-    4532:	25 b1       	in	r18, 0x05	; 5
-    4534:	25 7f       	andi	r18, 0xF5	; 245
-    4536:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 25));
-    4538:	9c 01       	movw	r18, r24
-    453a:	27 5e       	subi	r18, 0xE7	; 231
-    453c:	3f 4f       	sbci	r19, 0xFF	; 255
-    453e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4542:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4546:	e2 0f       	add	r30, r18
-    4548:	f3 1f       	adc	r31, r19
-    454a:	e4 91       	lpm	r30, Z
-    454c:	2b b1       	in	r18, 0x0b	; 11
-    454e:	34 e0       	ldi	r19, 0x04	; 4
-    4550:	e3 9f       	mul	r30, r19
-    4552:	f0 01       	movw	r30, r0
-    4554:	11 24       	eor	r1, r1
-    4556:	23 70       	andi	r18, 0x03	; 3
-    4558:	e2 2b       	or	r30, r18
-    455a:	eb b9       	out	0x0b, r30	; 11
+    396e:	25 b1       	in	r18, 0x05	; 5
+    3970:	2a 60       	ori	r18, 0x0A	; 10
+    3972:	25 b9       	out	0x05, r18	; 5
+    3974:	25 b1       	in	r18, 0x05	; 5
+    3976:	25 7f       	andi	r18, 0xF5	; 245
+    3978:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    455c:	25 b1       	in	r18, 0x05	; 5
-    455e:	2a 60       	ori	r18, 0x0A	; 10
-    4560:	25 b9       	out	0x05, r18	; 5
-    4562:	25 b1       	in	r18, 0x05	; 5
-    4564:	25 7f       	andi	r18, 0xF5	; 245
-    4566:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4568:	25 b1       	in	r18, 0x05	; 5
-    456a:	2a 60       	ori	r18, 0x0A	; 10
-    456c:	25 b9       	out	0x05, r18	; 5
-    456e:	25 b1       	in	r18, 0x05	; 5
-    4570:	25 7f       	andi	r18, 0xF5	; 245
-    4572:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 26));
-    4574:	9c 01       	movw	r18, r24
-    4576:	26 5e       	subi	r18, 0xE6	; 230
-    4578:	3f 4f       	sbci	r19, 0xFF	; 255
-    457a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    457e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4582:	e2 0f       	add	r30, r18
-    4584:	f3 1f       	adc	r31, r19
-    4586:	e4 91       	lpm	r30, Z
-    4588:	2b b1       	in	r18, 0x0b	; 11
-    458a:	64 e0       	ldi	r22, 0x04	; 4
-    458c:	e6 9f       	mul	r30, r22
-    458e:	f0 01       	movw	r30, r0
-    4590:	11 24       	eor	r1, r1
-    4592:	23 70       	andi	r18, 0x03	; 3
-    4594:	e2 2b       	or	r30, r18
-    4596:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
+    397a:	fc 01       	movw	r30, r24
+    397c:	79 96       	adiw	r30, 0x19	; 25
             PWCLK_GCLK;
-    4598:	25 b1       	in	r18, 0x05	; 5
-    459a:	2a 60       	ori	r18, 0x0A	; 10
-    459c:	25 b9       	out	0x05, r18	; 5
-    459e:	25 b1       	in	r18, 0x05	; 5
-    45a0:	25 7f       	andi	r18, 0xF5	; 245
-    45a2:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    45a4:	25 b1       	in	r18, 0x05	; 5
-    45a6:	2a 60       	ori	r18, 0x0A	; 10
-    45a8:	25 b9       	out	0x05, r18	; 5
-    45aa:	25 b1       	in	r18, 0x05	; 5
-    45ac:	25 7f       	andi	r18, 0xF5	; 245
-    45ae:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 27));
-    45b0:	9c 01       	movw	r18, r24
-    45b2:	25 5e       	subi	r18, 0xE5	; 229
-    45b4:	3f 4f       	sbci	r19, 0xFF	; 255
-    45b6:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    45ba:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    45be:	e2 0f       	add	r30, r18
-    45c0:	f3 1f       	adc	r31, r19
-    45c2:	e4 91       	lpm	r30, Z
-    45c4:	2b b1       	in	r18, 0x0b	; 11
-    45c6:	74 e0       	ldi	r23, 0x04	; 4
-    45c8:	e7 9f       	mul	r30, r23
-    45ca:	f0 01       	movw	r30, r0
-    45cc:	11 24       	eor	r1, r1
-    45ce:	23 70       	andi	r18, 0x03	; 3
-    45d0:	e2 2b       	or	r30, r18
-    45d2:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    397e:	24 91       	lpm	r18, Z
+    3980:	eb b1       	in	r30, 0x0b	; 11
+    3982:	64 e0       	ldi	r22, 0x04	; 4
+    3984:	26 9f       	mul	r18, r22
+    3986:	90 01       	movw	r18, r0
+    3988:	11 24       	eor	r1, r1
+    398a:	e3 70       	andi	r30, 0x03	; 3
+    398c:	e2 2b       	or	r30, r18
+    398e:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    45d4:	25 b1       	in	r18, 0x05	; 5
-    45d6:	2a 60       	ori	r18, 0x0A	; 10
-    45d8:	25 b9       	out	0x05, r18	; 5
-    45da:	25 b1       	in	r18, 0x05	; 5
-    45dc:	25 7f       	andi	r18, 0xF5	; 245
-    45de:	25 b9       	out	0x05, r18	; 5
+    3990:	25 b1       	in	r18, 0x05	; 5
+    3992:	2a 60       	ori	r18, 0x0A	; 10
+    3994:	25 b9       	out	0x05, r18	; 5
+    3996:	25 b1       	in	r18, 0x05	; 5
+    3998:	25 7f       	andi	r18, 0xF5	; 245
+    399a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    45e0:	25 b1       	in	r18, 0x05	; 5
-    45e2:	2a 60       	ori	r18, 0x0A	; 10
-    45e4:	25 b9       	out	0x05, r18	; 5
-    45e6:	25 b1       	in	r18, 0x05	; 5
-    45e8:	25 7f       	andi	r18, 0xF5	; 245
-    45ea:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 28));
-    45ec:	9c 01       	movw	r18, r24
-    45ee:	24 5e       	subi	r18, 0xE4	; 228
-    45f0:	3f 4f       	sbci	r19, 0xFF	; 255
-    45f2:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    45f6:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    45fa:	e2 0f       	add	r30, r18
-    45fc:	f3 1f       	adc	r31, r19
-    45fe:	e4 91       	lpm	r30, Z
-    4600:	2b b1       	in	r18, 0x0b	; 11
-    4602:	34 e0       	ldi	r19, 0x04	; 4
-    4604:	e3 9f       	mul	r30, r19
-    4606:	f0 01       	movw	r30, r0
-    4608:	11 24       	eor	r1, r1
-    460a:	23 70       	andi	r18, 0x03	; 3
-    460c:	e2 2b       	or	r30, r18
-    460e:	eb b9       	out	0x0b, r30	; 11
+    399c:	25 b1       	in	r18, 0x05	; 5
+    399e:	2a 60       	ori	r18, 0x0A	; 10
+    39a0:	25 b9       	out	0x05, r18	; 5
+    39a2:	25 b1       	in	r18, 0x05	; 5
+    39a4:	25 7f       	andi	r18, 0xF5	; 245
+    39a6:	25 b9       	out	0x05, r18	; 5
+
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    4610:	25 b1       	in	r18, 0x05	; 5
-    4612:	2a 60       	ori	r18, 0x0A	; 10
-    4614:	25 b9       	out	0x05, r18	; 5
-    4616:	25 b1       	in	r18, 0x05	; 5
-    4618:	25 7f       	andi	r18, 0xF5	; 245
-    461a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    461c:	25 b1       	in	r18, 0x05	; 5
-    461e:	2a 60       	ori	r18, 0x0A	; 10
-    4620:	25 b9       	out	0x05, r18	; 5
-    4622:	25 b1       	in	r18, 0x05	; 5
-    4624:	25 7f       	andi	r18, 0xF5	; 245
-    4626:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 29));
-    4628:	9c 01       	movw	r18, r24
-    462a:	23 5e       	subi	r18, 0xE3	; 227
-    462c:	3f 4f       	sbci	r19, 0xFF	; 255
-    462e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4632:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4636:	e2 0f       	add	r30, r18
-    4638:	f3 1f       	adc	r31, r19
-    463a:	e4 91       	lpm	r30, Z
-    463c:	2b b1       	in	r18, 0x0b	; 11
-    463e:	64 e0       	ldi	r22, 0x04	; 4
-    4640:	e6 9f       	mul	r30, r22
-    4642:	f0 01       	movw	r30, r0
-    4644:	11 24       	eor	r1, r1
-    4646:	23 70       	andi	r18, 0x03	; 3
-    4648:	e2 2b       	or	r30, r18
-    464a:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    39a8:	fc 01       	movw	r30, r24
+    39aa:	7a 96       	adiw	r30, 0x1a	; 26
             PWCLK_GCLK;
-    464c:	25 b1       	in	r18, 0x05	; 5
-    464e:	2a 60       	ori	r18, 0x0A	; 10
-    4650:	25 b9       	out	0x05, r18	; 5
-    4652:	25 b1       	in	r18, 0x05	; 5
-    4654:	25 7f       	andi	r18, 0xF5	; 245
-    4656:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4658:	25 b1       	in	r18, 0x05	; 5
-    465a:	2a 60       	ori	r18, 0x0A	; 10
-    465c:	25 b9       	out	0x05, r18	; 5
-    465e:	25 b1       	in	r18, 0x05	; 5
-    4660:	25 7f       	andi	r18, 0xF5	; 245
-    4662:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 30));
-    4664:	9c 01       	movw	r18, r24
-    4666:	22 5e       	subi	r18, 0xE2	; 226
-    4668:	3f 4f       	sbci	r19, 0xFF	; 255
-    466a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    466e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4672:	e2 0f       	add	r30, r18
-    4674:	f3 1f       	adc	r31, r19
-    4676:	e4 91       	lpm	r30, Z
-    4678:	2b b1       	in	r18, 0x0b	; 11
-    467a:	74 e0       	ldi	r23, 0x04	; 4
-    467c:	e7 9f       	mul	r30, r23
-    467e:	f0 01       	movw	r30, r0
-    4680:	11 24       	eor	r1, r1
-    4682:	23 70       	andi	r18, 0x03	; 3
-    4684:	e2 2b       	or	r30, r18
-    4686:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    39ac:	24 91       	lpm	r18, Z
+    39ae:	eb b1       	in	r30, 0x0b	; 11
+    39b0:	74 e0       	ldi	r23, 0x04	; 4
+    39b2:	27 9f       	mul	r18, r23
+    39b4:	90 01       	movw	r18, r0
+    39b6:	11 24       	eor	r1, r1
+    39b8:	e3 70       	andi	r30, 0x03	; 3
+    39ba:	e2 2b       	or	r30, r18
+    39bc:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4688:	25 b1       	in	r18, 0x05	; 5
-    468a:	2a 60       	ori	r18, 0x0A	; 10
-    468c:	25 b9       	out	0x05, r18	; 5
-    468e:	25 b1       	in	r18, 0x05	; 5
-    4690:	25 7f       	andi	r18, 0xF5	; 245
-    4692:	25 b9       	out	0x05, r18	; 5
+    39be:	25 b1       	in	r18, 0x05	; 5
+    39c0:	2a 60       	ori	r18, 0x0A	; 10
+    39c2:	25 b9       	out	0x05, r18	; 5
+    39c4:	25 b1       	in	r18, 0x05	; 5
+    39c6:	25 7f       	andi	r18, 0xF5	; 245
+    39c8:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4694:	25 b1       	in	r18, 0x05	; 5
-    4696:	2a 60       	ori	r18, 0x0A	; 10
-    4698:	25 b9       	out	0x05, r18	; 5
-    469a:	25 b1       	in	r18, 0x05	; 5
-    469c:	25 7f       	andi	r18, 0xF5	; 245
-    469e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 31));
-    46a0:	9c 01       	movw	r18, r24
-    46a2:	21 5e       	subi	r18, 0xE1	; 225
-    46a4:	3f 4f       	sbci	r19, 0xFF	; 255
-    46a6:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    46aa:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    46ae:	e2 0f       	add	r30, r18
-    46b0:	f3 1f       	adc	r31, r19
-    46b2:	e4 91       	lpm	r30, Z
-    46b4:	2b b1       	in	r18, 0x0b	; 11
-    46b6:	34 e0       	ldi	r19, 0x04	; 4
-    46b8:	e3 9f       	mul	r30, r19
-    46ba:	f0 01       	movw	r30, r0
-    46bc:	11 24       	eor	r1, r1
-    46be:	23 70       	andi	r18, 0x03	; 3
-    46c0:	e2 2b       	or	r30, r18
-    46c2:	eb b9       	out	0x0b, r30	; 11
+    39ca:	25 b1       	in	r18, 0x05	; 5
+    39cc:	2a 60       	ori	r18, 0x0A	; 10
+    39ce:	25 b9       	out	0x05, r18	; 5
+    39d0:	25 b1       	in	r18, 0x05	; 5
+    39d2:	25 7f       	andi	r18, 0xF5	; 245
+    39d4:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    46c4:	25 b1       	in	r18, 0x05	; 5
-    46c6:	2a 60       	ori	r18, 0x0A	; 10
-    46c8:	25 b9       	out	0x05, r18	; 5
-    46ca:	25 b1       	in	r18, 0x05	; 5
-    46cc:	25 7f       	andi	r18, 0xF5	; 245
-    46ce:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    46d0:	25 b1       	in	r18, 0x05	; 5
-    46d2:	2a 60       	ori	r18, 0x0A	; 10
-    46d4:	25 b9       	out	0x05, r18	; 5
-    46d6:	25 b1       	in	r18, 0x05	; 5
-    46d8:	25 7f       	andi	r18, 0xF5	; 245
-    46da:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    39d6:	fc 01       	movw	r30, r24
+    39d8:	7b 96       	adiw	r30, 0x1b	; 27
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    39da:	24 91       	lpm	r18, Z
+    39dc:	eb b1       	in	r30, 0x0b	; 11
+    39de:	f4 e0       	ldi	r31, 0x04	; 4
+    39e0:	2f 9f       	mul	r18, r31
+    39e2:	90 01       	movw	r18, r0
+    39e4:	11 24       	eor	r1, r1
+    39e6:	e3 70       	andi	r30, 0x03	; 3
+    39e8:	e2 2b       	or	r30, r18
+    39ea:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    39ec:	25 b1       	in	r18, 0x05	; 5
+    39ee:	2a 60       	ori	r18, 0x0A	; 10
+    39f0:	25 b9       	out	0x05, r18	; 5
+    39f2:	25 b1       	in	r18, 0x05	; 5
+    39f4:	25 7f       	andi	r18, 0xF5	; 245
+    39f6:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    39f8:	25 b1       	in	r18, 0x05	; 5
+    39fa:	2a 60       	ori	r18, 0x0A	; 10
+    39fc:	25 b9       	out	0x05, r18	; 5
+    39fe:	25 b1       	in	r18, 0x05	; 5
+    3a00:	25 7f       	andi	r18, 0xF5	; 245
+    3a02:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3a04:	fc 01       	movw	r30, r24
+    3a06:	7c 96       	adiw	r30, 0x1c	; 28
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3a08:	24 91       	lpm	r18, Z
+    3a0a:	eb b1       	in	r30, 0x0b	; 11
+    3a0c:	64 e0       	ldi	r22, 0x04	; 4
+    3a0e:	26 9f       	mul	r18, r22
+    3a10:	90 01       	movw	r18, r0
+    3a12:	11 24       	eor	r1, r1
+    3a14:	e3 70       	andi	r30, 0x03	; 3
+    3a16:	e2 2b       	or	r30, r18
+    3a18:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3a1a:	25 b1       	in	r18, 0x05	; 5
+    3a1c:	2a 60       	ori	r18, 0x0A	; 10
+    3a1e:	25 b9       	out	0x05, r18	; 5
+    3a20:	25 b1       	in	r18, 0x05	; 5
+    3a22:	25 7f       	andi	r18, 0xF5	; 245
+    3a24:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3a26:	25 b1       	in	r18, 0x05	; 5
+    3a28:	2a 60       	ori	r18, 0x0A	; 10
+    3a2a:	25 b9       	out	0x05, r18	; 5
+    3a2c:	25 b1       	in	r18, 0x05	; 5
+    3a2e:	25 7f       	andi	r18, 0xF5	; 245
+    3a30:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3a32:	fc 01       	movw	r30, r24
+    3a34:	7d 96       	adiw	r30, 0x1d	; 29
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3a36:	24 91       	lpm	r18, Z
+    3a38:	eb b1       	in	r30, 0x0b	; 11
+    3a3a:	74 e0       	ldi	r23, 0x04	; 4
+    3a3c:	27 9f       	mul	r18, r23
+    3a3e:	90 01       	movw	r18, r0
+    3a40:	11 24       	eor	r1, r1
+    3a42:	e3 70       	andi	r30, 0x03	; 3
+    3a44:	e2 2b       	or	r30, r18
+    3a46:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3a48:	25 b1       	in	r18, 0x05	; 5
+    3a4a:	2a 60       	ori	r18, 0x0A	; 10
+    3a4c:	25 b9       	out	0x05, r18	; 5
+    3a4e:	25 b1       	in	r18, 0x05	; 5
+    3a50:	25 7f       	andi	r18, 0xF5	; 245
+    3a52:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3a54:	25 b1       	in	r18, 0x05	; 5
+    3a56:	2a 60       	ori	r18, 0x0A	; 10
+    3a58:	25 b9       	out	0x05, r18	; 5
+    3a5a:	25 b1       	in	r18, 0x05	; 5
+    3a5c:	25 7f       	andi	r18, 0xF5	; 245
+    3a5e:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3a60:	fc 01       	movw	r30, r24
+    3a62:	7e 96       	adiw	r30, 0x1e	; 30
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3a64:	24 91       	lpm	r18, Z
+    3a66:	eb b1       	in	r30, 0x0b	; 11
+    3a68:	f4 e0       	ldi	r31, 0x04	; 4
+    3a6a:	2f 9f       	mul	r18, r31
+    3a6c:	90 01       	movw	r18, r0
+    3a6e:	11 24       	eor	r1, r1
+    3a70:	e3 70       	andi	r30, 0x03	; 3
+    3a72:	e2 2b       	or	r30, r18
+    3a74:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3a76:	25 b1       	in	r18, 0x05	; 5
+    3a78:	2a 60       	ori	r18, 0x0A	; 10
+    3a7a:	25 b9       	out	0x05, r18	; 5
+    3a7c:	25 b1       	in	r18, 0x05	; 5
+    3a7e:	25 7f       	andi	r18, 0xF5	; 245
+    3a80:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3a82:	25 b1       	in	r18, 0x05	; 5
+    3a84:	2a 60       	ori	r18, 0x0A	; 10
+    3a86:	25 b9       	out	0x05, r18	; 5
+    3a88:	25 b1       	in	r18, 0x05	; 5
+    3a8a:	25 7f       	andi	r18, 0xF5	; 245
+    3a8c:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3a8e:	fc 01       	movw	r30, r24
+    3a90:	7f 96       	adiw	r30, 0x1f	; 31
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3a92:	24 91       	lpm	r18, Z
+    3a94:	eb b1       	in	r30, 0x0b	; 11
+    3a96:	64 e0       	ldi	r22, 0x04	; 4
+    3a98:	26 9f       	mul	r18, r22
+    3a9a:	90 01       	movw	r18, r0
+    3a9c:	11 24       	eor	r1, r1
+    3a9e:	e3 70       	andi	r30, 0x03	; 3
+    3aa0:	e2 2b       	or	r30, r18
+    3aa2:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3aa4:	25 b1       	in	r18, 0x05	; 5
+    3aa6:	2a 60       	ori	r18, 0x0A	; 10
+    3aa8:	25 b9       	out	0x05, r18	; 5
+    3aaa:	25 b1       	in	r18, 0x05	; 5
+    3aac:	25 7f       	andi	r18, 0xF5	; 245
+    3aae:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3ab0:	25 b1       	in	r18, 0x05	; 5
+    3ab2:	2a 60       	ori	r18, 0x0A	; 10
+    3ab4:	25 b9       	out	0x05, r18	; 5
+    3ab6:	25 b1       	in	r18, 0x05	; 5
+    3ab8:	25 7f       	andi	r18, 0xF5	; 245
+    3aba:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3abc:	fc 01       	movw	r30, r24
+    3abe:	b0 96       	adiw	r30, 0x20	; 32
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 4
-            SET_COLOR(pgm_read_byte(buffer + index + 32));
-    46dc:	9c 01       	movw	r18, r24
-    46de:	20 5e       	subi	r18, 0xE0	; 224
-    46e0:	3f 4f       	sbci	r19, 0xFF	; 255
-    46e2:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    46e6:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    46ea:	e2 0f       	add	r30, r18
-    46ec:	f3 1f       	adc	r31, r19
-    46ee:	e4 91       	lpm	r30, Z
-    46f0:	2b b1       	in	r18, 0x0b	; 11
-    46f2:	64 e0       	ldi	r22, 0x04	; 4
-    46f4:	e6 9f       	mul	r30, r22
-    46f6:	f0 01       	movw	r30, r0
-    46f8:	11 24       	eor	r1, r1
-    46fa:	23 70       	andi	r18, 0x03	; 3
-    46fc:	e2 2b       	or	r30, r18
-    46fe:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3ac0:	24 91       	lpm	r18, Z
+    3ac2:	eb b1       	in	r30, 0x0b	; 11
+    3ac4:	74 e0       	ldi	r23, 0x04	; 4
+    3ac6:	27 9f       	mul	r18, r23
+    3ac8:	90 01       	movw	r18, r0
+    3aca:	11 24       	eor	r1, r1
+    3acc:	e3 70       	andi	r30, 0x03	; 3
+    3ace:	e2 2b       	or	r30, r18
+    3ad0:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4700:	25 b1       	in	r18, 0x05	; 5
-    4702:	2a 60       	ori	r18, 0x0A	; 10
-    4704:	25 b9       	out	0x05, r18	; 5
-    4706:	25 b1       	in	r18, 0x05	; 5
-    4708:	25 7f       	andi	r18, 0xF5	; 245
-    470a:	25 b9       	out	0x05, r18	; 5
+    3ad2:	25 b1       	in	r18, 0x05	; 5
+    3ad4:	2a 60       	ori	r18, 0x0A	; 10
+    3ad6:	25 b9       	out	0x05, r18	; 5
+    3ad8:	25 b1       	in	r18, 0x05	; 5
+    3ada:	25 7f       	andi	r18, 0xF5	; 245
+    3adc:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    470c:	25 b1       	in	r18, 0x05	; 5
-    470e:	2a 60       	ori	r18, 0x0A	; 10
-    4710:	25 b9       	out	0x05, r18	; 5
-    4712:	25 b1       	in	r18, 0x05	; 5
-    4714:	25 7f       	andi	r18, 0xF5	; 245
-    4716:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 33));
-    4718:	9c 01       	movw	r18, r24
-    471a:	2f 5d       	subi	r18, 0xDF	; 223
-    471c:	3f 4f       	sbci	r19, 0xFF	; 255
-    471e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4722:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4726:	e2 0f       	add	r30, r18
-    4728:	f3 1f       	adc	r31, r19
-    472a:	e4 91       	lpm	r30, Z
-    472c:	2b b1       	in	r18, 0x0b	; 11
-    472e:	74 e0       	ldi	r23, 0x04	; 4
-    4730:	e7 9f       	mul	r30, r23
-    4732:	f0 01       	movw	r30, r0
-    4734:	11 24       	eor	r1, r1
-    4736:	23 70       	andi	r18, 0x03	; 3
-    4738:	e2 2b       	or	r30, r18
-    473a:	eb b9       	out	0x0b, r30	; 11
+    3ade:	25 b1       	in	r18, 0x05	; 5
+    3ae0:	2a 60       	ori	r18, 0x0A	; 10
+    3ae2:	25 b9       	out	0x05, r18	; 5
+    3ae4:	25 b1       	in	r18, 0x05	; 5
+    3ae6:	25 7f       	andi	r18, 0xF5	; 245
+    3ae8:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    473c:	25 b1       	in	r18, 0x05	; 5
-    473e:	2a 60       	ori	r18, 0x0A	; 10
-    4740:	25 b9       	out	0x05, r18	; 5
-    4742:	25 b1       	in	r18, 0x05	; 5
-    4744:	25 7f       	andi	r18, 0xF5	; 245
-    4746:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4748:	25 b1       	in	r18, 0x05	; 5
-    474a:	2a 60       	ori	r18, 0x0A	; 10
-    474c:	25 b9       	out	0x05, r18	; 5
-    474e:	25 b1       	in	r18, 0x05	; 5
-    4750:	25 7f       	andi	r18, 0xF5	; 245
-    4752:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 34));
-    4754:	9c 01       	movw	r18, r24
-    4756:	2e 5d       	subi	r18, 0xDE	; 222
-    4758:	3f 4f       	sbci	r19, 0xFF	; 255
-    475a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    475e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4762:	e2 0f       	add	r30, r18
-    4764:	f3 1f       	adc	r31, r19
-    4766:	e4 91       	lpm	r30, Z
-    4768:	2b b1       	in	r18, 0x0b	; 11
-    476a:	34 e0       	ldi	r19, 0x04	; 4
-    476c:	e3 9f       	mul	r30, r19
-    476e:	f0 01       	movw	r30, r0
-    4770:	11 24       	eor	r1, r1
-    4772:	23 70       	andi	r18, 0x03	; 3
-    4774:	e2 2b       	or	r30, r18
-    4776:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
+    3aea:	fc 01       	movw	r30, r24
+    3aec:	b1 96       	adiw	r30, 0x21	; 33
             PWCLK_GCLK;
-    4778:	25 b1       	in	r18, 0x05	; 5
-    477a:	2a 60       	ori	r18, 0x0A	; 10
-    477c:	25 b9       	out	0x05, r18	; 5
-    477e:	25 b1       	in	r18, 0x05	; 5
-    4780:	25 7f       	andi	r18, 0xF5	; 245
-    4782:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4784:	25 b1       	in	r18, 0x05	; 5
-    4786:	2a 60       	ori	r18, 0x0A	; 10
-    4788:	25 b9       	out	0x05, r18	; 5
-    478a:	25 b1       	in	r18, 0x05	; 5
-    478c:	25 7f       	andi	r18, 0xF5	; 245
-    478e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 35));
-    4790:	9c 01       	movw	r18, r24
-    4792:	2d 5d       	subi	r18, 0xDD	; 221
-    4794:	3f 4f       	sbci	r19, 0xFF	; 255
-    4796:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    479a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    479e:	e2 0f       	add	r30, r18
-    47a0:	f3 1f       	adc	r31, r19
-    47a2:	e4 91       	lpm	r30, Z
-    47a4:	2b b1       	in	r18, 0x0b	; 11
-    47a6:	64 e0       	ldi	r22, 0x04	; 4
-    47a8:	e6 9f       	mul	r30, r22
-    47aa:	f0 01       	movw	r30, r0
-    47ac:	11 24       	eor	r1, r1
-    47ae:	23 70       	andi	r18, 0x03	; 3
-    47b0:	e2 2b       	or	r30, r18
-    47b2:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3aee:	24 91       	lpm	r18, Z
+    3af0:	eb b1       	in	r30, 0x0b	; 11
+    3af2:	f4 e0       	ldi	r31, 0x04	; 4
+    3af4:	2f 9f       	mul	r18, r31
+    3af6:	90 01       	movw	r18, r0
+    3af8:	11 24       	eor	r1, r1
+    3afa:	e3 70       	andi	r30, 0x03	; 3
+    3afc:	e2 2b       	or	r30, r18
+    3afe:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    47b4:	25 b1       	in	r18, 0x05	; 5
-    47b6:	2a 60       	ori	r18, 0x0A	; 10
-    47b8:	25 b9       	out	0x05, r18	; 5
-    47ba:	25 b1       	in	r18, 0x05	; 5
-    47bc:	25 7f       	andi	r18, 0xF5	; 245
-    47be:	25 b9       	out	0x05, r18	; 5
+    3b00:	25 b1       	in	r18, 0x05	; 5
+    3b02:	2a 60       	ori	r18, 0x0A	; 10
+    3b04:	25 b9       	out	0x05, r18	; 5
+    3b06:	25 b1       	in	r18, 0x05	; 5
+    3b08:	25 7f       	andi	r18, 0xF5	; 245
+    3b0a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    47c0:	25 b1       	in	r18, 0x05	; 5
-    47c2:	2a 60       	ori	r18, 0x0A	; 10
-    47c4:	25 b9       	out	0x05, r18	; 5
-    47c6:	25 b1       	in	r18, 0x05	; 5
-    47c8:	25 7f       	andi	r18, 0xF5	; 245
-    47ca:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 36));
-    47cc:	9c 01       	movw	r18, r24
-    47ce:	2c 5d       	subi	r18, 0xDC	; 220
-    47d0:	3f 4f       	sbci	r19, 0xFF	; 255
-    47d2:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    47d6:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    47da:	e2 0f       	add	r30, r18
-    47dc:	f3 1f       	adc	r31, r19
-    47de:	e4 91       	lpm	r30, Z
-    47e0:	2b b1       	in	r18, 0x0b	; 11
-    47e2:	74 e0       	ldi	r23, 0x04	; 4
-    47e4:	e7 9f       	mul	r30, r23
-    47e6:	f0 01       	movw	r30, r0
-    47e8:	11 24       	eor	r1, r1
-    47ea:	23 70       	andi	r18, 0x03	; 3
-    47ec:	e2 2b       	or	r30, r18
-    47ee:	eb b9       	out	0x0b, r30	; 11
+    3b0c:	25 b1       	in	r18, 0x05	; 5
+    3b0e:	2a 60       	ori	r18, 0x0A	; 10
+    3b10:	25 b9       	out	0x05, r18	; 5
+    3b12:	25 b1       	in	r18, 0x05	; 5
+    3b14:	25 7f       	andi	r18, 0xF5	; 245
+    3b16:	25 b9       	out	0x05, r18	; 5
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    47f0:	25 b1       	in	r18, 0x05	; 5
-    47f2:	2a 60       	ori	r18, 0x0A	; 10
-    47f4:	25 b9       	out	0x05, r18	; 5
-    47f6:	25 b1       	in	r18, 0x05	; 5
-    47f8:	25 7f       	andi	r18, 0xF5	; 245
-    47fa:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    47fc:	25 b1       	in	r18, 0x05	; 5
-    47fe:	2a 60       	ori	r18, 0x0A	; 10
-    4800:	25 b9       	out	0x05, r18	; 5
-    4802:	25 b1       	in	r18, 0x05	; 5
-    4804:	25 7f       	andi	r18, 0xF5	; 245
-    4806:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 37));
-    4808:	9c 01       	movw	r18, r24
-    480a:	2b 5d       	subi	r18, 0xDB	; 219
-    480c:	3f 4f       	sbci	r19, 0xFF	; 255
-    480e:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4812:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4816:	e2 0f       	add	r30, r18
-    4818:	f3 1f       	adc	r31, r19
-    481a:	e4 91       	lpm	r30, Z
-    481c:	2b b1       	in	r18, 0x0b	; 11
-    481e:	34 e0       	ldi	r19, 0x04	; 4
-    4820:	e3 9f       	mul	r30, r19
-    4822:	f0 01       	movw	r30, r0
-    4824:	11 24       	eor	r1, r1
-    4826:	23 70       	andi	r18, 0x03	; 3
-    4828:	e2 2b       	or	r30, r18
-    482a:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3b18:	fc 01       	movw	r30, r24
+    3b1a:	b2 96       	adiw	r30, 0x22	; 34
             PWCLK_GCLK;
-    482c:	25 b1       	in	r18, 0x05	; 5
-    482e:	2a 60       	ori	r18, 0x0A	; 10
-    4830:	25 b9       	out	0x05, r18	; 5
-    4832:	25 b1       	in	r18, 0x05	; 5
-    4834:	25 7f       	andi	r18, 0xF5	; 245
-    4836:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4838:	25 b1       	in	r18, 0x05	; 5
-    483a:	2a 60       	ori	r18, 0x0A	; 10
-    483c:	25 b9       	out	0x05, r18	; 5
-    483e:	25 b1       	in	r18, 0x05	; 5
-    4840:	25 7f       	andi	r18, 0xF5	; 245
-    4842:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 38));
-    4844:	9c 01       	movw	r18, r24
-    4846:	2a 5d       	subi	r18, 0xDA	; 218
-    4848:	3f 4f       	sbci	r19, 0xFF	; 255
-    484a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    484e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4852:	e2 0f       	add	r30, r18
-    4854:	f3 1f       	adc	r31, r19
-    4856:	e4 91       	lpm	r30, Z
-    4858:	2b b1       	in	r18, 0x0b	; 11
-    485a:	64 e0       	ldi	r22, 0x04	; 4
-    485c:	e6 9f       	mul	r30, r22
-    485e:	f0 01       	movw	r30, r0
-    4860:	11 24       	eor	r1, r1
-    4862:	23 70       	andi	r18, 0x03	; 3
-    4864:	e2 2b       	or	r30, r18
-    4866:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3b1c:	24 91       	lpm	r18, Z
+    3b1e:	eb b1       	in	r30, 0x0b	; 11
+    3b20:	64 e0       	ldi	r22, 0x04	; 4
+    3b22:	26 9f       	mul	r18, r22
+    3b24:	90 01       	movw	r18, r0
+    3b26:	11 24       	eor	r1, r1
+    3b28:	e3 70       	andi	r30, 0x03	; 3
+    3b2a:	e2 2b       	or	r30, r18
+    3b2c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4868:	25 b1       	in	r18, 0x05	; 5
-    486a:	2a 60       	ori	r18, 0x0A	; 10
-    486c:	25 b9       	out	0x05, r18	; 5
-    486e:	25 b1       	in	r18, 0x05	; 5
-    4870:	25 7f       	andi	r18, 0xF5	; 245
-    4872:	25 b9       	out	0x05, r18	; 5
+    3b2e:	25 b1       	in	r18, 0x05	; 5
+    3b30:	2a 60       	ori	r18, 0x0A	; 10
+    3b32:	25 b9       	out	0x05, r18	; 5
+    3b34:	25 b1       	in	r18, 0x05	; 5
+    3b36:	25 7f       	andi	r18, 0xF5	; 245
+    3b38:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4874:	25 b1       	in	r18, 0x05	; 5
-    4876:	2a 60       	ori	r18, 0x0A	; 10
-    4878:	25 b9       	out	0x05, r18	; 5
-    487a:	25 b1       	in	r18, 0x05	; 5
-    487c:	25 7f       	andi	r18, 0xF5	; 245
-    487e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 39));
-    4880:	9c 01       	movw	r18, r24
-    4882:	29 5d       	subi	r18, 0xD9	; 217
-    4884:	3f 4f       	sbci	r19, 0xFF	; 255
-    4886:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    488a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    488e:	e2 0f       	add	r30, r18
-    4890:	f3 1f       	adc	r31, r19
-    4892:	e4 91       	lpm	r30, Z
-    4894:	2b b1       	in	r18, 0x0b	; 11
-    4896:	74 e0       	ldi	r23, 0x04	; 4
-    4898:	e7 9f       	mul	r30, r23
-    489a:	f0 01       	movw	r30, r0
-    489c:	11 24       	eor	r1, r1
-    489e:	23 70       	andi	r18, 0x03	; 3
-    48a0:	e2 2b       	or	r30, r18
-    48a2:	eb b9       	out	0x0b, r30	; 11
+    3b3a:	25 b1       	in	r18, 0x05	; 5
+    3b3c:	2a 60       	ori	r18, 0x0A	; 10
+    3b3e:	25 b9       	out	0x05, r18	; 5
+    3b40:	25 b1       	in	r18, 0x05	; 5
+    3b42:	25 7f       	andi	r18, 0xF5	; 245
+    3b44:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    48a4:	25 b1       	in	r18, 0x05	; 5
-    48a6:	2a 60       	ori	r18, 0x0A	; 10
-    48a8:	25 b9       	out	0x05, r18	; 5
-    48aa:	25 b1       	in	r18, 0x05	; 5
-    48ac:	25 7f       	andi	r18, 0xF5	; 245
-    48ae:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    48b0:	25 b1       	in	r18, 0x05	; 5
-    48b2:	2a 60       	ori	r18, 0x0A	; 10
-    48b4:	25 b9       	out	0x05, r18	; 5
-    48b6:	25 b1       	in	r18, 0x05	; 5
-    48b8:	25 7f       	andi	r18, 0xF5	; 245
-    48ba:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3b46:	fc 01       	movw	r30, r24
+    3b48:	b3 96       	adiw	r30, 0x23	; 35
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3b4a:	24 91       	lpm	r18, Z
+    3b4c:	eb b1       	in	r30, 0x0b	; 11
+    3b4e:	74 e0       	ldi	r23, 0x04	; 4
+    3b50:	27 9f       	mul	r18, r23
+    3b52:	90 01       	movw	r18, r0
+    3b54:	11 24       	eor	r1, r1
+    3b56:	e3 70       	andi	r30, 0x03	; 3
+    3b58:	e2 2b       	or	r30, r18
+    3b5a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3b5c:	25 b1       	in	r18, 0x05	; 5
+    3b5e:	2a 60       	ori	r18, 0x0A	; 10
+    3b60:	25 b9       	out	0x05, r18	; 5
+    3b62:	25 b1       	in	r18, 0x05	; 5
+    3b64:	25 7f       	andi	r18, 0xF5	; 245
+    3b66:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3b68:	25 b1       	in	r18, 0x05	; 5
+    3b6a:	2a 60       	ori	r18, 0x0A	; 10
+    3b6c:	25 b9       	out	0x05, r18	; 5
+    3b6e:	25 b1       	in	r18, 0x05	; 5
+    3b70:	25 7f       	andi	r18, 0xF5	; 245
+    3b72:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3b74:	fc 01       	movw	r30, r24
+    3b76:	b4 96       	adiw	r30, 0x24	; 36
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3b78:	24 91       	lpm	r18, Z
+    3b7a:	eb b1       	in	r30, 0x0b	; 11
+    3b7c:	f4 e0       	ldi	r31, 0x04	; 4
+    3b7e:	2f 9f       	mul	r18, r31
+    3b80:	90 01       	movw	r18, r0
+    3b82:	11 24       	eor	r1, r1
+    3b84:	e3 70       	andi	r30, 0x03	; 3
+    3b86:	e2 2b       	or	r30, r18
+    3b88:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3b8a:	25 b1       	in	r18, 0x05	; 5
+    3b8c:	2a 60       	ori	r18, 0x0A	; 10
+    3b8e:	25 b9       	out	0x05, r18	; 5
+    3b90:	25 b1       	in	r18, 0x05	; 5
+    3b92:	25 7f       	andi	r18, 0xF5	; 245
+    3b94:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3b96:	25 b1       	in	r18, 0x05	; 5
+    3b98:	2a 60       	ori	r18, 0x0A	; 10
+    3b9a:	25 b9       	out	0x05, r18	; 5
+    3b9c:	25 b1       	in	r18, 0x05	; 5
+    3b9e:	25 7f       	andi	r18, 0xF5	; 245
+    3ba0:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3ba2:	fc 01       	movw	r30, r24
+    3ba4:	b5 96       	adiw	r30, 0x25	; 37
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3ba6:	24 91       	lpm	r18, Z
+    3ba8:	eb b1       	in	r30, 0x0b	; 11
+    3baa:	64 e0       	ldi	r22, 0x04	; 4
+    3bac:	26 9f       	mul	r18, r22
+    3bae:	90 01       	movw	r18, r0
+    3bb0:	11 24       	eor	r1, r1
+    3bb2:	e3 70       	andi	r30, 0x03	; 3
+    3bb4:	e2 2b       	or	r30, r18
+    3bb6:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3bb8:	25 b1       	in	r18, 0x05	; 5
+    3bba:	2a 60       	ori	r18, 0x0A	; 10
+    3bbc:	25 b9       	out	0x05, r18	; 5
+    3bbe:	25 b1       	in	r18, 0x05	; 5
+    3bc0:	25 7f       	andi	r18, 0xF5	; 245
+    3bc2:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3bc4:	25 b1       	in	r18, 0x05	; 5
+    3bc6:	2a 60       	ori	r18, 0x0A	; 10
+    3bc8:	25 b9       	out	0x05, r18	; 5
+    3bca:	25 b1       	in	r18, 0x05	; 5
+    3bcc:	25 7f       	andi	r18, 0xF5	; 245
+    3bce:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3bd0:	fc 01       	movw	r30, r24
+    3bd2:	b6 96       	adiw	r30, 0x26	; 38
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3bd4:	24 91       	lpm	r18, Z
+    3bd6:	eb b1       	in	r30, 0x0b	; 11
+    3bd8:	74 e0       	ldi	r23, 0x04	; 4
+    3bda:	27 9f       	mul	r18, r23
+    3bdc:	90 01       	movw	r18, r0
+    3bde:	11 24       	eor	r1, r1
+    3be0:	e3 70       	andi	r30, 0x03	; 3
+    3be2:	e2 2b       	or	r30, r18
+    3be4:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3be6:	25 b1       	in	r18, 0x05	; 5
+    3be8:	2a 60       	ori	r18, 0x0A	; 10
+    3bea:	25 b9       	out	0x05, r18	; 5
+    3bec:	25 b1       	in	r18, 0x05	; 5
+    3bee:	25 7f       	andi	r18, 0xF5	; 245
+    3bf0:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3bf2:	25 b1       	in	r18, 0x05	; 5
+    3bf4:	2a 60       	ori	r18, 0x0A	; 10
+    3bf6:	25 b9       	out	0x05, r18	; 5
+    3bf8:	25 b1       	in	r18, 0x05	; 5
+    3bfa:	25 7f       	andi	r18, 0xF5	; 245
+    3bfc:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3bfe:	fc 01       	movw	r30, r24
+    3c00:	b7 96       	adiw	r30, 0x27	; 39
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3c02:	24 91       	lpm	r18, Z
+    3c04:	eb b1       	in	r30, 0x0b	; 11
+    3c06:	f4 e0       	ldi	r31, 0x04	; 4
+    3c08:	2f 9f       	mul	r18, r31
+    3c0a:	90 01       	movw	r18, r0
+    3c0c:	11 24       	eor	r1, r1
+    3c0e:	e3 70       	andi	r30, 0x03	; 3
+    3c10:	e2 2b       	or	r30, r18
+    3c12:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3c14:	25 b1       	in	r18, 0x05	; 5
+    3c16:	2a 60       	ori	r18, 0x0A	; 10
+    3c18:	25 b9       	out	0x05, r18	; 5
+    3c1a:	25 b1       	in	r18, 0x05	; 5
+    3c1c:	25 7f       	andi	r18, 0xF5	; 245
+    3c1e:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3c20:	25 b1       	in	r18, 0x05	; 5
+    3c22:	2a 60       	ori	r18, 0x0A	; 10
+    3c24:	25 b9       	out	0x05, r18	; 5
+    3c26:	25 b1       	in	r18, 0x05	; 5
+    3c28:	25 7f       	andi	r18, 0xF5	; 245
+    3c2a:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3c2c:	fc 01       	movw	r30, r24
+    3c2e:	b8 96       	adiw	r30, 0x28	; 40
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 5
-            SET_COLOR(pgm_read_byte(buffer + index + 40));
-    48bc:	9c 01       	movw	r18, r24
-    48be:	28 5d       	subi	r18, 0xD8	; 216
-    48c0:	3f 4f       	sbci	r19, 0xFF	; 255
-    48c2:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    48c6:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    48ca:	e2 0f       	add	r30, r18
-    48cc:	f3 1f       	adc	r31, r19
-    48ce:	e4 91       	lpm	r30, Z
-    48d0:	2b b1       	in	r18, 0x0b	; 11
-    48d2:	34 e0       	ldi	r19, 0x04	; 4
-    48d4:	e3 9f       	mul	r30, r19
-    48d6:	f0 01       	movw	r30, r0
-    48d8:	11 24       	eor	r1, r1
-    48da:	23 70       	andi	r18, 0x03	; 3
-    48dc:	e2 2b       	or	r30, r18
-    48de:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3c30:	24 91       	lpm	r18, Z
+    3c32:	eb b1       	in	r30, 0x0b	; 11
+    3c34:	64 e0       	ldi	r22, 0x04	; 4
+    3c36:	26 9f       	mul	r18, r22
+    3c38:	90 01       	movw	r18, r0
+    3c3a:	11 24       	eor	r1, r1
+    3c3c:	e3 70       	andi	r30, 0x03	; 3
+    3c3e:	e2 2b       	or	r30, r18
+    3c40:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    48e0:	25 b1       	in	r18, 0x05	; 5
-    48e2:	2a 60       	ori	r18, 0x0A	; 10
-    48e4:	25 b9       	out	0x05, r18	; 5
-    48e6:	25 b1       	in	r18, 0x05	; 5
-    48e8:	25 7f       	andi	r18, 0xF5	; 245
-    48ea:	25 b9       	out	0x05, r18	; 5
+    3c42:	25 b1       	in	r18, 0x05	; 5
+    3c44:	2a 60       	ori	r18, 0x0A	; 10
+    3c46:	25 b9       	out	0x05, r18	; 5
+    3c48:	25 b1       	in	r18, 0x05	; 5
+    3c4a:	25 7f       	andi	r18, 0xF5	; 245
+    3c4c:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    48ec:	25 b1       	in	r18, 0x05	; 5
-    48ee:	2a 60       	ori	r18, 0x0A	; 10
-    48f0:	25 b9       	out	0x05, r18	; 5
-    48f2:	25 b1       	in	r18, 0x05	; 5
-    48f4:	25 7f       	andi	r18, 0xF5	; 245
-    48f6:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 41));
-    48f8:	9c 01       	movw	r18, r24
-    48fa:	27 5d       	subi	r18, 0xD7	; 215
-    48fc:	3f 4f       	sbci	r19, 0xFF	; 255
-    48fe:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4902:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4906:	e2 0f       	add	r30, r18
-    4908:	f3 1f       	adc	r31, r19
-    490a:	e4 91       	lpm	r30, Z
-    490c:	2b b1       	in	r18, 0x0b	; 11
-    490e:	64 e0       	ldi	r22, 0x04	; 4
-    4910:	e6 9f       	mul	r30, r22
-    4912:	f0 01       	movw	r30, r0
-    4914:	11 24       	eor	r1, r1
-    4916:	23 70       	andi	r18, 0x03	; 3
-    4918:	e2 2b       	or	r30, r18
-    491a:	eb b9       	out	0x0b, r30	; 11
+    3c4e:	25 b1       	in	r18, 0x05	; 5
+    3c50:	2a 60       	ori	r18, 0x0A	; 10
+    3c52:	25 b9       	out	0x05, r18	; 5
+    3c54:	25 b1       	in	r18, 0x05	; 5
+    3c56:	25 7f       	andi	r18, 0xF5	; 245
+    3c58:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    491c:	25 b1       	in	r18, 0x05	; 5
-    491e:	2a 60       	ori	r18, 0x0A	; 10
-    4920:	25 b9       	out	0x05, r18	; 5
-    4922:	25 b1       	in	r18, 0x05	; 5
-    4924:	25 7f       	andi	r18, 0xF5	; 245
-    4926:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4928:	25 b1       	in	r18, 0x05	; 5
-    492a:	2a 60       	ori	r18, 0x0A	; 10
-    492c:	25 b9       	out	0x05, r18	; 5
-    492e:	25 b1       	in	r18, 0x05	; 5
-    4930:	25 7f       	andi	r18, 0xF5	; 245
-    4932:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 42));
-    4934:	9c 01       	movw	r18, r24
-    4936:	26 5d       	subi	r18, 0xD6	; 214
-    4938:	3f 4f       	sbci	r19, 0xFF	; 255
-    493a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    493e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4942:	e2 0f       	add	r30, r18
-    4944:	f3 1f       	adc	r31, r19
-    4946:	e4 91       	lpm	r30, Z
-    4948:	2b b1       	in	r18, 0x0b	; 11
-    494a:	74 e0       	ldi	r23, 0x04	; 4
-    494c:	e7 9f       	mul	r30, r23
-    494e:	f0 01       	movw	r30, r0
-    4950:	11 24       	eor	r1, r1
-    4952:	23 70       	andi	r18, 0x03	; 3
-    4954:	e2 2b       	or	r30, r18
-    4956:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
+    3c5a:	fc 01       	movw	r30, r24
+    3c5c:	b9 96       	adiw	r30, 0x29	; 41
             PWCLK_GCLK;
-    4958:	25 b1       	in	r18, 0x05	; 5
-    495a:	2a 60       	ori	r18, 0x0A	; 10
-    495c:	25 b9       	out	0x05, r18	; 5
-    495e:	25 b1       	in	r18, 0x05	; 5
-    4960:	25 7f       	andi	r18, 0xF5	; 245
-    4962:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4964:	25 b1       	in	r18, 0x05	; 5
-    4966:	2a 60       	ori	r18, 0x0A	; 10
-    4968:	25 b9       	out	0x05, r18	; 5
-    496a:	25 b1       	in	r18, 0x05	; 5
-    496c:	25 7f       	andi	r18, 0xF5	; 245
-    496e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 43));
-    4970:	9c 01       	movw	r18, r24
-    4972:	25 5d       	subi	r18, 0xD5	; 213
-    4974:	3f 4f       	sbci	r19, 0xFF	; 255
-    4976:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    497a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    497e:	e2 0f       	add	r30, r18
-    4980:	f3 1f       	adc	r31, r19
-    4982:	e4 91       	lpm	r30, Z
-    4984:	2b b1       	in	r18, 0x0b	; 11
-    4986:	34 e0       	ldi	r19, 0x04	; 4
-    4988:	e3 9f       	mul	r30, r19
-    498a:	f0 01       	movw	r30, r0
-    498c:	11 24       	eor	r1, r1
-    498e:	23 70       	andi	r18, 0x03	; 3
-    4990:	e2 2b       	or	r30, r18
-    4992:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3c5e:	24 91       	lpm	r18, Z
+    3c60:	eb b1       	in	r30, 0x0b	; 11
+    3c62:	74 e0       	ldi	r23, 0x04	; 4
+    3c64:	27 9f       	mul	r18, r23
+    3c66:	90 01       	movw	r18, r0
+    3c68:	11 24       	eor	r1, r1
+    3c6a:	e3 70       	andi	r30, 0x03	; 3
+    3c6c:	e2 2b       	or	r30, r18
+    3c6e:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4994:	25 b1       	in	r18, 0x05	; 5
-    4996:	2a 60       	ori	r18, 0x0A	; 10
-    4998:	25 b9       	out	0x05, r18	; 5
-    499a:	25 b1       	in	r18, 0x05	; 5
-    499c:	25 7f       	andi	r18, 0xF5	; 245
-    499e:	25 b9       	out	0x05, r18	; 5
+    3c70:	25 b1       	in	r18, 0x05	; 5
+    3c72:	2a 60       	ori	r18, 0x0A	; 10
+    3c74:	25 b9       	out	0x05, r18	; 5
+    3c76:	25 b1       	in	r18, 0x05	; 5
+    3c78:	25 7f       	andi	r18, 0xF5	; 245
+    3c7a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    49a0:	25 b1       	in	r18, 0x05	; 5
-    49a2:	2a 60       	ori	r18, 0x0A	; 10
-    49a4:	25 b9       	out	0x05, r18	; 5
-    49a6:	25 b1       	in	r18, 0x05	; 5
-    49a8:	25 7f       	andi	r18, 0xF5	; 245
-    49aa:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 44));
-    49ac:	9c 01       	movw	r18, r24
-    49ae:	24 5d       	subi	r18, 0xD4	; 212
-    49b0:	3f 4f       	sbci	r19, 0xFF	; 255
-    49b2:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    49b6:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    49ba:	e2 0f       	add	r30, r18
-    49bc:	f3 1f       	adc	r31, r19
-    49be:	e4 91       	lpm	r30, Z
-    49c0:	2b b1       	in	r18, 0x0b	; 11
-    49c2:	64 e0       	ldi	r22, 0x04	; 4
-    49c4:	e6 9f       	mul	r30, r22
-    49c6:	f0 01       	movw	r30, r0
-    49c8:	11 24       	eor	r1, r1
-    49ca:	23 70       	andi	r18, 0x03	; 3
-    49cc:	e2 2b       	or	r30, r18
-    49ce:	eb b9       	out	0x0b, r30	; 11
+    3c7c:	25 b1       	in	r18, 0x05	; 5
+    3c7e:	2a 60       	ori	r18, 0x0A	; 10
+    3c80:	25 b9       	out	0x05, r18	; 5
+    3c82:	25 b1       	in	r18, 0x05	; 5
+    3c84:	25 7f       	andi	r18, 0xF5	; 245
+    3c86:	25 b9       	out	0x05, r18	; 5
+
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    49d0:	25 b1       	in	r18, 0x05	; 5
-    49d2:	2a 60       	ori	r18, 0x0A	; 10
-    49d4:	25 b9       	out	0x05, r18	; 5
-    49d6:	25 b1       	in	r18, 0x05	; 5
-    49d8:	25 7f       	andi	r18, 0xF5	; 245
-    49da:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    49dc:	25 b1       	in	r18, 0x05	; 5
-    49de:	2a 60       	ori	r18, 0x0A	; 10
-    49e0:	25 b9       	out	0x05, r18	; 5
-    49e2:	25 b1       	in	r18, 0x05	; 5
-    49e4:	25 7f       	andi	r18, 0xF5	; 245
-    49e6:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 45));
-    49e8:	9c 01       	movw	r18, r24
-    49ea:	23 5d       	subi	r18, 0xD3	; 211
-    49ec:	3f 4f       	sbci	r19, 0xFF	; 255
-    49ee:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    49f2:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    49f6:	e2 0f       	add	r30, r18
-    49f8:	f3 1f       	adc	r31, r19
-    49fa:	e4 91       	lpm	r30, Z
-    49fc:	2b b1       	in	r18, 0x0b	; 11
-    49fe:	74 e0       	ldi	r23, 0x04	; 4
-    4a00:	e7 9f       	mul	r30, r23
-    4a02:	f0 01       	movw	r30, r0
-    4a04:	11 24       	eor	r1, r1
-    4a06:	23 70       	andi	r18, 0x03	; 3
-    4a08:	e2 2b       	or	r30, r18
-    4a0a:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3c88:	fc 01       	movw	r30, r24
+    3c8a:	ba 96       	adiw	r30, 0x2a	; 42
             PWCLK_GCLK;
-    4a0c:	25 b1       	in	r18, 0x05	; 5
-    4a0e:	2a 60       	ori	r18, 0x0A	; 10
-    4a10:	25 b9       	out	0x05, r18	; 5
-    4a12:	25 b1       	in	r18, 0x05	; 5
-    4a14:	25 7f       	andi	r18, 0xF5	; 245
-    4a16:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4a18:	25 b1       	in	r18, 0x05	; 5
-    4a1a:	2a 60       	ori	r18, 0x0A	; 10
-    4a1c:	25 b9       	out	0x05, r18	; 5
-    4a1e:	25 b1       	in	r18, 0x05	; 5
-    4a20:	25 7f       	andi	r18, 0xF5	; 245
-    4a22:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 46));
-    4a24:	9c 01       	movw	r18, r24
-    4a26:	22 5d       	subi	r18, 0xD2	; 210
-    4a28:	3f 4f       	sbci	r19, 0xFF	; 255
-    4a2a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4a2e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4a32:	e2 0f       	add	r30, r18
-    4a34:	f3 1f       	adc	r31, r19
-    4a36:	e4 91       	lpm	r30, Z
-    4a38:	2b b1       	in	r18, 0x0b	; 11
-    4a3a:	34 e0       	ldi	r19, 0x04	; 4
-    4a3c:	e3 9f       	mul	r30, r19
-    4a3e:	f0 01       	movw	r30, r0
-    4a40:	11 24       	eor	r1, r1
-    4a42:	23 70       	andi	r18, 0x03	; 3
-    4a44:	e2 2b       	or	r30, r18
-    4a46:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3c8c:	24 91       	lpm	r18, Z
+    3c8e:	eb b1       	in	r30, 0x0b	; 11
+    3c90:	f4 e0       	ldi	r31, 0x04	; 4
+    3c92:	2f 9f       	mul	r18, r31
+    3c94:	90 01       	movw	r18, r0
+    3c96:	11 24       	eor	r1, r1
+    3c98:	e3 70       	andi	r30, 0x03	; 3
+    3c9a:	e2 2b       	or	r30, r18
+    3c9c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4a48:	25 b1       	in	r18, 0x05	; 5
-    4a4a:	2a 60       	ori	r18, 0x0A	; 10
-    4a4c:	25 b9       	out	0x05, r18	; 5
-    4a4e:	25 b1       	in	r18, 0x05	; 5
-    4a50:	25 7f       	andi	r18, 0xF5	; 245
-    4a52:	25 b9       	out	0x05, r18	; 5
+    3c9e:	25 b1       	in	r18, 0x05	; 5
+    3ca0:	2a 60       	ori	r18, 0x0A	; 10
+    3ca2:	25 b9       	out	0x05, r18	; 5
+    3ca4:	25 b1       	in	r18, 0x05	; 5
+    3ca6:	25 7f       	andi	r18, 0xF5	; 245
+    3ca8:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4a54:	25 b1       	in	r18, 0x05	; 5
-    4a56:	2a 60       	ori	r18, 0x0A	; 10
-    4a58:	25 b9       	out	0x05, r18	; 5
-    4a5a:	25 b1       	in	r18, 0x05	; 5
-    4a5c:	25 7f       	andi	r18, 0xF5	; 245
-    4a5e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 47));
-    4a60:	9c 01       	movw	r18, r24
-    4a62:	21 5d       	subi	r18, 0xD1	; 209
-    4a64:	3f 4f       	sbci	r19, 0xFF	; 255
-    4a66:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4a6a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4a6e:	e2 0f       	add	r30, r18
-    4a70:	f3 1f       	adc	r31, r19
-    4a72:	e4 91       	lpm	r30, Z
-    4a74:	2b b1       	in	r18, 0x0b	; 11
-    4a76:	64 e0       	ldi	r22, 0x04	; 4
-    4a78:	e6 9f       	mul	r30, r22
-    4a7a:	f0 01       	movw	r30, r0
-    4a7c:	11 24       	eor	r1, r1
-    4a7e:	23 70       	andi	r18, 0x03	; 3
-    4a80:	e2 2b       	or	r30, r18
-    4a82:	eb b9       	out	0x0b, r30	; 11
+    3caa:	25 b1       	in	r18, 0x05	; 5
+    3cac:	2a 60       	ori	r18, 0x0A	; 10
+    3cae:	25 b9       	out	0x05, r18	; 5
+    3cb0:	25 b1       	in	r18, 0x05	; 5
+    3cb2:	25 7f       	andi	r18, 0xF5	; 245
+    3cb4:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4a84:	25 b1       	in	r18, 0x05	; 5
-    4a86:	2a 60       	ori	r18, 0x0A	; 10
-    4a88:	25 b9       	out	0x05, r18	; 5
-    4a8a:	25 b1       	in	r18, 0x05	; 5
-    4a8c:	25 7f       	andi	r18, 0xF5	; 245
-    4a8e:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4a90:	25 b1       	in	r18, 0x05	; 5
-    4a92:	2a 60       	ori	r18, 0x0A	; 10
-    4a94:	25 b9       	out	0x05, r18	; 5
-    4a96:	25 b1       	in	r18, 0x05	; 5
-    4a98:	25 7f       	andi	r18, 0xF5	; 245
-    4a9a:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3cb6:	fc 01       	movw	r30, r24
+    3cb8:	bb 96       	adiw	r30, 0x2b	; 43
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3cba:	24 91       	lpm	r18, Z
+    3cbc:	eb b1       	in	r30, 0x0b	; 11
+    3cbe:	64 e0       	ldi	r22, 0x04	; 4
+    3cc0:	26 9f       	mul	r18, r22
+    3cc2:	90 01       	movw	r18, r0
+    3cc4:	11 24       	eor	r1, r1
+    3cc6:	e3 70       	andi	r30, 0x03	; 3
+    3cc8:	e2 2b       	or	r30, r18
+    3cca:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3ccc:	25 b1       	in	r18, 0x05	; 5
+    3cce:	2a 60       	ori	r18, 0x0A	; 10
+    3cd0:	25 b9       	out	0x05, r18	; 5
+    3cd2:	25 b1       	in	r18, 0x05	; 5
+    3cd4:	25 7f       	andi	r18, 0xF5	; 245
+    3cd6:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3cd8:	25 b1       	in	r18, 0x05	; 5
+    3cda:	2a 60       	ori	r18, 0x0A	; 10
+    3cdc:	25 b9       	out	0x05, r18	; 5
+    3cde:	25 b1       	in	r18, 0x05	; 5
+    3ce0:	25 7f       	andi	r18, 0xF5	; 245
+    3ce2:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3ce4:	fc 01       	movw	r30, r24
+    3ce6:	bc 96       	adiw	r30, 0x2c	; 44
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3ce8:	24 91       	lpm	r18, Z
+    3cea:	eb b1       	in	r30, 0x0b	; 11
+    3cec:	74 e0       	ldi	r23, 0x04	; 4
+    3cee:	27 9f       	mul	r18, r23
+    3cf0:	90 01       	movw	r18, r0
+    3cf2:	11 24       	eor	r1, r1
+    3cf4:	e3 70       	andi	r30, 0x03	; 3
+    3cf6:	e2 2b       	or	r30, r18
+    3cf8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3cfa:	25 b1       	in	r18, 0x05	; 5
+    3cfc:	2a 60       	ori	r18, 0x0A	; 10
+    3cfe:	25 b9       	out	0x05, r18	; 5
+    3d00:	25 b1       	in	r18, 0x05	; 5
+    3d02:	25 7f       	andi	r18, 0xF5	; 245
+    3d04:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3d06:	25 b1       	in	r18, 0x05	; 5
+    3d08:	2a 60       	ori	r18, 0x0A	; 10
+    3d0a:	25 b9       	out	0x05, r18	; 5
+    3d0c:	25 b1       	in	r18, 0x05	; 5
+    3d0e:	25 7f       	andi	r18, 0xF5	; 245
+    3d10:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3d12:	fc 01       	movw	r30, r24
+    3d14:	bd 96       	adiw	r30, 0x2d	; 45
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3d16:	24 91       	lpm	r18, Z
+    3d18:	eb b1       	in	r30, 0x0b	; 11
+    3d1a:	f4 e0       	ldi	r31, 0x04	; 4
+    3d1c:	2f 9f       	mul	r18, r31
+    3d1e:	90 01       	movw	r18, r0
+    3d20:	11 24       	eor	r1, r1
+    3d22:	e3 70       	andi	r30, 0x03	; 3
+    3d24:	e2 2b       	or	r30, r18
+    3d26:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3d28:	25 b1       	in	r18, 0x05	; 5
+    3d2a:	2a 60       	ori	r18, 0x0A	; 10
+    3d2c:	25 b9       	out	0x05, r18	; 5
+    3d2e:	25 b1       	in	r18, 0x05	; 5
+    3d30:	25 7f       	andi	r18, 0xF5	; 245
+    3d32:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3d34:	25 b1       	in	r18, 0x05	; 5
+    3d36:	2a 60       	ori	r18, 0x0A	; 10
+    3d38:	25 b9       	out	0x05, r18	; 5
+    3d3a:	25 b1       	in	r18, 0x05	; 5
+    3d3c:	25 7f       	andi	r18, 0xF5	; 245
+    3d3e:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3d40:	fc 01       	movw	r30, r24
+    3d42:	be 96       	adiw	r30, 0x2e	; 46
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3d44:	24 91       	lpm	r18, Z
+    3d46:	eb b1       	in	r30, 0x0b	; 11
+    3d48:	64 e0       	ldi	r22, 0x04	; 4
+    3d4a:	26 9f       	mul	r18, r22
+    3d4c:	90 01       	movw	r18, r0
+    3d4e:	11 24       	eor	r1, r1
+    3d50:	e3 70       	andi	r30, 0x03	; 3
+    3d52:	e2 2b       	or	r30, r18
+    3d54:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3d56:	25 b1       	in	r18, 0x05	; 5
+    3d58:	2a 60       	ori	r18, 0x0A	; 10
+    3d5a:	25 b9       	out	0x05, r18	; 5
+    3d5c:	25 b1       	in	r18, 0x05	; 5
+    3d5e:	25 7f       	andi	r18, 0xF5	; 245
+    3d60:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3d62:	25 b1       	in	r18, 0x05	; 5
+    3d64:	2a 60       	ori	r18, 0x0A	; 10
+    3d66:	25 b9       	out	0x05, r18	; 5
+    3d68:	25 b1       	in	r18, 0x05	; 5
+    3d6a:	25 7f       	andi	r18, 0xF5	; 245
+    3d6c:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3d6e:	fc 01       	movw	r30, r24
+    3d70:	bf 96       	adiw	r30, 0x2f	; 47
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3d72:	24 91       	lpm	r18, Z
+    3d74:	eb b1       	in	r30, 0x0b	; 11
+    3d76:	74 e0       	ldi	r23, 0x04	; 4
+    3d78:	27 9f       	mul	r18, r23
+    3d7a:	90 01       	movw	r18, r0
+    3d7c:	11 24       	eor	r1, r1
+    3d7e:	e3 70       	andi	r30, 0x03	; 3
+    3d80:	e2 2b       	or	r30, r18
+    3d82:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3d84:	25 b1       	in	r18, 0x05	; 5
+    3d86:	2a 60       	ori	r18, 0x0A	; 10
+    3d88:	25 b9       	out	0x05, r18	; 5
+    3d8a:	25 b1       	in	r18, 0x05	; 5
+    3d8c:	25 7f       	andi	r18, 0xF5	; 245
+    3d8e:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3d90:	25 b1       	in	r18, 0x05	; 5
+    3d92:	2a 60       	ori	r18, 0x0A	; 10
+    3d94:	25 b9       	out	0x05, r18	; 5
+    3d96:	25 b1       	in	r18, 0x05	; 5
+    3d98:	25 7f       	andi	r18, 0xF5	; 245
+    3d9a:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3d9c:	fc 01       	movw	r30, r24
+    3d9e:	f0 96       	adiw	r30, 0x30	; 48
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 6
-            SET_COLOR(pgm_read_byte(buffer + index + 48));
-    4a9c:	9c 01       	movw	r18, r24
-    4a9e:	20 5d       	subi	r18, 0xD0	; 208
-    4aa0:	3f 4f       	sbci	r19, 0xFF	; 255
-    4aa2:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4aa6:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4aaa:	e2 0f       	add	r30, r18
-    4aac:	f3 1f       	adc	r31, r19
-    4aae:	e4 91       	lpm	r30, Z
-    4ab0:	2b b1       	in	r18, 0x0b	; 11
-    4ab2:	74 e0       	ldi	r23, 0x04	; 4
-    4ab4:	e7 9f       	mul	r30, r23
-    4ab6:	f0 01       	movw	r30, r0
-    4ab8:	11 24       	eor	r1, r1
-    4aba:	23 70       	andi	r18, 0x03	; 3
-    4abc:	e2 2b       	or	r30, r18
-    4abe:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3da0:	24 91       	lpm	r18, Z
+    3da2:	eb b1       	in	r30, 0x0b	; 11
+    3da4:	f4 e0       	ldi	r31, 0x04	; 4
+    3da6:	2f 9f       	mul	r18, r31
+    3da8:	90 01       	movw	r18, r0
+    3daa:	11 24       	eor	r1, r1
+    3dac:	e3 70       	andi	r30, 0x03	; 3
+    3dae:	e2 2b       	or	r30, r18
+    3db0:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4ac0:	25 b1       	in	r18, 0x05	; 5
-    4ac2:	2a 60       	ori	r18, 0x0A	; 10
-    4ac4:	25 b9       	out	0x05, r18	; 5
-    4ac6:	25 b1       	in	r18, 0x05	; 5
-    4ac8:	25 7f       	andi	r18, 0xF5	; 245
-    4aca:	25 b9       	out	0x05, r18	; 5
+    3db2:	25 b1       	in	r18, 0x05	; 5
+    3db4:	2a 60       	ori	r18, 0x0A	; 10
+    3db6:	25 b9       	out	0x05, r18	; 5
+    3db8:	25 b1       	in	r18, 0x05	; 5
+    3dba:	25 7f       	andi	r18, 0xF5	; 245
+    3dbc:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4acc:	25 b1       	in	r18, 0x05	; 5
-    4ace:	2a 60       	ori	r18, 0x0A	; 10
-    4ad0:	25 b9       	out	0x05, r18	; 5
-    4ad2:	25 b1       	in	r18, 0x05	; 5
-    4ad4:	25 7f       	andi	r18, 0xF5	; 245
-    4ad6:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 49));
-    4ad8:	9c 01       	movw	r18, r24
-    4ada:	2f 5c       	subi	r18, 0xCF	; 207
-    4adc:	3f 4f       	sbci	r19, 0xFF	; 255
-    4ade:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4ae2:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4ae6:	e2 0f       	add	r30, r18
-    4ae8:	f3 1f       	adc	r31, r19
-    4aea:	e4 91       	lpm	r30, Z
-    4aec:	2b b1       	in	r18, 0x0b	; 11
-    4aee:	34 e0       	ldi	r19, 0x04	; 4
-    4af0:	e3 9f       	mul	r30, r19
-    4af2:	f0 01       	movw	r30, r0
-    4af4:	11 24       	eor	r1, r1
-    4af6:	23 70       	andi	r18, 0x03	; 3
-    4af8:	e2 2b       	or	r30, r18
-    4afa:	eb b9       	out	0x0b, r30	; 11
+    3dbe:	25 b1       	in	r18, 0x05	; 5
+    3dc0:	2a 60       	ori	r18, 0x0A	; 10
+    3dc2:	25 b9       	out	0x05, r18	; 5
+    3dc4:	25 b1       	in	r18, 0x05	; 5
+    3dc6:	25 7f       	andi	r18, 0xF5	; 245
+    3dc8:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    4afc:	25 b1       	in	r18, 0x05	; 5
-    4afe:	2a 60       	ori	r18, 0x0A	; 10
-    4b00:	25 b9       	out	0x05, r18	; 5
-    4b02:	25 b1       	in	r18, 0x05	; 5
-    4b04:	25 7f       	andi	r18, 0xF5	; 245
-    4b06:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4b08:	25 b1       	in	r18, 0x05	; 5
-    4b0a:	2a 60       	ori	r18, 0x0A	; 10
-    4b0c:	25 b9       	out	0x05, r18	; 5
-    4b0e:	25 b1       	in	r18, 0x05	; 5
-    4b10:	25 7f       	andi	r18, 0xF5	; 245
-    4b12:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 50));
-    4b14:	9c 01       	movw	r18, r24
-    4b16:	2e 5c       	subi	r18, 0xCE	; 206
-    4b18:	3f 4f       	sbci	r19, 0xFF	; 255
-    4b1a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4b1e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4b22:	e2 0f       	add	r30, r18
-    4b24:	f3 1f       	adc	r31, r19
-    4b26:	e4 91       	lpm	r30, Z
-    4b28:	2b b1       	in	r18, 0x0b	; 11
-    4b2a:	64 e0       	ldi	r22, 0x04	; 4
-    4b2c:	e6 9f       	mul	r30, r22
-    4b2e:	f0 01       	movw	r30, r0
-    4b30:	11 24       	eor	r1, r1
-    4b32:	23 70       	andi	r18, 0x03	; 3
-    4b34:	e2 2b       	or	r30, r18
-    4b36:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 6
+            SET_COLOR(pgm_read_byte(index++));
+    3dca:	fc 01       	movw	r30, r24
+    3dcc:	f1 96       	adiw	r30, 0x31	; 49
             PWCLK_GCLK;
-    4b38:	25 b1       	in	r18, 0x05	; 5
-    4b3a:	2a 60       	ori	r18, 0x0A	; 10
-    4b3c:	25 b9       	out	0x05, r18	; 5
-    4b3e:	25 b1       	in	r18, 0x05	; 5
-    4b40:	25 7f       	andi	r18, 0xF5	; 245
-    4b42:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4b44:	25 b1       	in	r18, 0x05	; 5
-    4b46:	2a 60       	ori	r18, 0x0A	; 10
-    4b48:	25 b9       	out	0x05, r18	; 5
-    4b4a:	25 b1       	in	r18, 0x05	; 5
-    4b4c:	25 7f       	andi	r18, 0xF5	; 245
-    4b4e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 51));
-    4b50:	9c 01       	movw	r18, r24
-    4b52:	2d 5c       	subi	r18, 0xCD	; 205
-    4b54:	3f 4f       	sbci	r19, 0xFF	; 255
-    4b56:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4b5a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4b5e:	e2 0f       	add	r30, r18
-    4b60:	f3 1f       	adc	r31, r19
-    4b62:	e4 91       	lpm	r30, Z
-    4b64:	2b b1       	in	r18, 0x0b	; 11
-    4b66:	74 e0       	ldi	r23, 0x04	; 4
-    4b68:	e7 9f       	mul	r30, r23
-    4b6a:	f0 01       	movw	r30, r0
-    4b6c:	11 24       	eor	r1, r1
-    4b6e:	23 70       	andi	r18, 0x03	; 3
-    4b70:	e2 2b       	or	r30, r18
-    4b72:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3dce:	24 91       	lpm	r18, Z
+    3dd0:	eb b1       	in	r30, 0x0b	; 11
+    3dd2:	64 e0       	ldi	r22, 0x04	; 4
+    3dd4:	26 9f       	mul	r18, r22
+    3dd6:	90 01       	movw	r18, r0
+    3dd8:	11 24       	eor	r1, r1
+    3dda:	e3 70       	andi	r30, 0x03	; 3
+    3ddc:	e2 2b       	or	r30, r18
+    3dde:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4b74:	25 b1       	in	r18, 0x05	; 5
-    4b76:	2a 60       	ori	r18, 0x0A	; 10
-    4b78:	25 b9       	out	0x05, r18	; 5
-    4b7a:	25 b1       	in	r18, 0x05	; 5
-    4b7c:	25 7f       	andi	r18, 0xF5	; 245
-    4b7e:	25 b9       	out	0x05, r18	; 5
+    3de0:	25 b1       	in	r18, 0x05	; 5
+    3de2:	2a 60       	ori	r18, 0x0A	; 10
+    3de4:	25 b9       	out	0x05, r18	; 5
+    3de6:	25 b1       	in	r18, 0x05	; 5
+    3de8:	25 7f       	andi	r18, 0xF5	; 245
+    3dea:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4b80:	25 b1       	in	r18, 0x05	; 5
-    4b82:	2a 60       	ori	r18, 0x0A	; 10
-    4b84:	25 b9       	out	0x05, r18	; 5
-    4b86:	25 b1       	in	r18, 0x05	; 5
-    4b88:	25 7f       	andi	r18, 0xF5	; 245
-    4b8a:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 52));
-    4b8c:	9c 01       	movw	r18, r24
-    4b8e:	2c 5c       	subi	r18, 0xCC	; 204
-    4b90:	3f 4f       	sbci	r19, 0xFF	; 255
-    4b92:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4b96:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4b9a:	e2 0f       	add	r30, r18
-    4b9c:	f3 1f       	adc	r31, r19
-    4b9e:	e4 91       	lpm	r30, Z
-    4ba0:	2b b1       	in	r18, 0x0b	; 11
-    4ba2:	34 e0       	ldi	r19, 0x04	; 4
-    4ba4:	e3 9f       	mul	r30, r19
-    4ba6:	f0 01       	movw	r30, r0
-    4ba8:	11 24       	eor	r1, r1
-    4baa:	23 70       	andi	r18, 0x03	; 3
-    4bac:	e2 2b       	or	r30, r18
-    4bae:	eb b9       	out	0x0b, r30	; 11
+    3dec:	25 b1       	in	r18, 0x05	; 5
+    3dee:	2a 60       	ori	r18, 0x0A	; 10
+    3df0:	25 b9       	out	0x05, r18	; 5
+    3df2:	25 b1       	in	r18, 0x05	; 5
+    3df4:	25 7f       	andi	r18, 0xF5	; 245
+    3df6:	25 b9       	out	0x05, r18	; 5
+
+            // chip 6
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    4bb0:	25 b1       	in	r18, 0x05	; 5
-    4bb2:	2a 60       	ori	r18, 0x0A	; 10
-    4bb4:	25 b9       	out	0x05, r18	; 5
-    4bb6:	25 b1       	in	r18, 0x05	; 5
-    4bb8:	25 7f       	andi	r18, 0xF5	; 245
-    4bba:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4bbc:	25 b1       	in	r18, 0x05	; 5
-    4bbe:	2a 60       	ori	r18, 0x0A	; 10
-    4bc0:	25 b9       	out	0x05, r18	; 5
-    4bc2:	25 b1       	in	r18, 0x05	; 5
-    4bc4:	25 7f       	andi	r18, 0xF5	; 245
-    4bc6:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 53));
-    4bc8:	9c 01       	movw	r18, r24
-    4bca:	2b 5c       	subi	r18, 0xCB	; 203
-    4bcc:	3f 4f       	sbci	r19, 0xFF	; 255
-    4bce:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4bd2:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4bd6:	e2 0f       	add	r30, r18
-    4bd8:	f3 1f       	adc	r31, r19
-    4bda:	e4 91       	lpm	r30, Z
-    4bdc:	2b b1       	in	r18, 0x0b	; 11
-    4bde:	64 e0       	ldi	r22, 0x04	; 4
-    4be0:	e6 9f       	mul	r30, r22
-    4be2:	f0 01       	movw	r30, r0
-    4be4:	11 24       	eor	r1, r1
-    4be6:	23 70       	andi	r18, 0x03	; 3
-    4be8:	e2 2b       	or	r30, r18
-    4bea:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3df8:	fc 01       	movw	r30, r24
+    3dfa:	f2 96       	adiw	r30, 0x32	; 50
             PWCLK_GCLK;
-    4bec:	25 b1       	in	r18, 0x05	; 5
-    4bee:	2a 60       	ori	r18, 0x0A	; 10
-    4bf0:	25 b9       	out	0x05, r18	; 5
-    4bf2:	25 b1       	in	r18, 0x05	; 5
-    4bf4:	25 7f       	andi	r18, 0xF5	; 245
-    4bf6:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4bf8:	25 b1       	in	r18, 0x05	; 5
-    4bfa:	2a 60       	ori	r18, 0x0A	; 10
-    4bfc:	25 b9       	out	0x05, r18	; 5
-    4bfe:	25 b1       	in	r18, 0x05	; 5
-    4c00:	25 7f       	andi	r18, 0xF5	; 245
-    4c02:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 54));
-    4c04:	9c 01       	movw	r18, r24
-    4c06:	2a 5c       	subi	r18, 0xCA	; 202
-    4c08:	3f 4f       	sbci	r19, 0xFF	; 255
-    4c0a:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4c0e:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4c12:	e2 0f       	add	r30, r18
-    4c14:	f3 1f       	adc	r31, r19
-    4c16:	e4 91       	lpm	r30, Z
-    4c18:	2b b1       	in	r18, 0x0b	; 11
-    4c1a:	74 e0       	ldi	r23, 0x04	; 4
-    4c1c:	e7 9f       	mul	r30, r23
-    4c1e:	f0 01       	movw	r30, r0
-    4c20:	11 24       	eor	r1, r1
-    4c22:	23 70       	andi	r18, 0x03	; 3
-    4c24:	e2 2b       	or	r30, r18
-    4c26:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3dfc:	24 91       	lpm	r18, Z
+    3dfe:	eb b1       	in	r30, 0x0b	; 11
+    3e00:	74 e0       	ldi	r23, 0x04	; 4
+    3e02:	27 9f       	mul	r18, r23
+    3e04:	90 01       	movw	r18, r0
+    3e06:	11 24       	eor	r1, r1
+    3e08:	e3 70       	andi	r30, 0x03	; 3
+    3e0a:	e2 2b       	or	r30, r18
+    3e0c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4c28:	25 b1       	in	r18, 0x05	; 5
-    4c2a:	2a 60       	ori	r18, 0x0A	; 10
-    4c2c:	25 b9       	out	0x05, r18	; 5
-    4c2e:	25 b1       	in	r18, 0x05	; 5
-    4c30:	25 7f       	andi	r18, 0xF5	; 245
-    4c32:	25 b9       	out	0x05, r18	; 5
+    3e0e:	25 b1       	in	r18, 0x05	; 5
+    3e10:	2a 60       	ori	r18, 0x0A	; 10
+    3e12:	25 b9       	out	0x05, r18	; 5
+    3e14:	25 b1       	in	r18, 0x05	; 5
+    3e16:	25 7f       	andi	r18, 0xF5	; 245
+    3e18:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4c34:	25 b1       	in	r18, 0x05	; 5
-    4c36:	2a 60       	ori	r18, 0x0A	; 10
-    4c38:	25 b9       	out	0x05, r18	; 5
-    4c3a:	25 b1       	in	r18, 0x05	; 5
-    4c3c:	25 7f       	andi	r18, 0xF5	; 245
-    4c3e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 55));
-    4c40:	9c 01       	movw	r18, r24
-    4c42:	29 5c       	subi	r18, 0xC9	; 201
-    4c44:	3f 4f       	sbci	r19, 0xFF	; 255
-    4c46:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4c4a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4c4e:	e2 0f       	add	r30, r18
-    4c50:	f3 1f       	adc	r31, r19
-    4c52:	e4 91       	lpm	r30, Z
-    4c54:	2b b1       	in	r18, 0x0b	; 11
-    4c56:	34 e0       	ldi	r19, 0x04	; 4
-    4c58:	e3 9f       	mul	r30, r19
-    4c5a:	f0 01       	movw	r30, r0
-    4c5c:	11 24       	eor	r1, r1
-    4c5e:	23 70       	andi	r18, 0x03	; 3
-    4c60:	e2 2b       	or	r30, r18
-    4c62:	eb b9       	out	0x0b, r30	; 11
+    3e1a:	25 b1       	in	r18, 0x05	; 5
+    3e1c:	2a 60       	ori	r18, 0x0A	; 10
+    3e1e:	25 b9       	out	0x05, r18	; 5
+    3e20:	25 b1       	in	r18, 0x05	; 5
+    3e22:	25 7f       	andi	r18, 0xF5	; 245
+    3e24:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4c64:	25 b1       	in	r18, 0x05	; 5
-    4c66:	2a 60       	ori	r18, 0x0A	; 10
-    4c68:	25 b9       	out	0x05, r18	; 5
-    4c6a:	25 b1       	in	r18, 0x05	; 5
-    4c6c:	25 7f       	andi	r18, 0xF5	; 245
-    4c6e:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4c70:	25 b1       	in	r18, 0x05	; 5
-    4c72:	2a 60       	ori	r18, 0x0A	; 10
-    4c74:	25 b9       	out	0x05, r18	; 5
-    4c76:	25 b1       	in	r18, 0x05	; 5
-    4c78:	25 7f       	andi	r18, 0xF5	; 245
-    4c7a:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3e26:	fc 01       	movw	r30, r24
+    3e28:	f3 96       	adiw	r30, 0x33	; 51
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3e2a:	24 91       	lpm	r18, Z
+    3e2c:	eb b1       	in	r30, 0x0b	; 11
+    3e2e:	f4 e0       	ldi	r31, 0x04	; 4
+    3e30:	2f 9f       	mul	r18, r31
+    3e32:	90 01       	movw	r18, r0
+    3e34:	11 24       	eor	r1, r1
+    3e36:	e3 70       	andi	r30, 0x03	; 3
+    3e38:	e2 2b       	or	r30, r18
+    3e3a:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3e3c:	25 b1       	in	r18, 0x05	; 5
+    3e3e:	2a 60       	ori	r18, 0x0A	; 10
+    3e40:	25 b9       	out	0x05, r18	; 5
+    3e42:	25 b1       	in	r18, 0x05	; 5
+    3e44:	25 7f       	andi	r18, 0xF5	; 245
+    3e46:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3e48:	25 b1       	in	r18, 0x05	; 5
+    3e4a:	2a 60       	ori	r18, 0x0A	; 10
+    3e4c:	25 b9       	out	0x05, r18	; 5
+    3e4e:	25 b1       	in	r18, 0x05	; 5
+    3e50:	25 7f       	andi	r18, 0xF5	; 245
+    3e52:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3e54:	fc 01       	movw	r30, r24
+    3e56:	f4 96       	adiw	r30, 0x34	; 52
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3e58:	24 91       	lpm	r18, Z
+    3e5a:	eb b1       	in	r30, 0x0b	; 11
+    3e5c:	64 e0       	ldi	r22, 0x04	; 4
+    3e5e:	26 9f       	mul	r18, r22
+    3e60:	90 01       	movw	r18, r0
+    3e62:	11 24       	eor	r1, r1
+    3e64:	e3 70       	andi	r30, 0x03	; 3
+    3e66:	e2 2b       	or	r30, r18
+    3e68:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3e6a:	25 b1       	in	r18, 0x05	; 5
+    3e6c:	2a 60       	ori	r18, 0x0A	; 10
+    3e6e:	25 b9       	out	0x05, r18	; 5
+    3e70:	25 b1       	in	r18, 0x05	; 5
+    3e72:	25 7f       	andi	r18, 0xF5	; 245
+    3e74:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3e76:	25 b1       	in	r18, 0x05	; 5
+    3e78:	2a 60       	ori	r18, 0x0A	; 10
+    3e7a:	25 b9       	out	0x05, r18	; 5
+    3e7c:	25 b1       	in	r18, 0x05	; 5
+    3e7e:	25 7f       	andi	r18, 0xF5	; 245
+    3e80:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3e82:	fc 01       	movw	r30, r24
+    3e84:	f5 96       	adiw	r30, 0x35	; 53
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3e86:	24 91       	lpm	r18, Z
+    3e88:	eb b1       	in	r30, 0x0b	; 11
+    3e8a:	74 e0       	ldi	r23, 0x04	; 4
+    3e8c:	27 9f       	mul	r18, r23
+    3e8e:	90 01       	movw	r18, r0
+    3e90:	11 24       	eor	r1, r1
+    3e92:	e3 70       	andi	r30, 0x03	; 3
+    3e94:	e2 2b       	or	r30, r18
+    3e96:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3e98:	25 b1       	in	r18, 0x05	; 5
+    3e9a:	2a 60       	ori	r18, 0x0A	; 10
+    3e9c:	25 b9       	out	0x05, r18	; 5
+    3e9e:	25 b1       	in	r18, 0x05	; 5
+    3ea0:	25 7f       	andi	r18, 0xF5	; 245
+    3ea2:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3ea4:	25 b1       	in	r18, 0x05	; 5
+    3ea6:	2a 60       	ori	r18, 0x0A	; 10
+    3ea8:	25 b9       	out	0x05, r18	; 5
+    3eaa:	25 b1       	in	r18, 0x05	; 5
+    3eac:	25 7f       	andi	r18, 0xF5	; 245
+    3eae:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3eb0:	fc 01       	movw	r30, r24
+    3eb2:	f6 96       	adiw	r30, 0x36	; 54
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3eb4:	24 91       	lpm	r18, Z
+    3eb6:	eb b1       	in	r30, 0x0b	; 11
+    3eb8:	f4 e0       	ldi	r31, 0x04	; 4
+    3eba:	2f 9f       	mul	r18, r31
+    3ebc:	90 01       	movw	r18, r0
+    3ebe:	11 24       	eor	r1, r1
+    3ec0:	e3 70       	andi	r30, 0x03	; 3
+    3ec2:	e2 2b       	or	r30, r18
+    3ec4:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3ec6:	25 b1       	in	r18, 0x05	; 5
+    3ec8:	2a 60       	ori	r18, 0x0A	; 10
+    3eca:	25 b9       	out	0x05, r18	; 5
+    3ecc:	25 b1       	in	r18, 0x05	; 5
+    3ece:	25 7f       	andi	r18, 0xF5	; 245
+    3ed0:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3ed2:	25 b1       	in	r18, 0x05	; 5
+    3ed4:	2a 60       	ori	r18, 0x0A	; 10
+    3ed6:	25 b9       	out	0x05, r18	; 5
+    3ed8:	25 b1       	in	r18, 0x05	; 5
+    3eda:	25 7f       	andi	r18, 0xF5	; 245
+    3edc:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3ede:	fc 01       	movw	r30, r24
+    3ee0:	f7 96       	adiw	r30, 0x37	; 55
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3ee2:	24 91       	lpm	r18, Z
+    3ee4:	eb b1       	in	r30, 0x0b	; 11
+    3ee6:	64 e0       	ldi	r22, 0x04	; 4
+    3ee8:	26 9f       	mul	r18, r22
+    3eea:	90 01       	movw	r18, r0
+    3eec:	11 24       	eor	r1, r1
+    3eee:	e3 70       	andi	r30, 0x03	; 3
+    3ef0:	e2 2b       	or	r30, r18
+    3ef2:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3ef4:	25 b1       	in	r18, 0x05	; 5
+    3ef6:	2a 60       	ori	r18, 0x0A	; 10
+    3ef8:	25 b9       	out	0x05, r18	; 5
+    3efa:	25 b1       	in	r18, 0x05	; 5
+    3efc:	25 7f       	andi	r18, 0xF5	; 245
+    3efe:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3f00:	25 b1       	in	r18, 0x05	; 5
+    3f02:	2a 60       	ori	r18, 0x0A	; 10
+    3f04:	25 b9       	out	0x05, r18	; 5
+    3f06:	25 b1       	in	r18, 0x05	; 5
+    3f08:	25 7f       	andi	r18, 0xF5	; 245
+    3f0a:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3f0c:	fc 01       	movw	r30, r24
+    3f0e:	f8 96       	adiw	r30, 0x38	; 56
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 7
-            SET_COLOR(pgm_read_byte(buffer + index + 56));
-    4c7c:	9c 01       	movw	r18, r24
-    4c7e:	28 5c       	subi	r18, 0xC8	; 200
-    4c80:	3f 4f       	sbci	r19, 0xFF	; 255
-    4c82:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4c86:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4c8a:	e2 0f       	add	r30, r18
-    4c8c:	f3 1f       	adc	r31, r19
-    4c8e:	e4 91       	lpm	r30, Z
-    4c90:	2b b1       	in	r18, 0x0b	; 11
-    4c92:	64 e0       	ldi	r22, 0x04	; 4
-    4c94:	e6 9f       	mul	r30, r22
-    4c96:	f0 01       	movw	r30, r0
-    4c98:	11 24       	eor	r1, r1
-    4c9a:	23 70       	andi	r18, 0x03	; 3
-    4c9c:	e2 2b       	or	r30, r18
-    4c9e:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3f10:	24 91       	lpm	r18, Z
+    3f12:	eb b1       	in	r30, 0x0b	; 11
+    3f14:	74 e0       	ldi	r23, 0x04	; 4
+    3f16:	27 9f       	mul	r18, r23
+    3f18:	90 01       	movw	r18, r0
+    3f1a:	11 24       	eor	r1, r1
+    3f1c:	e3 70       	andi	r30, 0x03	; 3
+    3f1e:	e2 2b       	or	r30, r18
+    3f20:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4ca0:	25 b1       	in	r18, 0x05	; 5
-    4ca2:	2a 60       	ori	r18, 0x0A	; 10
-    4ca4:	25 b9       	out	0x05, r18	; 5
-    4ca6:	25 b1       	in	r18, 0x05	; 5
-    4ca8:	25 7f       	andi	r18, 0xF5	; 245
-    4caa:	25 b9       	out	0x05, r18	; 5
+    3f22:	25 b1       	in	r18, 0x05	; 5
+    3f24:	2a 60       	ori	r18, 0x0A	; 10
+    3f26:	25 b9       	out	0x05, r18	; 5
+    3f28:	25 b1       	in	r18, 0x05	; 5
+    3f2a:	25 7f       	andi	r18, 0xF5	; 245
+    3f2c:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4cac:	25 b1       	in	r18, 0x05	; 5
-    4cae:	2a 60       	ori	r18, 0x0A	; 10
-    4cb0:	25 b9       	out	0x05, r18	; 5
-    4cb2:	25 b1       	in	r18, 0x05	; 5
-    4cb4:	25 7f       	andi	r18, 0xF5	; 245
-    4cb6:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 57));
-    4cb8:	9c 01       	movw	r18, r24
-    4cba:	27 5c       	subi	r18, 0xC7	; 199
-    4cbc:	3f 4f       	sbci	r19, 0xFF	; 255
-    4cbe:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4cc2:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4cc6:	e2 0f       	add	r30, r18
-    4cc8:	f3 1f       	adc	r31, r19
-    4cca:	e4 91       	lpm	r30, Z
-    4ccc:	2b b1       	in	r18, 0x0b	; 11
-    4cce:	74 e0       	ldi	r23, 0x04	; 4
-    4cd0:	e7 9f       	mul	r30, r23
-    4cd2:	f0 01       	movw	r30, r0
-    4cd4:	11 24       	eor	r1, r1
-    4cd6:	23 70       	andi	r18, 0x03	; 3
-    4cd8:	e2 2b       	or	r30, r18
-    4cda:	eb b9       	out	0x0b, r30	; 11
+    3f2e:	25 b1       	in	r18, 0x05	; 5
+    3f30:	2a 60       	ori	r18, 0x0A	; 10
+    3f32:	25 b9       	out	0x05, r18	; 5
+    3f34:	25 b1       	in	r18, 0x05	; 5
+    3f36:	25 7f       	andi	r18, 0xF5	; 245
+    3f38:	25 b9       	out	0x05, r18	; 5
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    4cdc:	25 b1       	in	r18, 0x05	; 5
-    4cde:	2a 60       	ori	r18, 0x0A	; 10
-    4ce0:	25 b9       	out	0x05, r18	; 5
-    4ce2:	25 b1       	in	r18, 0x05	; 5
-    4ce4:	25 7f       	andi	r18, 0xF5	; 245
-    4ce6:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4ce8:	25 b1       	in	r18, 0x05	; 5
-    4cea:	2a 60       	ori	r18, 0x0A	; 10
-    4cec:	25 b9       	out	0x05, r18	; 5
-    4cee:	25 b1       	in	r18, 0x05	; 5
-    4cf0:	25 7f       	andi	r18, 0xF5	; 245
-    4cf2:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 58));
-    4cf4:	9c 01       	movw	r18, r24
-    4cf6:	26 5c       	subi	r18, 0xC6	; 198
-    4cf8:	3f 4f       	sbci	r19, 0xFF	; 255
-    4cfa:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4cfe:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4d02:	e2 0f       	add	r30, r18
-    4d04:	f3 1f       	adc	r31, r19
-    4d06:	e4 91       	lpm	r30, Z
-    4d08:	2b b1       	in	r18, 0x0b	; 11
-    4d0a:	34 e0       	ldi	r19, 0x04	; 4
-    4d0c:	e3 9f       	mul	r30, r19
-    4d0e:	f0 01       	movw	r30, r0
-    4d10:	11 24       	eor	r1, r1
-    4d12:	23 70       	andi	r18, 0x03	; 3
-    4d14:	e2 2b       	or	r30, r18
-    4d16:	eb b9       	out	0x0b, r30	; 11
+
+            // chip 7
+            SET_COLOR(pgm_read_byte(index++));
+    3f3a:	fc 01       	movw	r30, r24
+    3f3c:	f9 96       	adiw	r30, 0x39	; 57
             PWCLK_GCLK;
-    4d18:	25 b1       	in	r18, 0x05	; 5
-    4d1a:	2a 60       	ori	r18, 0x0A	; 10
-    4d1c:	25 b9       	out	0x05, r18	; 5
-    4d1e:	25 b1       	in	r18, 0x05	; 5
-    4d20:	25 7f       	andi	r18, 0xF5	; 245
-    4d22:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4d24:	25 b1       	in	r18, 0x05	; 5
-    4d26:	2a 60       	ori	r18, 0x0A	; 10
-    4d28:	25 b9       	out	0x05, r18	; 5
-    4d2a:	25 b1       	in	r18, 0x05	; 5
-    4d2c:	25 7f       	andi	r18, 0xF5	; 245
-    4d2e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 59));
-    4d30:	9c 01       	movw	r18, r24
-    4d32:	25 5c       	subi	r18, 0xC5	; 197
-    4d34:	3f 4f       	sbci	r19, 0xFF	; 255
-    4d36:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4d3a:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4d3e:	e2 0f       	add	r30, r18
-    4d40:	f3 1f       	adc	r31, r19
-    4d42:	e4 91       	lpm	r30, Z
-    4d44:	2b b1       	in	r18, 0x0b	; 11
-    4d46:	64 e0       	ldi	r22, 0x04	; 4
-    4d48:	e6 9f       	mul	r30, r22
-    4d4a:	f0 01       	movw	r30, r0
-    4d4c:	11 24       	eor	r1, r1
-    4d4e:	23 70       	andi	r18, 0x03	; 3
-    4d50:	e2 2b       	or	r30, r18
-    4d52:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3f3e:	24 91       	lpm	r18, Z
+    3f40:	eb b1       	in	r30, 0x0b	; 11
+    3f42:	f4 e0       	ldi	r31, 0x04	; 4
+    3f44:	2f 9f       	mul	r18, r31
+    3f46:	90 01       	movw	r18, r0
+    3f48:	11 24       	eor	r1, r1
+    3f4a:	e3 70       	andi	r30, 0x03	; 3
+    3f4c:	e2 2b       	or	r30, r18
+    3f4e:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4d54:	25 b1       	in	r18, 0x05	; 5
-    4d56:	2a 60       	ori	r18, 0x0A	; 10
-    4d58:	25 b9       	out	0x05, r18	; 5
-    4d5a:	25 b1       	in	r18, 0x05	; 5
-    4d5c:	25 7f       	andi	r18, 0xF5	; 245
-    4d5e:	25 b9       	out	0x05, r18	; 5
+    3f50:	25 b1       	in	r18, 0x05	; 5
+    3f52:	2a 60       	ori	r18, 0x0A	; 10
+    3f54:	25 b9       	out	0x05, r18	; 5
+    3f56:	25 b1       	in	r18, 0x05	; 5
+    3f58:	25 7f       	andi	r18, 0xF5	; 245
+    3f5a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4d60:	25 b1       	in	r18, 0x05	; 5
-    4d62:	2a 60       	ori	r18, 0x0A	; 10
-    4d64:	25 b9       	out	0x05, r18	; 5
-    4d66:	25 b1       	in	r18, 0x05	; 5
-    4d68:	25 7f       	andi	r18, 0xF5	; 245
-    4d6a:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 60));
-    4d6c:	9c 01       	movw	r18, r24
-    4d6e:	24 5c       	subi	r18, 0xC4	; 196
-    4d70:	3f 4f       	sbci	r19, 0xFF	; 255
-    4d72:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4d76:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4d7a:	e2 0f       	add	r30, r18
-    4d7c:	f3 1f       	adc	r31, r19
-    4d7e:	e4 91       	lpm	r30, Z
-    4d80:	2b b1       	in	r18, 0x0b	; 11
-    4d82:	74 e0       	ldi	r23, 0x04	; 4
-    4d84:	e7 9f       	mul	r30, r23
-    4d86:	f0 01       	movw	r30, r0
-    4d88:	11 24       	eor	r1, r1
-    4d8a:	23 70       	andi	r18, 0x03	; 3
-    4d8c:	e2 2b       	or	r30, r18
-    4d8e:	eb b9       	out	0x0b, r30	; 11
+    3f5c:	25 b1       	in	r18, 0x05	; 5
+    3f5e:	2a 60       	ori	r18, 0x0A	; 10
+    3f60:	25 b9       	out	0x05, r18	; 5
+    3f62:	25 b1       	in	r18, 0x05	; 5
+    3f64:	25 7f       	andi	r18, 0xF5	; 245
+    3f66:	25 b9       	out	0x05, r18	; 5
+
+            // chip 7
+            SET_COLOR(pgm_read_byte(index++));
             PWCLK_GCLK;
-    4d90:	25 b1       	in	r18, 0x05	; 5
-    4d92:	2a 60       	ori	r18, 0x0A	; 10
-    4d94:	25 b9       	out	0x05, r18	; 5
-    4d96:	25 b1       	in	r18, 0x05	; 5
-    4d98:	25 7f       	andi	r18, 0xF5	; 245
-    4d9a:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4d9c:	25 b1       	in	r18, 0x05	; 5
-    4d9e:	2a 60       	ori	r18, 0x0A	; 10
-    4da0:	25 b9       	out	0x05, r18	; 5
-    4da2:	25 b1       	in	r18, 0x05	; 5
-    4da4:	25 7f       	andi	r18, 0xF5	; 245
-    4da6:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 61));
-    4da8:	9c 01       	movw	r18, r24
-    4daa:	23 5c       	subi	r18, 0xC3	; 195
-    4dac:	3f 4f       	sbci	r19, 0xFF	; 255
-    4dae:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4db2:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4db6:	e2 0f       	add	r30, r18
-    4db8:	f3 1f       	adc	r31, r19
-    4dba:	e4 91       	lpm	r30, Z
-    4dbc:	2b b1       	in	r18, 0x0b	; 11
-    4dbe:	34 e0       	ldi	r19, 0x04	; 4
-    4dc0:	e3 9f       	mul	r30, r19
-    4dc2:	f0 01       	movw	r30, r0
-    4dc4:	11 24       	eor	r1, r1
-    4dc6:	23 70       	andi	r18, 0x03	; 3
-    4dc8:	e2 2b       	or	r30, r18
-    4dca:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3f68:	fc 01       	movw	r30, r24
+    3f6a:	fa 96       	adiw	r30, 0x3a	; 58
             PWCLK_GCLK;
-    4dcc:	25 b1       	in	r18, 0x05	; 5
-    4dce:	2a 60       	ori	r18, 0x0A	; 10
-    4dd0:	25 b9       	out	0x05, r18	; 5
-    4dd2:	25 b1       	in	r18, 0x05	; 5
-    4dd4:	25 7f       	andi	r18, 0xF5	; 245
-    4dd6:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4dd8:	25 b1       	in	r18, 0x05	; 5
-    4dda:	2a 60       	ori	r18, 0x0A	; 10
-    4ddc:	25 b9       	out	0x05, r18	; 5
-    4dde:	25 b1       	in	r18, 0x05	; 5
-    4de0:	25 7f       	andi	r18, 0xF5	; 245
-    4de2:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 62));
-    4de4:	9c 01       	movw	r18, r24
-    4de6:	22 5c       	subi	r18, 0xC2	; 194
-    4de8:	3f 4f       	sbci	r19, 0xFF	; 255
-    4dea:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4dee:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4df2:	e2 0f       	add	r30, r18
-    4df4:	f3 1f       	adc	r31, r19
-    4df6:	e4 91       	lpm	r30, Z
-    4df8:	2b b1       	in	r18, 0x0b	; 11
-    4dfa:	64 e0       	ldi	r22, 0x04	; 4
-    4dfc:	e6 9f       	mul	r30, r22
-    4dfe:	f0 01       	movw	r30, r0
-    4e00:	11 24       	eor	r1, r1
-    4e02:	23 70       	andi	r18, 0x03	; 3
-    4e04:	e2 2b       	or	r30, r18
-    4e06:	eb b9       	out	0x0b, r30	; 11
+            SET_COLOR(pgm_read_byte(index++));
+    3f6c:	24 91       	lpm	r18, Z
+    3f6e:	eb b1       	in	r30, 0x0b	; 11
+    3f70:	64 e0       	ldi	r22, 0x04	; 4
+    3f72:	26 9f       	mul	r18, r22
+    3f74:	90 01       	movw	r18, r0
+    3f76:	11 24       	eor	r1, r1
+    3f78:	e3 70       	andi	r30, 0x03	; 3
+    3f7a:	e2 2b       	or	r30, r18
+    3f7c:	eb b9       	out	0x0b, r30	; 11
             PWCLK_GCLK;
-    4e08:	25 b1       	in	r18, 0x05	; 5
-    4e0a:	2a 60       	ori	r18, 0x0A	; 10
-    4e0c:	25 b9       	out	0x05, r18	; 5
-    4e0e:	25 b1       	in	r18, 0x05	; 5
-    4e10:	25 7f       	andi	r18, 0xF5	; 245
-    4e12:	25 b9       	out	0x05, r18	; 5
+    3f7e:	25 b1       	in	r18, 0x05	; 5
+    3f80:	2a 60       	ori	r18, 0x0A	; 10
+    3f82:	25 b9       	out	0x05, r18	; 5
+    3f84:	25 b1       	in	r18, 0x05	; 5
+    3f86:	25 7f       	andi	r18, 0xF5	; 245
+    3f88:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4e14:	25 b1       	in	r18, 0x05	; 5
-    4e16:	2a 60       	ori	r18, 0x0A	; 10
-    4e18:	25 b9       	out	0x05, r18	; 5
-    4e1a:	25 b1       	in	r18, 0x05	; 5
-    4e1c:	25 7f       	andi	r18, 0xF5	; 245
-    4e1e:	25 b9       	out	0x05, r18	; 5
-            SET_COLOR(pgm_read_byte(buffer + index + 63));
-    4e20:	cf 96       	adiw	r24, 0x3f	; 63
-    4e22:	e0 91 00 01 	lds	r30, 0x0100	; 0x800100 <_edata>
-    4e26:	f0 91 01 01 	lds	r31, 0x0101	; 0x800101 <_edata+0x1>
-    4e2a:	e8 0f       	add	r30, r24
-    4e2c:	f9 1f       	adc	r31, r25
-    4e2e:	84 91       	lpm	r24, Z
-    4e30:	eb b1       	in	r30, 0x0b	; 11
-    4e32:	74 e0       	ldi	r23, 0x04	; 4
-    4e34:	87 9f       	mul	r24, r23
-    4e36:	c0 01       	movw	r24, r0
-    4e38:	11 24       	eor	r1, r1
-    4e3a:	e3 70       	andi	r30, 0x03	; 3
-    4e3c:	8e 2b       	or	r24, r30
-    4e3e:	8b b9       	out	0x0b, r24	; 11
+    3f8a:	25 b1       	in	r18, 0x05	; 5
+    3f8c:	2a 60       	ori	r18, 0x0A	; 10
+    3f8e:	25 b9       	out	0x05, r18	; 5
+    3f90:	25 b1       	in	r18, 0x05	; 5
+    3f92:	25 7f       	andi	r18, 0xF5	; 245
+    3f94:	25 b9       	out	0x05, r18	; 5
             PWCLK_GCLK;
-    4e40:	85 b1       	in	r24, 0x05	; 5
-    4e42:	8a 60       	ori	r24, 0x0A	; 10
-    4e44:	85 b9       	out	0x05, r24	; 5
-    4e46:	85 b1       	in	r24, 0x05	; 5
-    4e48:	85 7f       	andi	r24, 0xF5	; 245
-    4e4a:	85 b9       	out	0x05, r24	; 5
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3f96:	fc 01       	movw	r30, r24
+    3f98:	fb 96       	adiw	r30, 0x3b	; 59
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3f9a:	24 91       	lpm	r18, Z
+    3f9c:	eb b1       	in	r30, 0x0b	; 11
+    3f9e:	74 e0       	ldi	r23, 0x04	; 4
+    3fa0:	27 9f       	mul	r18, r23
+    3fa2:	90 01       	movw	r18, r0
+    3fa4:	11 24       	eor	r1, r1
+    3fa6:	e3 70       	andi	r30, 0x03	; 3
+    3fa8:	e2 2b       	or	r30, r18
+    3faa:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3fac:	25 b1       	in	r18, 0x05	; 5
+    3fae:	2a 60       	ori	r18, 0x0A	; 10
+    3fb0:	25 b9       	out	0x05, r18	; 5
+    3fb2:	25 b1       	in	r18, 0x05	; 5
+    3fb4:	25 7f       	andi	r18, 0xF5	; 245
+    3fb6:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3fb8:	25 b1       	in	r18, 0x05	; 5
+    3fba:	2a 60       	ori	r18, 0x0A	; 10
+    3fbc:	25 b9       	out	0x05, r18	; 5
+    3fbe:	25 b1       	in	r18, 0x05	; 5
+    3fc0:	25 7f       	andi	r18, 0xF5	; 245
+    3fc2:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3fc4:	fc 01       	movw	r30, r24
+    3fc6:	fc 96       	adiw	r30, 0x3c	; 60
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3fc8:	24 91       	lpm	r18, Z
+    3fca:	eb b1       	in	r30, 0x0b	; 11
+    3fcc:	f4 e0       	ldi	r31, 0x04	; 4
+    3fce:	2f 9f       	mul	r18, r31
+    3fd0:	90 01       	movw	r18, r0
+    3fd2:	11 24       	eor	r1, r1
+    3fd4:	e3 70       	andi	r30, 0x03	; 3
+    3fd6:	e2 2b       	or	r30, r18
+    3fd8:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    3fda:	25 b1       	in	r18, 0x05	; 5
+    3fdc:	2a 60       	ori	r18, 0x0A	; 10
+    3fde:	25 b9       	out	0x05, r18	; 5
+    3fe0:	25 b1       	in	r18, 0x05	; 5
+    3fe2:	25 7f       	andi	r18, 0xF5	; 245
+    3fe4:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    3fe6:	25 b1       	in	r18, 0x05	; 5
+    3fe8:	2a 60       	ori	r18, 0x0A	; 10
+    3fea:	25 b9       	out	0x05, r18	; 5
+    3fec:	25 b1       	in	r18, 0x05	; 5
+    3fee:	25 7f       	andi	r18, 0xF5	; 245
+    3ff0:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3ff2:	fc 01       	movw	r30, r24
+    3ff4:	fd 96       	adiw	r30, 0x3d	; 61
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    3ff6:	24 91       	lpm	r18, Z
+    3ff8:	eb b1       	in	r30, 0x0b	; 11
+    3ffa:	64 e0       	ldi	r22, 0x04	; 4
+    3ffc:	26 9f       	mul	r18, r22
+    3ffe:	90 01       	movw	r18, r0
+    4000:	11 24       	eor	r1, r1
+    4002:	e3 70       	andi	r30, 0x03	; 3
+    4004:	e2 2b       	or	r30, r18
+    4006:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    4008:	25 b1       	in	r18, 0x05	; 5
+    400a:	2a 60       	ori	r18, 0x0A	; 10
+    400c:	25 b9       	out	0x05, r18	; 5
+    400e:	25 b1       	in	r18, 0x05	; 5
+    4010:	25 7f       	andi	r18, 0xF5	; 245
+    4012:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    4014:	25 b1       	in	r18, 0x05	; 5
+    4016:	2a 60       	ori	r18, 0x0A	; 10
+    4018:	25 b9       	out	0x05, r18	; 5
+    401a:	25 b1       	in	r18, 0x05	; 5
+    401c:	25 7f       	andi	r18, 0xF5	; 245
+    401e:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    4020:	fc 01       	movw	r30, r24
+    4022:	fe 96       	adiw	r30, 0x3e	; 62
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    4024:	24 91       	lpm	r18, Z
+    4026:	eb b1       	in	r30, 0x0b	; 11
+    4028:	74 e0       	ldi	r23, 0x04	; 4
+    402a:	27 9f       	mul	r18, r23
+    402c:	90 01       	movw	r18, r0
+    402e:	11 24       	eor	r1, r1
+    4030:	e3 70       	andi	r30, 0x03	; 3
+    4032:	e2 2b       	or	r30, r18
+    4034:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    4036:	25 b1       	in	r18, 0x05	; 5
+    4038:	2a 60       	ori	r18, 0x0A	; 10
+    403a:	25 b9       	out	0x05, r18	; 5
+    403c:	25 b1       	in	r18, 0x05	; 5
+    403e:	25 7f       	andi	r18, 0xF5	; 245
+    4040:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+    4042:	25 b1       	in	r18, 0x05	; 5
+    4044:	2a 60       	ori	r18, 0x0A	; 10
+    4046:	25 b9       	out	0x05, r18	; 5
+    4048:	25 b1       	in	r18, 0x05	; 5
+    404a:	25 7f       	andi	r18, 0xF5	; 245
+    404c:	25 b9       	out	0x05, r18	; 5
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    404e:	fc 01       	movw	r30, r24
+    4050:	ff 96       	adiw	r30, 0x3f	; 63
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+    4052:	e4 91       	lpm	r30, Z
+    4054:	8b b1       	in	r24, 0x0b	; 11
+    4056:	94 e0       	ldi	r25, 0x04	; 4
+    4058:	e9 9f       	mul	r30, r25
+    405a:	f0 01       	movw	r30, r0
+    405c:	11 24       	eor	r1, r1
+    405e:	83 70       	andi	r24, 0x03	; 3
+    4060:	e8 2b       	or	r30, r24
+    4062:	eb b9       	out	0x0b, r30	; 11
+            PWCLK_GCLK;
+    4064:	85 b1       	in	r24, 0x05	; 5
+    4066:	8a 60       	ori	r24, 0x0A	; 10
+    4068:	85 b9       	out	0x05, r24	; 5
+    406a:	85 b1       	in	r24, 0x05	; 5
+    406c:	85 7f       	andi	r24, 0xF5	; 245
+    406e:	85 b9       	out	0x05, r24	; 5
 
             // shift data into buffers
             HIGH_LAT;
-    4e4c:	2a 9a       	sbi	0x05, 2	; 5
+    4070:	2a 9a       	sbi	0x05, 2	; 5
             PWCLK_GCLK;
-    4e4e:	85 b1       	in	r24, 0x05	; 5
-    4e50:	8a 60       	ori	r24, 0x0A	; 10
-    4e52:	85 b9       	out	0x05, r24	; 5
-    4e54:	85 b1       	in	r24, 0x05	; 5
-    4e56:	85 7f       	andi	r24, 0xF5	; 245
-    4e58:	85 b9       	out	0x05, r24	; 5
+    4072:	85 b1       	in	r24, 0x05	; 5
+    4074:	8a 60       	ori	r24, 0x0A	; 10
+    4076:	85 b9       	out	0x05, r24	; 5
+    4078:	85 b1       	in	r24, 0x05	; 5
+    407a:	85 7f       	andi	r24, 0xF5	; 245
+    407c:	85 b9       	out	0x05, r24	; 5
             CLEAR_LAT;
-    4e5a:	2a 98       	cbi	0x05, 2	; 5
+    407e:	2a 98       	cbi	0x05, 2	; 5
 
 #pragma endregion // LLSB
 
 #pragma region LSB_fake
             SET_COLOR(0);
-    4e5c:	8b b1       	in	r24, 0x0b	; 11
-    4e5e:	83 70       	andi	r24, 0x03	; 3
-    4e60:	8b b9       	out	0x0b, r24	; 11
+    4080:	8b b1       	in	r24, 0x0b	; 11
+    4082:	83 70       	andi	r24, 0x03	; 3
+    4084:	8b b9       	out	0x0b, r24	; 11
 
             PWCLK_GCLK;
-    4e62:	85 b1       	in	r24, 0x05	; 5
-    4e64:	8a 60       	ori	r24, 0x0A	; 10
-    4e66:	85 b9       	out	0x05, r24	; 5
-    4e68:	85 b1       	in	r24, 0x05	; 5
-    4e6a:	85 7f       	andi	r24, 0xF5	; 245
-    4e6c:	85 b9       	out	0x05, r24	; 5
+    4086:	85 b1       	in	r24, 0x05	; 5
+    4088:	8a 60       	ori	r24, 0x0A	; 10
+    408a:	85 b9       	out	0x05, r24	; 5
+    408c:	85 b1       	in	r24, 0x05	; 5
+    408e:	85 7f       	andi	r24, 0xF5	; 245
+    4090:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4e6e:	85 b1       	in	r24, 0x05	; 5
-    4e70:	8a 60       	ori	r24, 0x0A	; 10
-    4e72:	85 b9       	out	0x05, r24	; 5
-    4e74:	85 b1       	in	r24, 0x05	; 5
-    4e76:	85 7f       	andi	r24, 0xF5	; 245
-    4e78:	85 b9       	out	0x05, r24	; 5
+    4092:	85 b1       	in	r24, 0x05	; 5
+    4094:	8a 60       	ori	r24, 0x0A	; 10
+    4096:	85 b9       	out	0x05, r24	; 5
+    4098:	85 b1       	in	r24, 0x05	; 5
+    409a:	85 7f       	andi	r24, 0xF5	; 245
+    409c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4e7a:	85 b1       	in	r24, 0x05	; 5
-    4e7c:	8a 60       	ori	r24, 0x0A	; 10
-    4e7e:	85 b9       	out	0x05, r24	; 5
-    4e80:	85 b1       	in	r24, 0x05	; 5
-    4e82:	85 7f       	andi	r24, 0xF5	; 245
-    4e84:	85 b9       	out	0x05, r24	; 5
+    409e:	85 b1       	in	r24, 0x05	; 5
+    40a0:	8a 60       	ori	r24, 0x0A	; 10
+    40a2:	85 b9       	out	0x05, r24	; 5
+    40a4:	85 b1       	in	r24, 0x05	; 5
+    40a6:	85 7f       	andi	r24, 0xF5	; 245
+    40a8:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4e86:	85 b1       	in	r24, 0x05	; 5
-    4e88:	8a 60       	ori	r24, 0x0A	; 10
-    4e8a:	85 b9       	out	0x05, r24	; 5
-    4e8c:	85 b1       	in	r24, 0x05	; 5
-    4e8e:	85 7f       	andi	r24, 0xF5	; 245
-    4e90:	85 b9       	out	0x05, r24	; 5
+    40aa:	85 b1       	in	r24, 0x05	; 5
+    40ac:	8a 60       	ori	r24, 0x0A	; 10
+    40ae:	85 b9       	out	0x05, r24	; 5
+    40b0:	85 b1       	in	r24, 0x05	; 5
+    40b2:	85 7f       	andi	r24, 0xF5	; 245
+    40b4:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4e92:	85 b1       	in	r24, 0x05	; 5
-    4e94:	8a 60       	ori	r24, 0x0A	; 10
-    4e96:	85 b9       	out	0x05, r24	; 5
-    4e98:	85 b1       	in	r24, 0x05	; 5
-    4e9a:	85 7f       	andi	r24, 0xF5	; 245
-    4e9c:	85 b9       	out	0x05, r24	; 5
+    40b6:	85 b1       	in	r24, 0x05	; 5
+    40b8:	8a 60       	ori	r24, 0x0A	; 10
+    40ba:	85 b9       	out	0x05, r24	; 5
+    40bc:	85 b1       	in	r24, 0x05	; 5
+    40be:	85 7f       	andi	r24, 0xF5	; 245
+    40c0:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4e9e:	85 b1       	in	r24, 0x05	; 5
-    4ea0:	8a 60       	ori	r24, 0x0A	; 10
-    4ea2:	85 b9       	out	0x05, r24	; 5
-    4ea4:	85 b1       	in	r24, 0x05	; 5
-    4ea6:	85 7f       	andi	r24, 0xF5	; 245
-    4ea8:	85 b9       	out	0x05, r24	; 5
+    40c2:	85 b1       	in	r24, 0x05	; 5
+    40c4:	8a 60       	ori	r24, 0x0A	; 10
+    40c6:	85 b9       	out	0x05, r24	; 5
+    40c8:	85 b1       	in	r24, 0x05	; 5
+    40ca:	85 7f       	andi	r24, 0xF5	; 245
+    40cc:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4eaa:	85 b1       	in	r24, 0x05	; 5
-    4eac:	8a 60       	ori	r24, 0x0A	; 10
-    4eae:	85 b9       	out	0x05, r24	; 5
-    4eb0:	85 b1       	in	r24, 0x05	; 5
-    4eb2:	85 7f       	andi	r24, 0xF5	; 245
-    4eb4:	85 b9       	out	0x05, r24	; 5
+    40ce:	85 b1       	in	r24, 0x05	; 5
+    40d0:	8a 60       	ori	r24, 0x0A	; 10
+    40d2:	85 b9       	out	0x05, r24	; 5
+    40d4:	85 b1       	in	r24, 0x05	; 5
+    40d6:	85 7f       	andi	r24, 0xF5	; 245
+    40d8:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4eb6:	85 b1       	in	r24, 0x05	; 5
-    4eb8:	8a 60       	ori	r24, 0x0A	; 10
-    4eba:	85 b9       	out	0x05, r24	; 5
-    4ebc:	85 b1       	in	r24, 0x05	; 5
-    4ebe:	85 7f       	andi	r24, 0xF5	; 245
-    4ec0:	85 b9       	out	0x05, r24	; 5
+    40da:	85 b1       	in	r24, 0x05	; 5
+    40dc:	8a 60       	ori	r24, 0x0A	; 10
+    40de:	85 b9       	out	0x05, r24	; 5
+    40e0:	85 b1       	in	r24, 0x05	; 5
+    40e2:	85 7f       	andi	r24, 0xF5	; 245
+    40e4:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4ec2:	85 b1       	in	r24, 0x05	; 5
-    4ec4:	8a 60       	ori	r24, 0x0A	; 10
-    4ec6:	85 b9       	out	0x05, r24	; 5
-    4ec8:	85 b1       	in	r24, 0x05	; 5
-    4eca:	85 7f       	andi	r24, 0xF5	; 245
-    4ecc:	85 b9       	out	0x05, r24	; 5
+    40e6:	85 b1       	in	r24, 0x05	; 5
+    40e8:	8a 60       	ori	r24, 0x0A	; 10
+    40ea:	85 b9       	out	0x05, r24	; 5
+    40ec:	85 b1       	in	r24, 0x05	; 5
+    40ee:	85 7f       	andi	r24, 0xF5	; 245
+    40f0:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4ece:	85 b1       	in	r24, 0x05	; 5
-    4ed0:	8a 60       	ori	r24, 0x0A	; 10
-    4ed2:	85 b9       	out	0x05, r24	; 5
-    4ed4:	85 b1       	in	r24, 0x05	; 5
-    4ed6:	85 7f       	andi	r24, 0xF5	; 245
-    4ed8:	85 b9       	out	0x05, r24	; 5
+    40f2:	85 b1       	in	r24, 0x05	; 5
+    40f4:	8a 60       	ori	r24, 0x0A	; 10
+    40f6:	85 b9       	out	0x05, r24	; 5
+    40f8:	85 b1       	in	r24, 0x05	; 5
+    40fa:	85 7f       	andi	r24, 0xF5	; 245
+    40fc:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4eda:	85 b1       	in	r24, 0x05	; 5
-    4edc:	8a 60       	ori	r24, 0x0A	; 10
-    4ede:	85 b9       	out	0x05, r24	; 5
-    4ee0:	85 b1       	in	r24, 0x05	; 5
-    4ee2:	85 7f       	andi	r24, 0xF5	; 245
-    4ee4:	85 b9       	out	0x05, r24	; 5
+    40fe:	85 b1       	in	r24, 0x05	; 5
+    4100:	8a 60       	ori	r24, 0x0A	; 10
+    4102:	85 b9       	out	0x05, r24	; 5
+    4104:	85 b1       	in	r24, 0x05	; 5
+    4106:	85 7f       	andi	r24, 0xF5	; 245
+    4108:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4ee6:	85 b1       	in	r24, 0x05	; 5
-    4ee8:	8a 60       	ori	r24, 0x0A	; 10
-    4eea:	85 b9       	out	0x05, r24	; 5
-    4eec:	85 b1       	in	r24, 0x05	; 5
-    4eee:	85 7f       	andi	r24, 0xF5	; 245
-    4ef0:	85 b9       	out	0x05, r24	; 5
+    410a:	85 b1       	in	r24, 0x05	; 5
+    410c:	8a 60       	ori	r24, 0x0A	; 10
+    410e:	85 b9       	out	0x05, r24	; 5
+    4110:	85 b1       	in	r24, 0x05	; 5
+    4112:	85 7f       	andi	r24, 0xF5	; 245
+    4114:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4ef2:	85 b1       	in	r24, 0x05	; 5
-    4ef4:	8a 60       	ori	r24, 0x0A	; 10
-    4ef6:	85 b9       	out	0x05, r24	; 5
-    4ef8:	85 b1       	in	r24, 0x05	; 5
-    4efa:	85 7f       	andi	r24, 0xF5	; 245
-    4efc:	85 b9       	out	0x05, r24	; 5
+    4116:	85 b1       	in	r24, 0x05	; 5
+    4118:	8a 60       	ori	r24, 0x0A	; 10
+    411a:	85 b9       	out	0x05, r24	; 5
+    411c:	85 b1       	in	r24, 0x05	; 5
+    411e:	85 7f       	andi	r24, 0xF5	; 245
+    4120:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4efe:	85 b1       	in	r24, 0x05	; 5
-    4f00:	8a 60       	ori	r24, 0x0A	; 10
-    4f02:	85 b9       	out	0x05, r24	; 5
-    4f04:	85 b1       	in	r24, 0x05	; 5
-    4f06:	85 7f       	andi	r24, 0xF5	; 245
-    4f08:	85 b9       	out	0x05, r24	; 5
+    4122:	85 b1       	in	r24, 0x05	; 5
+    4124:	8a 60       	ori	r24, 0x0A	; 10
+    4126:	85 b9       	out	0x05, r24	; 5
+    4128:	85 b1       	in	r24, 0x05	; 5
+    412a:	85 7f       	andi	r24, 0xF5	; 245
+    412c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4f0a:	85 b1       	in	r24, 0x05	; 5
-    4f0c:	8a 60       	ori	r24, 0x0A	; 10
-    4f0e:	85 b9       	out	0x05, r24	; 5
-    4f10:	85 b1       	in	r24, 0x05	; 5
-    4f12:	85 7f       	andi	r24, 0xF5	; 245
-    4f14:	85 b9       	out	0x05, r24	; 5
+    412e:	85 b1       	in	r24, 0x05	; 5
+    4130:	8a 60       	ori	r24, 0x0A	; 10
+    4132:	85 b9       	out	0x05, r24	; 5
+    4134:	85 b1       	in	r24, 0x05	; 5
+    4136:	85 7f       	andi	r24, 0xF5	; 245
+    4138:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4f16:	85 b1       	in	r24, 0x05	; 5
-    4f18:	8a 60       	ori	r24, 0x0A	; 10
-    4f1a:	85 b9       	out	0x05, r24	; 5
-    4f1c:	85 b1       	in	r24, 0x05	; 5
-    4f1e:	85 7f       	andi	r24, 0xF5	; 245
-    4f20:	85 b9       	out	0x05, r24	; 5
+    413a:	85 b1       	in	r24, 0x05	; 5
+    413c:	8a 60       	ori	r24, 0x0A	; 10
+    413e:	85 b9       	out	0x05, r24	; 5
+    4140:	85 b1       	in	r24, 0x05	; 5
+    4142:	85 7f       	andi	r24, 0xF5	; 245
+    4144:	85 b9       	out	0x05, r24	; 5
 
             PWCLK_GCLK;
-    4f22:	85 b1       	in	r24, 0x05	; 5
-    4f24:	8a 60       	ori	r24, 0x0A	; 10
-    4f26:	85 b9       	out	0x05, r24	; 5
-    4f28:	85 b1       	in	r24, 0x05	; 5
-    4f2a:	85 7f       	andi	r24, 0xF5	; 245
-    4f2c:	85 b9       	out	0x05, r24	; 5
+    4146:	85 b1       	in	r24, 0x05	; 5
+    4148:	8a 60       	ori	r24, 0x0A	; 10
+    414a:	85 b9       	out	0x05, r24	; 5
+    414c:	85 b1       	in	r24, 0x05	; 5
+    414e:	85 7f       	andi	r24, 0xF5	; 245
+    4150:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4f2e:	85 b1       	in	r24, 0x05	; 5
-    4f30:	8a 60       	ori	r24, 0x0A	; 10
-    4f32:	85 b9       	out	0x05, r24	; 5
-    4f34:	85 b1       	in	r24, 0x05	; 5
-    4f36:	85 7f       	andi	r24, 0xF5	; 245
-    4f38:	85 b9       	out	0x05, r24	; 5
+    4152:	85 b1       	in	r24, 0x05	; 5
+    4154:	8a 60       	ori	r24, 0x0A	; 10
+    4156:	85 b9       	out	0x05, r24	; 5
+    4158:	85 b1       	in	r24, 0x05	; 5
+    415a:	85 7f       	andi	r24, 0xF5	; 245
+    415c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4f3a:	85 b1       	in	r24, 0x05	; 5
-    4f3c:	8a 60       	ori	r24, 0x0A	; 10
-    4f3e:	85 b9       	out	0x05, r24	; 5
-    4f40:	85 b1       	in	r24, 0x05	; 5
-    4f42:	85 7f       	andi	r24, 0xF5	; 245
-    4f44:	85 b9       	out	0x05, r24	; 5
+    415e:	85 b1       	in	r24, 0x05	; 5
+    4160:	8a 60       	ori	r24, 0x0A	; 10
+    4162:	85 b9       	out	0x05, r24	; 5
+    4164:	85 b1       	in	r24, 0x05	; 5
+    4166:	85 7f       	andi	r24, 0xF5	; 245
+    4168:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4f46:	85 b1       	in	r24, 0x05	; 5
-    4f48:	8a 60       	ori	r24, 0x0A	; 10
-    4f4a:	85 b9       	out	0x05, r24	; 5
-    4f4c:	85 b1       	in	r24, 0x05	; 5
-    4f4e:	85 7f       	andi	r24, 0xF5	; 245
-    4f50:	85 b9       	out	0x05, r24	; 5
+    416a:	85 b1       	in	r24, 0x05	; 5
+    416c:	8a 60       	ori	r24, 0x0A	; 10
+    416e:	85 b9       	out	0x05, r24	; 5
+    4170:	85 b1       	in	r24, 0x05	; 5
+    4172:	85 7f       	andi	r24, 0xF5	; 245
+    4174:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4f52:	85 b1       	in	r24, 0x05	; 5
-    4f54:	8a 60       	ori	r24, 0x0A	; 10
-    4f56:	85 b9       	out	0x05, r24	; 5
-    4f58:	85 b1       	in	r24, 0x05	; 5
-    4f5a:	85 7f       	andi	r24, 0xF5	; 245
-    4f5c:	85 b9       	out	0x05, r24	; 5
+    4176:	85 b1       	in	r24, 0x05	; 5
+    4178:	8a 60       	ori	r24, 0x0A	; 10
+    417a:	85 b9       	out	0x05, r24	; 5
+    417c:	85 b1       	in	r24, 0x05	; 5
+    417e:	85 7f       	andi	r24, 0xF5	; 245
+    4180:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4f5e:	85 b1       	in	r24, 0x05	; 5
-    4f60:	8a 60       	ori	r24, 0x0A	; 10
-    4f62:	85 b9       	out	0x05, r24	; 5
-    4f64:	85 b1       	in	r24, 0x05	; 5
-    4f66:	85 7f       	andi	r24, 0xF5	; 245
-    4f68:	85 b9       	out	0x05, r24	; 5
+    4182:	85 b1       	in	r24, 0x05	; 5
+    4184:	8a 60       	ori	r24, 0x0A	; 10
+    4186:	85 b9       	out	0x05, r24	; 5
+    4188:	85 b1       	in	r24, 0x05	; 5
+    418a:	85 7f       	andi	r24, 0xF5	; 245
+    418c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4f6a:	85 b1       	in	r24, 0x05	; 5
-    4f6c:	8a 60       	ori	r24, 0x0A	; 10
-    4f6e:	85 b9       	out	0x05, r24	; 5
-    4f70:	85 b1       	in	r24, 0x05	; 5
-    4f72:	85 7f       	andi	r24, 0xF5	; 245
-    4f74:	85 b9       	out	0x05, r24	; 5
+    418e:	85 b1       	in	r24, 0x05	; 5
+    4190:	8a 60       	ori	r24, 0x0A	; 10
+    4192:	85 b9       	out	0x05, r24	; 5
+    4194:	85 b1       	in	r24, 0x05	; 5
+    4196:	85 7f       	andi	r24, 0xF5	; 245
+    4198:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4f76:	85 b1       	in	r24, 0x05	; 5
-    4f78:	8a 60       	ori	r24, 0x0A	; 10
-    4f7a:	85 b9       	out	0x05, r24	; 5
-    4f7c:	85 b1       	in	r24, 0x05	; 5
-    4f7e:	85 7f       	andi	r24, 0xF5	; 245
-    4f80:	85 b9       	out	0x05, r24	; 5
+    419a:	85 b1       	in	r24, 0x05	; 5
+    419c:	8a 60       	ori	r24, 0x0A	; 10
+    419e:	85 b9       	out	0x05, r24	; 5
+    41a0:	85 b1       	in	r24, 0x05	; 5
+    41a2:	85 7f       	andi	r24, 0xF5	; 245
+    41a4:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4f82:	85 b1       	in	r24, 0x05	; 5
-    4f84:	8a 60       	ori	r24, 0x0A	; 10
-    4f86:	85 b9       	out	0x05, r24	; 5
-    4f88:	85 b1       	in	r24, 0x05	; 5
-    4f8a:	85 7f       	andi	r24, 0xF5	; 245
-    4f8c:	85 b9       	out	0x05, r24	; 5
+    41a6:	85 b1       	in	r24, 0x05	; 5
+    41a8:	8a 60       	ori	r24, 0x0A	; 10
+    41aa:	85 b9       	out	0x05, r24	; 5
+    41ac:	85 b1       	in	r24, 0x05	; 5
+    41ae:	85 7f       	andi	r24, 0xF5	; 245
+    41b0:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4f8e:	85 b1       	in	r24, 0x05	; 5
-    4f90:	8a 60       	ori	r24, 0x0A	; 10
-    4f92:	85 b9       	out	0x05, r24	; 5
-    4f94:	85 b1       	in	r24, 0x05	; 5
-    4f96:	85 7f       	andi	r24, 0xF5	; 245
-    4f98:	85 b9       	out	0x05, r24	; 5
+    41b2:	85 b1       	in	r24, 0x05	; 5
+    41b4:	8a 60       	ori	r24, 0x0A	; 10
+    41b6:	85 b9       	out	0x05, r24	; 5
+    41b8:	85 b1       	in	r24, 0x05	; 5
+    41ba:	85 7f       	andi	r24, 0xF5	; 245
+    41bc:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4f9a:	85 b1       	in	r24, 0x05	; 5
-    4f9c:	8a 60       	ori	r24, 0x0A	; 10
-    4f9e:	85 b9       	out	0x05, r24	; 5
-    4fa0:	85 b1       	in	r24, 0x05	; 5
-    4fa2:	85 7f       	andi	r24, 0xF5	; 245
-    4fa4:	85 b9       	out	0x05, r24	; 5
+    41be:	85 b1       	in	r24, 0x05	; 5
+    41c0:	8a 60       	ori	r24, 0x0A	; 10
+    41c2:	85 b9       	out	0x05, r24	; 5
+    41c4:	85 b1       	in	r24, 0x05	; 5
+    41c6:	85 7f       	andi	r24, 0xF5	; 245
+    41c8:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4fa6:	85 b1       	in	r24, 0x05	; 5
-    4fa8:	8a 60       	ori	r24, 0x0A	; 10
-    4faa:	85 b9       	out	0x05, r24	; 5
-    4fac:	85 b1       	in	r24, 0x05	; 5
-    4fae:	85 7f       	andi	r24, 0xF5	; 245
-    4fb0:	85 b9       	out	0x05, r24	; 5
+    41ca:	85 b1       	in	r24, 0x05	; 5
+    41cc:	8a 60       	ori	r24, 0x0A	; 10
+    41ce:	85 b9       	out	0x05, r24	; 5
+    41d0:	85 b1       	in	r24, 0x05	; 5
+    41d2:	85 7f       	andi	r24, 0xF5	; 245
+    41d4:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4fb2:	85 b1       	in	r24, 0x05	; 5
-    4fb4:	8a 60       	ori	r24, 0x0A	; 10
-    4fb6:	85 b9       	out	0x05, r24	; 5
-    4fb8:	85 b1       	in	r24, 0x05	; 5
-    4fba:	85 7f       	andi	r24, 0xF5	; 245
-    4fbc:	85 b9       	out	0x05, r24	; 5
+    41d6:	85 b1       	in	r24, 0x05	; 5
+    41d8:	8a 60       	ori	r24, 0x0A	; 10
+    41da:	85 b9       	out	0x05, r24	; 5
+    41dc:	85 b1       	in	r24, 0x05	; 5
+    41de:	85 7f       	andi	r24, 0xF5	; 245
+    41e0:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4fbe:	85 b1       	in	r24, 0x05	; 5
-    4fc0:	8a 60       	ori	r24, 0x0A	; 10
-    4fc2:	85 b9       	out	0x05, r24	; 5
-    4fc4:	85 b1       	in	r24, 0x05	; 5
-    4fc6:	85 7f       	andi	r24, 0xF5	; 245
-    4fc8:	85 b9       	out	0x05, r24	; 5
+    41e2:	85 b1       	in	r24, 0x05	; 5
+    41e4:	8a 60       	ori	r24, 0x0A	; 10
+    41e6:	85 b9       	out	0x05, r24	; 5
+    41e8:	85 b1       	in	r24, 0x05	; 5
+    41ea:	85 7f       	andi	r24, 0xF5	; 245
+    41ec:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4fca:	85 b1       	in	r24, 0x05	; 5
-    4fcc:	8a 60       	ori	r24, 0x0A	; 10
-    4fce:	85 b9       	out	0x05, r24	; 5
-    4fd0:	85 b1       	in	r24, 0x05	; 5
-    4fd2:	85 7f       	andi	r24, 0xF5	; 245
-    4fd4:	85 b9       	out	0x05, r24	; 5
+    41ee:	85 b1       	in	r24, 0x05	; 5
+    41f0:	8a 60       	ori	r24, 0x0A	; 10
+    41f2:	85 b9       	out	0x05, r24	; 5
+    41f4:	85 b1       	in	r24, 0x05	; 5
+    41f6:	85 7f       	andi	r24, 0xF5	; 245
+    41f8:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4fd6:	85 b1       	in	r24, 0x05	; 5
-    4fd8:	8a 60       	ori	r24, 0x0A	; 10
-    4fda:	85 b9       	out	0x05, r24	; 5
-    4fdc:	85 b1       	in	r24, 0x05	; 5
-    4fde:	85 7f       	andi	r24, 0xF5	; 245
-    4fe0:	85 b9       	out	0x05, r24	; 5
+    41fa:	85 b1       	in	r24, 0x05	; 5
+    41fc:	8a 60       	ori	r24, 0x0A	; 10
+    41fe:	85 b9       	out	0x05, r24	; 5
+    4200:	85 b1       	in	r24, 0x05	; 5
+    4202:	85 7f       	andi	r24, 0xF5	; 245
+    4204:	85 b9       	out	0x05, r24	; 5
 
             PWCLK_GCLK;
-    4fe2:	85 b1       	in	r24, 0x05	; 5
-    4fe4:	8a 60       	ori	r24, 0x0A	; 10
-    4fe6:	85 b9       	out	0x05, r24	; 5
-    4fe8:	85 b1       	in	r24, 0x05	; 5
-    4fea:	85 7f       	andi	r24, 0xF5	; 245
-    4fec:	85 b9       	out	0x05, r24	; 5
+    4206:	85 b1       	in	r24, 0x05	; 5
+    4208:	8a 60       	ori	r24, 0x0A	; 10
+    420a:	85 b9       	out	0x05, r24	; 5
+    420c:	85 b1       	in	r24, 0x05	; 5
+    420e:	85 7f       	andi	r24, 0xF5	; 245
+    4210:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4fee:	85 b1       	in	r24, 0x05	; 5
-    4ff0:	8a 60       	ori	r24, 0x0A	; 10
-    4ff2:	85 b9       	out	0x05, r24	; 5
-    4ff4:	85 b1       	in	r24, 0x05	; 5
-    4ff6:	85 7f       	andi	r24, 0xF5	; 245
-    4ff8:	85 b9       	out	0x05, r24	; 5
+    4212:	85 b1       	in	r24, 0x05	; 5
+    4214:	8a 60       	ori	r24, 0x0A	; 10
+    4216:	85 b9       	out	0x05, r24	; 5
+    4218:	85 b1       	in	r24, 0x05	; 5
+    421a:	85 7f       	andi	r24, 0xF5	; 245
+    421c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    4ffa:	85 b1       	in	r24, 0x05	; 5
-    4ffc:	8a 60       	ori	r24, 0x0A	; 10
-    4ffe:	85 b9       	out	0x05, r24	; 5
-    5000:	85 b1       	in	r24, 0x05	; 5
-    5002:	85 7f       	andi	r24, 0xF5	; 245
-    5004:	85 b9       	out	0x05, r24	; 5
+    421e:	85 b1       	in	r24, 0x05	; 5
+    4220:	8a 60       	ori	r24, 0x0A	; 10
+    4222:	85 b9       	out	0x05, r24	; 5
+    4224:	85 b1       	in	r24, 0x05	; 5
+    4226:	85 7f       	andi	r24, 0xF5	; 245
+    4228:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5006:	85 b1       	in	r24, 0x05	; 5
-    5008:	8a 60       	ori	r24, 0x0A	; 10
-    500a:	85 b9       	out	0x05, r24	; 5
-    500c:	85 b1       	in	r24, 0x05	; 5
-    500e:	85 7f       	andi	r24, 0xF5	; 245
-    5010:	85 b9       	out	0x05, r24	; 5
+    422a:	85 b1       	in	r24, 0x05	; 5
+    422c:	8a 60       	ori	r24, 0x0A	; 10
+    422e:	85 b9       	out	0x05, r24	; 5
+    4230:	85 b1       	in	r24, 0x05	; 5
+    4232:	85 7f       	andi	r24, 0xF5	; 245
+    4234:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5012:	85 b1       	in	r24, 0x05	; 5
-    5014:	8a 60       	ori	r24, 0x0A	; 10
-    5016:	85 b9       	out	0x05, r24	; 5
-    5018:	85 b1       	in	r24, 0x05	; 5
-    501a:	85 7f       	andi	r24, 0xF5	; 245
-    501c:	85 b9       	out	0x05, r24	; 5
+    4236:	85 b1       	in	r24, 0x05	; 5
+    4238:	8a 60       	ori	r24, 0x0A	; 10
+    423a:	85 b9       	out	0x05, r24	; 5
+    423c:	85 b1       	in	r24, 0x05	; 5
+    423e:	85 7f       	andi	r24, 0xF5	; 245
+    4240:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    501e:	85 b1       	in	r24, 0x05	; 5
-    5020:	8a 60       	ori	r24, 0x0A	; 10
-    5022:	85 b9       	out	0x05, r24	; 5
-    5024:	85 b1       	in	r24, 0x05	; 5
-    5026:	85 7f       	andi	r24, 0xF5	; 245
-    5028:	85 b9       	out	0x05, r24	; 5
+    4242:	85 b1       	in	r24, 0x05	; 5
+    4244:	8a 60       	ori	r24, 0x0A	; 10
+    4246:	85 b9       	out	0x05, r24	; 5
+    4248:	85 b1       	in	r24, 0x05	; 5
+    424a:	85 7f       	andi	r24, 0xF5	; 245
+    424c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    502a:	85 b1       	in	r24, 0x05	; 5
-    502c:	8a 60       	ori	r24, 0x0A	; 10
-    502e:	85 b9       	out	0x05, r24	; 5
-    5030:	85 b1       	in	r24, 0x05	; 5
-    5032:	85 7f       	andi	r24, 0xF5	; 245
-    5034:	85 b9       	out	0x05, r24	; 5
+    424e:	85 b1       	in	r24, 0x05	; 5
+    4250:	8a 60       	ori	r24, 0x0A	; 10
+    4252:	85 b9       	out	0x05, r24	; 5
+    4254:	85 b1       	in	r24, 0x05	; 5
+    4256:	85 7f       	andi	r24, 0xF5	; 245
+    4258:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5036:	85 b1       	in	r24, 0x05	; 5
-    5038:	8a 60       	ori	r24, 0x0A	; 10
-    503a:	85 b9       	out	0x05, r24	; 5
-    503c:	85 b1       	in	r24, 0x05	; 5
-    503e:	85 7f       	andi	r24, 0xF5	; 245
-    5040:	85 b9       	out	0x05, r24	; 5
+    425a:	85 b1       	in	r24, 0x05	; 5
+    425c:	8a 60       	ori	r24, 0x0A	; 10
+    425e:	85 b9       	out	0x05, r24	; 5
+    4260:	85 b1       	in	r24, 0x05	; 5
+    4262:	85 7f       	andi	r24, 0xF5	; 245
+    4264:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5042:	85 b1       	in	r24, 0x05	; 5
-    5044:	8a 60       	ori	r24, 0x0A	; 10
-    5046:	85 b9       	out	0x05, r24	; 5
-    5048:	85 b1       	in	r24, 0x05	; 5
-    504a:	85 7f       	andi	r24, 0xF5	; 245
-    504c:	85 b9       	out	0x05, r24	; 5
+    4266:	85 b1       	in	r24, 0x05	; 5
+    4268:	8a 60       	ori	r24, 0x0A	; 10
+    426a:	85 b9       	out	0x05, r24	; 5
+    426c:	85 b1       	in	r24, 0x05	; 5
+    426e:	85 7f       	andi	r24, 0xF5	; 245
+    4270:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    504e:	85 b1       	in	r24, 0x05	; 5
-    5050:	8a 60       	ori	r24, 0x0A	; 10
-    5052:	85 b9       	out	0x05, r24	; 5
-    5054:	85 b1       	in	r24, 0x05	; 5
-    5056:	85 7f       	andi	r24, 0xF5	; 245
-    5058:	85 b9       	out	0x05, r24	; 5
+    4272:	85 b1       	in	r24, 0x05	; 5
+    4274:	8a 60       	ori	r24, 0x0A	; 10
+    4276:	85 b9       	out	0x05, r24	; 5
+    4278:	85 b1       	in	r24, 0x05	; 5
+    427a:	85 7f       	andi	r24, 0xF5	; 245
+    427c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    505a:	85 b1       	in	r24, 0x05	; 5
-    505c:	8a 60       	ori	r24, 0x0A	; 10
-    505e:	85 b9       	out	0x05, r24	; 5
-    5060:	85 b1       	in	r24, 0x05	; 5
-    5062:	85 7f       	andi	r24, 0xF5	; 245
-    5064:	85 b9       	out	0x05, r24	; 5
+    427e:	85 b1       	in	r24, 0x05	; 5
+    4280:	8a 60       	ori	r24, 0x0A	; 10
+    4282:	85 b9       	out	0x05, r24	; 5
+    4284:	85 b1       	in	r24, 0x05	; 5
+    4286:	85 7f       	andi	r24, 0xF5	; 245
+    4288:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5066:	85 b1       	in	r24, 0x05	; 5
-    5068:	8a 60       	ori	r24, 0x0A	; 10
-    506a:	85 b9       	out	0x05, r24	; 5
-    506c:	85 b1       	in	r24, 0x05	; 5
-    506e:	85 7f       	andi	r24, 0xF5	; 245
-    5070:	85 b9       	out	0x05, r24	; 5
+    428a:	85 b1       	in	r24, 0x05	; 5
+    428c:	8a 60       	ori	r24, 0x0A	; 10
+    428e:	85 b9       	out	0x05, r24	; 5
+    4290:	85 b1       	in	r24, 0x05	; 5
+    4292:	85 7f       	andi	r24, 0xF5	; 245
+    4294:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5072:	85 b1       	in	r24, 0x05	; 5
-    5074:	8a 60       	ori	r24, 0x0A	; 10
-    5076:	85 b9       	out	0x05, r24	; 5
-    5078:	85 b1       	in	r24, 0x05	; 5
-    507a:	85 7f       	andi	r24, 0xF5	; 245
-    507c:	85 b9       	out	0x05, r24	; 5
+    4296:	85 b1       	in	r24, 0x05	; 5
+    4298:	8a 60       	ori	r24, 0x0A	; 10
+    429a:	85 b9       	out	0x05, r24	; 5
+    429c:	85 b1       	in	r24, 0x05	; 5
+    429e:	85 7f       	andi	r24, 0xF5	; 245
+    42a0:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    507e:	85 b1       	in	r24, 0x05	; 5
-    5080:	8a 60       	ori	r24, 0x0A	; 10
-    5082:	85 b9       	out	0x05, r24	; 5
-    5084:	85 b1       	in	r24, 0x05	; 5
-    5086:	85 7f       	andi	r24, 0xF5	; 245
-    5088:	85 b9       	out	0x05, r24	; 5
+    42a2:	85 b1       	in	r24, 0x05	; 5
+    42a4:	8a 60       	ori	r24, 0x0A	; 10
+    42a6:	85 b9       	out	0x05, r24	; 5
+    42a8:	85 b1       	in	r24, 0x05	; 5
+    42aa:	85 7f       	andi	r24, 0xF5	; 245
+    42ac:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    508a:	85 b1       	in	r24, 0x05	; 5
-    508c:	8a 60       	ori	r24, 0x0A	; 10
-    508e:	85 b9       	out	0x05, r24	; 5
-    5090:	85 b1       	in	r24, 0x05	; 5
-    5092:	85 7f       	andi	r24, 0xF5	; 245
-    5094:	85 b9       	out	0x05, r24	; 5
+    42ae:	85 b1       	in	r24, 0x05	; 5
+    42b0:	8a 60       	ori	r24, 0x0A	; 10
+    42b2:	85 b9       	out	0x05, r24	; 5
+    42b4:	85 b1       	in	r24, 0x05	; 5
+    42b6:	85 7f       	andi	r24, 0xF5	; 245
+    42b8:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5096:	85 b1       	in	r24, 0x05	; 5
-    5098:	8a 60       	ori	r24, 0x0A	; 10
-    509a:	85 b9       	out	0x05, r24	; 5
-    509c:	85 b1       	in	r24, 0x05	; 5
-    509e:	85 7f       	andi	r24, 0xF5	; 245
-    50a0:	85 b9       	out	0x05, r24	; 5
+    42ba:	85 b1       	in	r24, 0x05	; 5
+    42bc:	8a 60       	ori	r24, 0x0A	; 10
+    42be:	85 b9       	out	0x05, r24	; 5
+    42c0:	85 b1       	in	r24, 0x05	; 5
+    42c2:	85 7f       	andi	r24, 0xF5	; 245
+    42c4:	85 b9       	out	0x05, r24	; 5
 
             PWCLK_GCLK;
-    50a2:	85 b1       	in	r24, 0x05	; 5
-    50a4:	8a 60       	ori	r24, 0x0A	; 10
-    50a6:	85 b9       	out	0x05, r24	; 5
-    50a8:	85 b1       	in	r24, 0x05	; 5
-    50aa:	85 7f       	andi	r24, 0xF5	; 245
-    50ac:	85 b9       	out	0x05, r24	; 5
+    42c6:	85 b1       	in	r24, 0x05	; 5
+    42c8:	8a 60       	ori	r24, 0x0A	; 10
+    42ca:	85 b9       	out	0x05, r24	; 5
+    42cc:	85 b1       	in	r24, 0x05	; 5
+    42ce:	85 7f       	andi	r24, 0xF5	; 245
+    42d0:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    50ae:	85 b1       	in	r24, 0x05	; 5
-    50b0:	8a 60       	ori	r24, 0x0A	; 10
-    50b2:	85 b9       	out	0x05, r24	; 5
-    50b4:	85 b1       	in	r24, 0x05	; 5
-    50b6:	85 7f       	andi	r24, 0xF5	; 245
-    50b8:	85 b9       	out	0x05, r24	; 5
+    42d2:	85 b1       	in	r24, 0x05	; 5
+    42d4:	8a 60       	ori	r24, 0x0A	; 10
+    42d6:	85 b9       	out	0x05, r24	; 5
+    42d8:	85 b1       	in	r24, 0x05	; 5
+    42da:	85 7f       	andi	r24, 0xF5	; 245
+    42dc:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    50ba:	85 b1       	in	r24, 0x05	; 5
-    50bc:	8a 60       	ori	r24, 0x0A	; 10
-    50be:	85 b9       	out	0x05, r24	; 5
-    50c0:	85 b1       	in	r24, 0x05	; 5
-    50c2:	85 7f       	andi	r24, 0xF5	; 245
-    50c4:	85 b9       	out	0x05, r24	; 5
+    42de:	85 b1       	in	r24, 0x05	; 5
+    42e0:	8a 60       	ori	r24, 0x0A	; 10
+    42e2:	85 b9       	out	0x05, r24	; 5
+    42e4:	85 b1       	in	r24, 0x05	; 5
+    42e6:	85 7f       	andi	r24, 0xF5	; 245
+    42e8:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    50c6:	85 b1       	in	r24, 0x05	; 5
-    50c8:	8a 60       	ori	r24, 0x0A	; 10
-    50ca:	85 b9       	out	0x05, r24	; 5
-    50cc:	85 b1       	in	r24, 0x05	; 5
-    50ce:	85 7f       	andi	r24, 0xF5	; 245
-    50d0:	85 b9       	out	0x05, r24	; 5
+    42ea:	85 b1       	in	r24, 0x05	; 5
+    42ec:	8a 60       	ori	r24, 0x0A	; 10
+    42ee:	85 b9       	out	0x05, r24	; 5
+    42f0:	85 b1       	in	r24, 0x05	; 5
+    42f2:	85 7f       	andi	r24, 0xF5	; 245
+    42f4:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    50d2:	85 b1       	in	r24, 0x05	; 5
-    50d4:	8a 60       	ori	r24, 0x0A	; 10
-    50d6:	85 b9       	out	0x05, r24	; 5
-    50d8:	85 b1       	in	r24, 0x05	; 5
-    50da:	85 7f       	andi	r24, 0xF5	; 245
-    50dc:	85 b9       	out	0x05, r24	; 5
+    42f6:	85 b1       	in	r24, 0x05	; 5
+    42f8:	8a 60       	ori	r24, 0x0A	; 10
+    42fa:	85 b9       	out	0x05, r24	; 5
+    42fc:	85 b1       	in	r24, 0x05	; 5
+    42fe:	85 7f       	andi	r24, 0xF5	; 245
+    4300:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    50de:	85 b1       	in	r24, 0x05	; 5
-    50e0:	8a 60       	ori	r24, 0x0A	; 10
-    50e2:	85 b9       	out	0x05, r24	; 5
-    50e4:	85 b1       	in	r24, 0x05	; 5
-    50e6:	85 7f       	andi	r24, 0xF5	; 245
-    50e8:	85 b9       	out	0x05, r24	; 5
+    4302:	85 b1       	in	r24, 0x05	; 5
+    4304:	8a 60       	ori	r24, 0x0A	; 10
+    4306:	85 b9       	out	0x05, r24	; 5
+    4308:	85 b1       	in	r24, 0x05	; 5
+    430a:	85 7f       	andi	r24, 0xF5	; 245
+    430c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    50ea:	85 b1       	in	r24, 0x05	; 5
-    50ec:	8a 60       	ori	r24, 0x0A	; 10
-    50ee:	85 b9       	out	0x05, r24	; 5
-    50f0:	85 b1       	in	r24, 0x05	; 5
-    50f2:	85 7f       	andi	r24, 0xF5	; 245
-    50f4:	85 b9       	out	0x05, r24	; 5
+    430e:	85 b1       	in	r24, 0x05	; 5
+    4310:	8a 60       	ori	r24, 0x0A	; 10
+    4312:	85 b9       	out	0x05, r24	; 5
+    4314:	85 b1       	in	r24, 0x05	; 5
+    4316:	85 7f       	andi	r24, 0xF5	; 245
+    4318:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    50f6:	85 b1       	in	r24, 0x05	; 5
-    50f8:	8a 60       	ori	r24, 0x0A	; 10
-    50fa:	85 b9       	out	0x05, r24	; 5
-    50fc:	85 b1       	in	r24, 0x05	; 5
-    50fe:	85 7f       	andi	r24, 0xF5	; 245
-    5100:	85 b9       	out	0x05, r24	; 5
+    431a:	85 b1       	in	r24, 0x05	; 5
+    431c:	8a 60       	ori	r24, 0x0A	; 10
+    431e:	85 b9       	out	0x05, r24	; 5
+    4320:	85 b1       	in	r24, 0x05	; 5
+    4322:	85 7f       	andi	r24, 0xF5	; 245
+    4324:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5102:	85 b1       	in	r24, 0x05	; 5
-    5104:	8a 60       	ori	r24, 0x0A	; 10
-    5106:	85 b9       	out	0x05, r24	; 5
-    5108:	85 b1       	in	r24, 0x05	; 5
-    510a:	85 7f       	andi	r24, 0xF5	; 245
-    510c:	85 b9       	out	0x05, r24	; 5
+    4326:	85 b1       	in	r24, 0x05	; 5
+    4328:	8a 60       	ori	r24, 0x0A	; 10
+    432a:	85 b9       	out	0x05, r24	; 5
+    432c:	85 b1       	in	r24, 0x05	; 5
+    432e:	85 7f       	andi	r24, 0xF5	; 245
+    4330:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    510e:	85 b1       	in	r24, 0x05	; 5
-    5110:	8a 60       	ori	r24, 0x0A	; 10
-    5112:	85 b9       	out	0x05, r24	; 5
-    5114:	85 b1       	in	r24, 0x05	; 5
-    5116:	85 7f       	andi	r24, 0xF5	; 245
-    5118:	85 b9       	out	0x05, r24	; 5
+    4332:	85 b1       	in	r24, 0x05	; 5
+    4334:	8a 60       	ori	r24, 0x0A	; 10
+    4336:	85 b9       	out	0x05, r24	; 5
+    4338:	85 b1       	in	r24, 0x05	; 5
+    433a:	85 7f       	andi	r24, 0xF5	; 245
+    433c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    511a:	85 b1       	in	r24, 0x05	; 5
-    511c:	8a 60       	ori	r24, 0x0A	; 10
-    511e:	85 b9       	out	0x05, r24	; 5
-    5120:	85 b1       	in	r24, 0x05	; 5
-    5122:	85 7f       	andi	r24, 0xF5	; 245
-    5124:	85 b9       	out	0x05, r24	; 5
+    433e:	85 b1       	in	r24, 0x05	; 5
+    4340:	8a 60       	ori	r24, 0x0A	; 10
+    4342:	85 b9       	out	0x05, r24	; 5
+    4344:	85 b1       	in	r24, 0x05	; 5
+    4346:	85 7f       	andi	r24, 0xF5	; 245
+    4348:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5126:	85 b1       	in	r24, 0x05	; 5
-    5128:	8a 60       	ori	r24, 0x0A	; 10
-    512a:	85 b9       	out	0x05, r24	; 5
-    512c:	85 b1       	in	r24, 0x05	; 5
-    512e:	85 7f       	andi	r24, 0xF5	; 245
-    5130:	85 b9       	out	0x05, r24	; 5
+    434a:	85 b1       	in	r24, 0x05	; 5
+    434c:	8a 60       	ori	r24, 0x0A	; 10
+    434e:	85 b9       	out	0x05, r24	; 5
+    4350:	85 b1       	in	r24, 0x05	; 5
+    4352:	85 7f       	andi	r24, 0xF5	; 245
+    4354:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5132:	85 b1       	in	r24, 0x05	; 5
-    5134:	8a 60       	ori	r24, 0x0A	; 10
-    5136:	85 b9       	out	0x05, r24	; 5
-    5138:	85 b1       	in	r24, 0x05	; 5
-    513a:	85 7f       	andi	r24, 0xF5	; 245
-    513c:	85 b9       	out	0x05, r24	; 5
+    4356:	85 b1       	in	r24, 0x05	; 5
+    4358:	8a 60       	ori	r24, 0x0A	; 10
+    435a:	85 b9       	out	0x05, r24	; 5
+    435c:	85 b1       	in	r24, 0x05	; 5
+    435e:	85 7f       	andi	r24, 0xF5	; 245
+    4360:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    513e:	85 b1       	in	r24, 0x05	; 5
-    5140:	8a 60       	ori	r24, 0x0A	; 10
-    5142:	85 b9       	out	0x05, r24	; 5
-    5144:	85 b1       	in	r24, 0x05	; 5
-    5146:	85 7f       	andi	r24, 0xF5	; 245
-    5148:	85 b9       	out	0x05, r24	; 5
+    4362:	85 b1       	in	r24, 0x05	; 5
+    4364:	8a 60       	ori	r24, 0x0A	; 10
+    4366:	85 b9       	out	0x05, r24	; 5
+    4368:	85 b1       	in	r24, 0x05	; 5
+    436a:	85 7f       	andi	r24, 0xF5	; 245
+    436c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    514a:	85 b1       	in	r24, 0x05	; 5
-    514c:	8a 60       	ori	r24, 0x0A	; 10
-    514e:	85 b9       	out	0x05, r24	; 5
-    5150:	85 b1       	in	r24, 0x05	; 5
-    5152:	85 7f       	andi	r24, 0xF5	; 245
-    5154:	85 b9       	out	0x05, r24	; 5
+    436e:	85 b1       	in	r24, 0x05	; 5
+    4370:	8a 60       	ori	r24, 0x0A	; 10
+    4372:	85 b9       	out	0x05, r24	; 5
+    4374:	85 b1       	in	r24, 0x05	; 5
+    4376:	85 7f       	andi	r24, 0xF5	; 245
+    4378:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5156:	85 b1       	in	r24, 0x05	; 5
-    5158:	8a 60       	ori	r24, 0x0A	; 10
-    515a:	85 b9       	out	0x05, r24	; 5
-    515c:	85 b1       	in	r24, 0x05	; 5
-    515e:	85 7f       	andi	r24, 0xF5	; 245
-    5160:	85 b9       	out	0x05, r24	; 5
+    437a:	85 b1       	in	r24, 0x05	; 5
+    437c:	8a 60       	ori	r24, 0x0A	; 10
+    437e:	85 b9       	out	0x05, r24	; 5
+    4380:	85 b1       	in	r24, 0x05	; 5
+    4382:	85 7f       	andi	r24, 0xF5	; 245
+    4384:	85 b9       	out	0x05, r24	; 5
 
             PWCLK_GCLK;
-    5162:	85 b1       	in	r24, 0x05	; 5
-    5164:	8a 60       	ori	r24, 0x0A	; 10
-    5166:	85 b9       	out	0x05, r24	; 5
-    5168:	85 b1       	in	r24, 0x05	; 5
-    516a:	85 7f       	andi	r24, 0xF5	; 245
-    516c:	85 b9       	out	0x05, r24	; 5
+    4386:	85 b1       	in	r24, 0x05	; 5
+    4388:	8a 60       	ori	r24, 0x0A	; 10
+    438a:	85 b9       	out	0x05, r24	; 5
+    438c:	85 b1       	in	r24, 0x05	; 5
+    438e:	85 7f       	andi	r24, 0xF5	; 245
+    4390:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    516e:	85 b1       	in	r24, 0x05	; 5
-    5170:	8a 60       	ori	r24, 0x0A	; 10
-    5172:	85 b9       	out	0x05, r24	; 5
-    5174:	85 b1       	in	r24, 0x05	; 5
-    5176:	85 7f       	andi	r24, 0xF5	; 245
-    5178:	85 b9       	out	0x05, r24	; 5
+    4392:	85 b1       	in	r24, 0x05	; 5
+    4394:	8a 60       	ori	r24, 0x0A	; 10
+    4396:	85 b9       	out	0x05, r24	; 5
+    4398:	85 b1       	in	r24, 0x05	; 5
+    439a:	85 7f       	andi	r24, 0xF5	; 245
+    439c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    517a:	85 b1       	in	r24, 0x05	; 5
-    517c:	8a 60       	ori	r24, 0x0A	; 10
-    517e:	85 b9       	out	0x05, r24	; 5
-    5180:	85 b1       	in	r24, 0x05	; 5
-    5182:	85 7f       	andi	r24, 0xF5	; 245
-    5184:	85 b9       	out	0x05, r24	; 5
+    439e:	85 b1       	in	r24, 0x05	; 5
+    43a0:	8a 60       	ori	r24, 0x0A	; 10
+    43a2:	85 b9       	out	0x05, r24	; 5
+    43a4:	85 b1       	in	r24, 0x05	; 5
+    43a6:	85 7f       	andi	r24, 0xF5	; 245
+    43a8:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5186:	85 b1       	in	r24, 0x05	; 5
-    5188:	8a 60       	ori	r24, 0x0A	; 10
-    518a:	85 b9       	out	0x05, r24	; 5
-    518c:	85 b1       	in	r24, 0x05	; 5
-    518e:	85 7f       	andi	r24, 0xF5	; 245
-    5190:	85 b9       	out	0x05, r24	; 5
+    43aa:	85 b1       	in	r24, 0x05	; 5
+    43ac:	8a 60       	ori	r24, 0x0A	; 10
+    43ae:	85 b9       	out	0x05, r24	; 5
+    43b0:	85 b1       	in	r24, 0x05	; 5
+    43b2:	85 7f       	andi	r24, 0xF5	; 245
+    43b4:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5192:	85 b1       	in	r24, 0x05	; 5
-    5194:	8a 60       	ori	r24, 0x0A	; 10
-    5196:	85 b9       	out	0x05, r24	; 5
-    5198:	85 b1       	in	r24, 0x05	; 5
-    519a:	85 7f       	andi	r24, 0xF5	; 245
-    519c:	85 b9       	out	0x05, r24	; 5
+    43b6:	85 b1       	in	r24, 0x05	; 5
+    43b8:	8a 60       	ori	r24, 0x0A	; 10
+    43ba:	85 b9       	out	0x05, r24	; 5
+    43bc:	85 b1       	in	r24, 0x05	; 5
+    43be:	85 7f       	andi	r24, 0xF5	; 245
+    43c0:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    519e:	85 b1       	in	r24, 0x05	; 5
-    51a0:	8a 60       	ori	r24, 0x0A	; 10
-    51a2:	85 b9       	out	0x05, r24	; 5
-    51a4:	85 b1       	in	r24, 0x05	; 5
-    51a6:	85 7f       	andi	r24, 0xF5	; 245
-    51a8:	85 b9       	out	0x05, r24	; 5
+    43c2:	85 b1       	in	r24, 0x05	; 5
+    43c4:	8a 60       	ori	r24, 0x0A	; 10
+    43c6:	85 b9       	out	0x05, r24	; 5
+    43c8:	85 b1       	in	r24, 0x05	; 5
+    43ca:	85 7f       	andi	r24, 0xF5	; 245
+    43cc:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    51aa:	85 b1       	in	r24, 0x05	; 5
-    51ac:	8a 60       	ori	r24, 0x0A	; 10
-    51ae:	85 b9       	out	0x05, r24	; 5
-    51b0:	85 b1       	in	r24, 0x05	; 5
-    51b2:	85 7f       	andi	r24, 0xF5	; 245
-    51b4:	85 b9       	out	0x05, r24	; 5
+    43ce:	85 b1       	in	r24, 0x05	; 5
+    43d0:	8a 60       	ori	r24, 0x0A	; 10
+    43d2:	85 b9       	out	0x05, r24	; 5
+    43d4:	85 b1       	in	r24, 0x05	; 5
+    43d6:	85 7f       	andi	r24, 0xF5	; 245
+    43d8:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    51b6:	85 b1       	in	r24, 0x05	; 5
-    51b8:	8a 60       	ori	r24, 0x0A	; 10
-    51ba:	85 b9       	out	0x05, r24	; 5
-    51bc:	85 b1       	in	r24, 0x05	; 5
-    51be:	85 7f       	andi	r24, 0xF5	; 245
-    51c0:	85 b9       	out	0x05, r24	; 5
+    43da:	85 b1       	in	r24, 0x05	; 5
+    43dc:	8a 60       	ori	r24, 0x0A	; 10
+    43de:	85 b9       	out	0x05, r24	; 5
+    43e0:	85 b1       	in	r24, 0x05	; 5
+    43e2:	85 7f       	andi	r24, 0xF5	; 245
+    43e4:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    51c2:	85 b1       	in	r24, 0x05	; 5
-    51c4:	8a 60       	ori	r24, 0x0A	; 10
-    51c6:	85 b9       	out	0x05, r24	; 5
-    51c8:	85 b1       	in	r24, 0x05	; 5
-    51ca:	85 7f       	andi	r24, 0xF5	; 245
-    51cc:	85 b9       	out	0x05, r24	; 5
+    43e6:	85 b1       	in	r24, 0x05	; 5
+    43e8:	8a 60       	ori	r24, 0x0A	; 10
+    43ea:	85 b9       	out	0x05, r24	; 5
+    43ec:	85 b1       	in	r24, 0x05	; 5
+    43ee:	85 7f       	andi	r24, 0xF5	; 245
+    43f0:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    51ce:	85 b1       	in	r24, 0x05	; 5
-    51d0:	8a 60       	ori	r24, 0x0A	; 10
-    51d2:	85 b9       	out	0x05, r24	; 5
-    51d4:	85 b1       	in	r24, 0x05	; 5
-    51d6:	85 7f       	andi	r24, 0xF5	; 245
-    51d8:	85 b9       	out	0x05, r24	; 5
+    43f2:	85 b1       	in	r24, 0x05	; 5
+    43f4:	8a 60       	ori	r24, 0x0A	; 10
+    43f6:	85 b9       	out	0x05, r24	; 5
+    43f8:	85 b1       	in	r24, 0x05	; 5
+    43fa:	85 7f       	andi	r24, 0xF5	; 245
+    43fc:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    51da:	85 b1       	in	r24, 0x05	; 5
-    51dc:	8a 60       	ori	r24, 0x0A	; 10
-    51de:	85 b9       	out	0x05, r24	; 5
-    51e0:	85 b1       	in	r24, 0x05	; 5
-    51e2:	85 7f       	andi	r24, 0xF5	; 245
-    51e4:	85 b9       	out	0x05, r24	; 5
+    43fe:	85 b1       	in	r24, 0x05	; 5
+    4400:	8a 60       	ori	r24, 0x0A	; 10
+    4402:	85 b9       	out	0x05, r24	; 5
+    4404:	85 b1       	in	r24, 0x05	; 5
+    4406:	85 7f       	andi	r24, 0xF5	; 245
+    4408:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    51e6:	85 b1       	in	r24, 0x05	; 5
-    51e8:	8a 60       	ori	r24, 0x0A	; 10
-    51ea:	85 b9       	out	0x05, r24	; 5
-    51ec:	85 b1       	in	r24, 0x05	; 5
-    51ee:	85 7f       	andi	r24, 0xF5	; 245
-    51f0:	85 b9       	out	0x05, r24	; 5
+    440a:	85 b1       	in	r24, 0x05	; 5
+    440c:	8a 60       	ori	r24, 0x0A	; 10
+    440e:	85 b9       	out	0x05, r24	; 5
+    4410:	85 b1       	in	r24, 0x05	; 5
+    4412:	85 7f       	andi	r24, 0xF5	; 245
+    4414:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    51f2:	85 b1       	in	r24, 0x05	; 5
-    51f4:	8a 60       	ori	r24, 0x0A	; 10
-    51f6:	85 b9       	out	0x05, r24	; 5
-    51f8:	85 b1       	in	r24, 0x05	; 5
-    51fa:	85 7f       	andi	r24, 0xF5	; 245
-    51fc:	85 b9       	out	0x05, r24	; 5
+    4416:	85 b1       	in	r24, 0x05	; 5
+    4418:	8a 60       	ori	r24, 0x0A	; 10
+    441a:	85 b9       	out	0x05, r24	; 5
+    441c:	85 b1       	in	r24, 0x05	; 5
+    441e:	85 7f       	andi	r24, 0xF5	; 245
+    4420:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    51fe:	85 b1       	in	r24, 0x05	; 5
-    5200:	8a 60       	ori	r24, 0x0A	; 10
-    5202:	85 b9       	out	0x05, r24	; 5
-    5204:	85 b1       	in	r24, 0x05	; 5
-    5206:	85 7f       	andi	r24, 0xF5	; 245
-    5208:	85 b9       	out	0x05, r24	; 5
+    4422:	85 b1       	in	r24, 0x05	; 5
+    4424:	8a 60       	ori	r24, 0x0A	; 10
+    4426:	85 b9       	out	0x05, r24	; 5
+    4428:	85 b1       	in	r24, 0x05	; 5
+    442a:	85 7f       	andi	r24, 0xF5	; 245
+    442c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    520a:	85 b1       	in	r24, 0x05	; 5
-    520c:	8a 60       	ori	r24, 0x0A	; 10
-    520e:	85 b9       	out	0x05, r24	; 5
-    5210:	85 b1       	in	r24, 0x05	; 5
-    5212:	85 7f       	andi	r24, 0xF5	; 245
-    5214:	85 b9       	out	0x05, r24	; 5
+    442e:	85 b1       	in	r24, 0x05	; 5
+    4430:	8a 60       	ori	r24, 0x0A	; 10
+    4432:	85 b9       	out	0x05, r24	; 5
+    4434:	85 b1       	in	r24, 0x05	; 5
+    4436:	85 7f       	andi	r24, 0xF5	; 245
+    4438:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5216:	85 b1       	in	r24, 0x05	; 5
-    5218:	8a 60       	ori	r24, 0x0A	; 10
-    521a:	85 b9       	out	0x05, r24	; 5
-    521c:	85 b1       	in	r24, 0x05	; 5
-    521e:	85 7f       	andi	r24, 0xF5	; 245
-    5220:	85 b9       	out	0x05, r24	; 5
+    443a:	85 b1       	in	r24, 0x05	; 5
+    443c:	8a 60       	ori	r24, 0x0A	; 10
+    443e:	85 b9       	out	0x05, r24	; 5
+    4440:	85 b1       	in	r24, 0x05	; 5
+    4442:	85 7f       	andi	r24, 0xF5	; 245
+    4444:	85 b9       	out	0x05, r24	; 5
 
             PWCLK_GCLK;
-    5222:	85 b1       	in	r24, 0x05	; 5
-    5224:	8a 60       	ori	r24, 0x0A	; 10
-    5226:	85 b9       	out	0x05, r24	; 5
-    5228:	85 b1       	in	r24, 0x05	; 5
-    522a:	85 7f       	andi	r24, 0xF5	; 245
-    522c:	85 b9       	out	0x05, r24	; 5
+    4446:	85 b1       	in	r24, 0x05	; 5
+    4448:	8a 60       	ori	r24, 0x0A	; 10
+    444a:	85 b9       	out	0x05, r24	; 5
+    444c:	85 b1       	in	r24, 0x05	; 5
+    444e:	85 7f       	andi	r24, 0xF5	; 245
+    4450:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    522e:	85 b1       	in	r24, 0x05	; 5
-    5230:	8a 60       	ori	r24, 0x0A	; 10
-    5232:	85 b9       	out	0x05, r24	; 5
-    5234:	85 b1       	in	r24, 0x05	; 5
-    5236:	85 7f       	andi	r24, 0xF5	; 245
-    5238:	85 b9       	out	0x05, r24	; 5
+    4452:	85 b1       	in	r24, 0x05	; 5
+    4454:	8a 60       	ori	r24, 0x0A	; 10
+    4456:	85 b9       	out	0x05, r24	; 5
+    4458:	85 b1       	in	r24, 0x05	; 5
+    445a:	85 7f       	andi	r24, 0xF5	; 245
+    445c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    523a:	85 b1       	in	r24, 0x05	; 5
-    523c:	8a 60       	ori	r24, 0x0A	; 10
-    523e:	85 b9       	out	0x05, r24	; 5
-    5240:	85 b1       	in	r24, 0x05	; 5
-    5242:	85 7f       	andi	r24, 0xF5	; 245
-    5244:	85 b9       	out	0x05, r24	; 5
+    445e:	85 b1       	in	r24, 0x05	; 5
+    4460:	8a 60       	ori	r24, 0x0A	; 10
+    4462:	85 b9       	out	0x05, r24	; 5
+    4464:	85 b1       	in	r24, 0x05	; 5
+    4466:	85 7f       	andi	r24, 0xF5	; 245
+    4468:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5246:	85 b1       	in	r24, 0x05	; 5
-    5248:	8a 60       	ori	r24, 0x0A	; 10
-    524a:	85 b9       	out	0x05, r24	; 5
-    524c:	85 b1       	in	r24, 0x05	; 5
-    524e:	85 7f       	andi	r24, 0xF5	; 245
-    5250:	85 b9       	out	0x05, r24	; 5
+    446a:	85 b1       	in	r24, 0x05	; 5
+    446c:	8a 60       	ori	r24, 0x0A	; 10
+    446e:	85 b9       	out	0x05, r24	; 5
+    4470:	85 b1       	in	r24, 0x05	; 5
+    4472:	85 7f       	andi	r24, 0xF5	; 245
+    4474:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5252:	85 b1       	in	r24, 0x05	; 5
-    5254:	8a 60       	ori	r24, 0x0A	; 10
-    5256:	85 b9       	out	0x05, r24	; 5
-    5258:	85 b1       	in	r24, 0x05	; 5
-    525a:	85 7f       	andi	r24, 0xF5	; 245
-    525c:	85 b9       	out	0x05, r24	; 5
+    4476:	85 b1       	in	r24, 0x05	; 5
+    4478:	8a 60       	ori	r24, 0x0A	; 10
+    447a:	85 b9       	out	0x05, r24	; 5
+    447c:	85 b1       	in	r24, 0x05	; 5
+    447e:	85 7f       	andi	r24, 0xF5	; 245
+    4480:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    525e:	85 b1       	in	r24, 0x05	; 5
-    5260:	8a 60       	ori	r24, 0x0A	; 10
-    5262:	85 b9       	out	0x05, r24	; 5
-    5264:	85 b1       	in	r24, 0x05	; 5
-    5266:	85 7f       	andi	r24, 0xF5	; 245
-    5268:	85 b9       	out	0x05, r24	; 5
+    4482:	85 b1       	in	r24, 0x05	; 5
+    4484:	8a 60       	ori	r24, 0x0A	; 10
+    4486:	85 b9       	out	0x05, r24	; 5
+    4488:	85 b1       	in	r24, 0x05	; 5
+    448a:	85 7f       	andi	r24, 0xF5	; 245
+    448c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    526a:	85 b1       	in	r24, 0x05	; 5
-    526c:	8a 60       	ori	r24, 0x0A	; 10
-    526e:	85 b9       	out	0x05, r24	; 5
-    5270:	85 b1       	in	r24, 0x05	; 5
-    5272:	85 7f       	andi	r24, 0xF5	; 245
-    5274:	85 b9       	out	0x05, r24	; 5
+    448e:	85 b1       	in	r24, 0x05	; 5
+    4490:	8a 60       	ori	r24, 0x0A	; 10
+    4492:	85 b9       	out	0x05, r24	; 5
+    4494:	85 b1       	in	r24, 0x05	; 5
+    4496:	85 7f       	andi	r24, 0xF5	; 245
+    4498:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5276:	85 b1       	in	r24, 0x05	; 5
-    5278:	8a 60       	ori	r24, 0x0A	; 10
-    527a:	85 b9       	out	0x05, r24	; 5
-    527c:	85 b1       	in	r24, 0x05	; 5
-    527e:	85 7f       	andi	r24, 0xF5	; 245
-    5280:	85 b9       	out	0x05, r24	; 5
+    449a:	85 b1       	in	r24, 0x05	; 5
+    449c:	8a 60       	ori	r24, 0x0A	; 10
+    449e:	85 b9       	out	0x05, r24	; 5
+    44a0:	85 b1       	in	r24, 0x05	; 5
+    44a2:	85 7f       	andi	r24, 0xF5	; 245
+    44a4:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5282:	85 b1       	in	r24, 0x05	; 5
-    5284:	8a 60       	ori	r24, 0x0A	; 10
-    5286:	85 b9       	out	0x05, r24	; 5
-    5288:	85 b1       	in	r24, 0x05	; 5
-    528a:	85 7f       	andi	r24, 0xF5	; 245
-    528c:	85 b9       	out	0x05, r24	; 5
+    44a6:	85 b1       	in	r24, 0x05	; 5
+    44a8:	8a 60       	ori	r24, 0x0A	; 10
+    44aa:	85 b9       	out	0x05, r24	; 5
+    44ac:	85 b1       	in	r24, 0x05	; 5
+    44ae:	85 7f       	andi	r24, 0xF5	; 245
+    44b0:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    528e:	85 b1       	in	r24, 0x05	; 5
-    5290:	8a 60       	ori	r24, 0x0A	; 10
-    5292:	85 b9       	out	0x05, r24	; 5
-    5294:	85 b1       	in	r24, 0x05	; 5
-    5296:	85 7f       	andi	r24, 0xF5	; 245
-    5298:	85 b9       	out	0x05, r24	; 5
+    44b2:	85 b1       	in	r24, 0x05	; 5
+    44b4:	8a 60       	ori	r24, 0x0A	; 10
+    44b6:	85 b9       	out	0x05, r24	; 5
+    44b8:	85 b1       	in	r24, 0x05	; 5
+    44ba:	85 7f       	andi	r24, 0xF5	; 245
+    44bc:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    529a:	85 b1       	in	r24, 0x05	; 5
-    529c:	8a 60       	ori	r24, 0x0A	; 10
-    529e:	85 b9       	out	0x05, r24	; 5
-    52a0:	85 b1       	in	r24, 0x05	; 5
-    52a2:	85 7f       	andi	r24, 0xF5	; 245
-    52a4:	85 b9       	out	0x05, r24	; 5
+    44be:	85 b1       	in	r24, 0x05	; 5
+    44c0:	8a 60       	ori	r24, 0x0A	; 10
+    44c2:	85 b9       	out	0x05, r24	; 5
+    44c4:	85 b1       	in	r24, 0x05	; 5
+    44c6:	85 7f       	andi	r24, 0xF5	; 245
+    44c8:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    52a6:	85 b1       	in	r24, 0x05	; 5
-    52a8:	8a 60       	ori	r24, 0x0A	; 10
-    52aa:	85 b9       	out	0x05, r24	; 5
-    52ac:	85 b1       	in	r24, 0x05	; 5
-    52ae:	85 7f       	andi	r24, 0xF5	; 245
-    52b0:	85 b9       	out	0x05, r24	; 5
+    44ca:	85 b1       	in	r24, 0x05	; 5
+    44cc:	8a 60       	ori	r24, 0x0A	; 10
+    44ce:	85 b9       	out	0x05, r24	; 5
+    44d0:	85 b1       	in	r24, 0x05	; 5
+    44d2:	85 7f       	andi	r24, 0xF5	; 245
+    44d4:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    52b2:	85 b1       	in	r24, 0x05	; 5
-    52b4:	8a 60       	ori	r24, 0x0A	; 10
-    52b6:	85 b9       	out	0x05, r24	; 5
-    52b8:	85 b1       	in	r24, 0x05	; 5
-    52ba:	85 7f       	andi	r24, 0xF5	; 245
-    52bc:	85 b9       	out	0x05, r24	; 5
+    44d6:	85 b1       	in	r24, 0x05	; 5
+    44d8:	8a 60       	ori	r24, 0x0A	; 10
+    44da:	85 b9       	out	0x05, r24	; 5
+    44dc:	85 b1       	in	r24, 0x05	; 5
+    44de:	85 7f       	andi	r24, 0xF5	; 245
+    44e0:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    52be:	85 b1       	in	r24, 0x05	; 5
-    52c0:	8a 60       	ori	r24, 0x0A	; 10
-    52c2:	85 b9       	out	0x05, r24	; 5
-    52c4:	85 b1       	in	r24, 0x05	; 5
-    52c6:	85 7f       	andi	r24, 0xF5	; 245
-    52c8:	85 b9       	out	0x05, r24	; 5
+    44e2:	85 b1       	in	r24, 0x05	; 5
+    44e4:	8a 60       	ori	r24, 0x0A	; 10
+    44e6:	85 b9       	out	0x05, r24	; 5
+    44e8:	85 b1       	in	r24, 0x05	; 5
+    44ea:	85 7f       	andi	r24, 0xF5	; 245
+    44ec:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    52ca:	85 b1       	in	r24, 0x05	; 5
-    52cc:	8a 60       	ori	r24, 0x0A	; 10
-    52ce:	85 b9       	out	0x05, r24	; 5
-    52d0:	85 b1       	in	r24, 0x05	; 5
-    52d2:	85 7f       	andi	r24, 0xF5	; 245
-    52d4:	85 b9       	out	0x05, r24	; 5
+    44ee:	85 b1       	in	r24, 0x05	; 5
+    44f0:	8a 60       	ori	r24, 0x0A	; 10
+    44f2:	85 b9       	out	0x05, r24	; 5
+    44f4:	85 b1       	in	r24, 0x05	; 5
+    44f6:	85 7f       	andi	r24, 0xF5	; 245
+    44f8:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    52d6:	85 b1       	in	r24, 0x05	; 5
-    52d8:	8a 60       	ori	r24, 0x0A	; 10
-    52da:	85 b9       	out	0x05, r24	; 5
-    52dc:	85 b1       	in	r24, 0x05	; 5
-    52de:	85 7f       	andi	r24, 0xF5	; 245
-    52e0:	85 b9       	out	0x05, r24	; 5
+    44fa:	85 b1       	in	r24, 0x05	; 5
+    44fc:	8a 60       	ori	r24, 0x0A	; 10
+    44fe:	85 b9       	out	0x05, r24	; 5
+    4500:	85 b1       	in	r24, 0x05	; 5
+    4502:	85 7f       	andi	r24, 0xF5	; 245
+    4504:	85 b9       	out	0x05, r24	; 5
 
             PWCLK_GCLK;
-    52e2:	85 b1       	in	r24, 0x05	; 5
-    52e4:	8a 60       	ori	r24, 0x0A	; 10
-    52e6:	85 b9       	out	0x05, r24	; 5
-    52e8:	85 b1       	in	r24, 0x05	; 5
-    52ea:	85 7f       	andi	r24, 0xF5	; 245
-    52ec:	85 b9       	out	0x05, r24	; 5
+    4506:	85 b1       	in	r24, 0x05	; 5
+    4508:	8a 60       	ori	r24, 0x0A	; 10
+    450a:	85 b9       	out	0x05, r24	; 5
+    450c:	85 b1       	in	r24, 0x05	; 5
+    450e:	85 7f       	andi	r24, 0xF5	; 245
+    4510:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    52ee:	85 b1       	in	r24, 0x05	; 5
-    52f0:	8a 60       	ori	r24, 0x0A	; 10
-    52f2:	85 b9       	out	0x05, r24	; 5
-    52f4:	85 b1       	in	r24, 0x05	; 5
-    52f6:	85 7f       	andi	r24, 0xF5	; 245
-    52f8:	85 b9       	out	0x05, r24	; 5
+    4512:	85 b1       	in	r24, 0x05	; 5
+    4514:	8a 60       	ori	r24, 0x0A	; 10
+    4516:	85 b9       	out	0x05, r24	; 5
+    4518:	85 b1       	in	r24, 0x05	; 5
+    451a:	85 7f       	andi	r24, 0xF5	; 245
+    451c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    52fa:	85 b1       	in	r24, 0x05	; 5
-    52fc:	8a 60       	ori	r24, 0x0A	; 10
-    52fe:	85 b9       	out	0x05, r24	; 5
-    5300:	85 b1       	in	r24, 0x05	; 5
-    5302:	85 7f       	andi	r24, 0xF5	; 245
-    5304:	85 b9       	out	0x05, r24	; 5
+    451e:	85 b1       	in	r24, 0x05	; 5
+    4520:	8a 60       	ori	r24, 0x0A	; 10
+    4522:	85 b9       	out	0x05, r24	; 5
+    4524:	85 b1       	in	r24, 0x05	; 5
+    4526:	85 7f       	andi	r24, 0xF5	; 245
+    4528:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5306:	85 b1       	in	r24, 0x05	; 5
-    5308:	8a 60       	ori	r24, 0x0A	; 10
-    530a:	85 b9       	out	0x05, r24	; 5
-    530c:	85 b1       	in	r24, 0x05	; 5
-    530e:	85 7f       	andi	r24, 0xF5	; 245
-    5310:	85 b9       	out	0x05, r24	; 5
+    452a:	85 b1       	in	r24, 0x05	; 5
+    452c:	8a 60       	ori	r24, 0x0A	; 10
+    452e:	85 b9       	out	0x05, r24	; 5
+    4530:	85 b1       	in	r24, 0x05	; 5
+    4532:	85 7f       	andi	r24, 0xF5	; 245
+    4534:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5312:	85 b1       	in	r24, 0x05	; 5
-    5314:	8a 60       	ori	r24, 0x0A	; 10
-    5316:	85 b9       	out	0x05, r24	; 5
-    5318:	85 b1       	in	r24, 0x05	; 5
-    531a:	85 7f       	andi	r24, 0xF5	; 245
-    531c:	85 b9       	out	0x05, r24	; 5
+    4536:	85 b1       	in	r24, 0x05	; 5
+    4538:	8a 60       	ori	r24, 0x0A	; 10
+    453a:	85 b9       	out	0x05, r24	; 5
+    453c:	85 b1       	in	r24, 0x05	; 5
+    453e:	85 7f       	andi	r24, 0xF5	; 245
+    4540:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    531e:	85 b1       	in	r24, 0x05	; 5
-    5320:	8a 60       	ori	r24, 0x0A	; 10
-    5322:	85 b9       	out	0x05, r24	; 5
-    5324:	85 b1       	in	r24, 0x05	; 5
-    5326:	85 7f       	andi	r24, 0xF5	; 245
-    5328:	85 b9       	out	0x05, r24	; 5
+    4542:	85 b1       	in	r24, 0x05	; 5
+    4544:	8a 60       	ori	r24, 0x0A	; 10
+    4546:	85 b9       	out	0x05, r24	; 5
+    4548:	85 b1       	in	r24, 0x05	; 5
+    454a:	85 7f       	andi	r24, 0xF5	; 245
+    454c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    532a:	85 b1       	in	r24, 0x05	; 5
-    532c:	8a 60       	ori	r24, 0x0A	; 10
-    532e:	85 b9       	out	0x05, r24	; 5
-    5330:	85 b1       	in	r24, 0x05	; 5
-    5332:	85 7f       	andi	r24, 0xF5	; 245
-    5334:	85 b9       	out	0x05, r24	; 5
+    454e:	85 b1       	in	r24, 0x05	; 5
+    4550:	8a 60       	ori	r24, 0x0A	; 10
+    4552:	85 b9       	out	0x05, r24	; 5
+    4554:	85 b1       	in	r24, 0x05	; 5
+    4556:	85 7f       	andi	r24, 0xF5	; 245
+    4558:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5336:	85 b1       	in	r24, 0x05	; 5
-    5338:	8a 60       	ori	r24, 0x0A	; 10
-    533a:	85 b9       	out	0x05, r24	; 5
-    533c:	85 b1       	in	r24, 0x05	; 5
-    533e:	85 7f       	andi	r24, 0xF5	; 245
-    5340:	85 b9       	out	0x05, r24	; 5
+    455a:	85 b1       	in	r24, 0x05	; 5
+    455c:	8a 60       	ori	r24, 0x0A	; 10
+    455e:	85 b9       	out	0x05, r24	; 5
+    4560:	85 b1       	in	r24, 0x05	; 5
+    4562:	85 7f       	andi	r24, 0xF5	; 245
+    4564:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5342:	85 b1       	in	r24, 0x05	; 5
-    5344:	8a 60       	ori	r24, 0x0A	; 10
-    5346:	85 b9       	out	0x05, r24	; 5
-    5348:	85 b1       	in	r24, 0x05	; 5
-    534a:	85 7f       	andi	r24, 0xF5	; 245
-    534c:	85 b9       	out	0x05, r24	; 5
+    4566:	85 b1       	in	r24, 0x05	; 5
+    4568:	8a 60       	ori	r24, 0x0A	; 10
+    456a:	85 b9       	out	0x05, r24	; 5
+    456c:	85 b1       	in	r24, 0x05	; 5
+    456e:	85 7f       	andi	r24, 0xF5	; 245
+    4570:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    534e:	85 b1       	in	r24, 0x05	; 5
-    5350:	8a 60       	ori	r24, 0x0A	; 10
-    5352:	85 b9       	out	0x05, r24	; 5
-    5354:	85 b1       	in	r24, 0x05	; 5
-    5356:	85 7f       	andi	r24, 0xF5	; 245
-    5358:	85 b9       	out	0x05, r24	; 5
+    4572:	85 b1       	in	r24, 0x05	; 5
+    4574:	8a 60       	ori	r24, 0x0A	; 10
+    4576:	85 b9       	out	0x05, r24	; 5
+    4578:	85 b1       	in	r24, 0x05	; 5
+    457a:	85 7f       	andi	r24, 0xF5	; 245
+    457c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    535a:	85 b1       	in	r24, 0x05	; 5
-    535c:	8a 60       	ori	r24, 0x0A	; 10
-    535e:	85 b9       	out	0x05, r24	; 5
-    5360:	85 b1       	in	r24, 0x05	; 5
-    5362:	85 7f       	andi	r24, 0xF5	; 245
-    5364:	85 b9       	out	0x05, r24	; 5
+    457e:	85 b1       	in	r24, 0x05	; 5
+    4580:	8a 60       	ori	r24, 0x0A	; 10
+    4582:	85 b9       	out	0x05, r24	; 5
+    4584:	85 b1       	in	r24, 0x05	; 5
+    4586:	85 7f       	andi	r24, 0xF5	; 245
+    4588:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5366:	85 b1       	in	r24, 0x05	; 5
-    5368:	8a 60       	ori	r24, 0x0A	; 10
-    536a:	85 b9       	out	0x05, r24	; 5
-    536c:	85 b1       	in	r24, 0x05	; 5
-    536e:	85 7f       	andi	r24, 0xF5	; 245
-    5370:	85 b9       	out	0x05, r24	; 5
+    458a:	85 b1       	in	r24, 0x05	; 5
+    458c:	8a 60       	ori	r24, 0x0A	; 10
+    458e:	85 b9       	out	0x05, r24	; 5
+    4590:	85 b1       	in	r24, 0x05	; 5
+    4592:	85 7f       	andi	r24, 0xF5	; 245
+    4594:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5372:	85 b1       	in	r24, 0x05	; 5
-    5374:	8a 60       	ori	r24, 0x0A	; 10
-    5376:	85 b9       	out	0x05, r24	; 5
-    5378:	85 b1       	in	r24, 0x05	; 5
-    537a:	85 7f       	andi	r24, 0xF5	; 245
-    537c:	85 b9       	out	0x05, r24	; 5
+    4596:	85 b1       	in	r24, 0x05	; 5
+    4598:	8a 60       	ori	r24, 0x0A	; 10
+    459a:	85 b9       	out	0x05, r24	; 5
+    459c:	85 b1       	in	r24, 0x05	; 5
+    459e:	85 7f       	andi	r24, 0xF5	; 245
+    45a0:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    537e:	85 b1       	in	r24, 0x05	; 5
-    5380:	8a 60       	ori	r24, 0x0A	; 10
-    5382:	85 b9       	out	0x05, r24	; 5
-    5384:	85 b1       	in	r24, 0x05	; 5
-    5386:	85 7f       	andi	r24, 0xF5	; 245
-    5388:	85 b9       	out	0x05, r24	; 5
+    45a2:	85 b1       	in	r24, 0x05	; 5
+    45a4:	8a 60       	ori	r24, 0x0A	; 10
+    45a6:	85 b9       	out	0x05, r24	; 5
+    45a8:	85 b1       	in	r24, 0x05	; 5
+    45aa:	85 7f       	andi	r24, 0xF5	; 245
+    45ac:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    538a:	85 b1       	in	r24, 0x05	; 5
-    538c:	8a 60       	ori	r24, 0x0A	; 10
-    538e:	85 b9       	out	0x05, r24	; 5
-    5390:	85 b1       	in	r24, 0x05	; 5
-    5392:	85 7f       	andi	r24, 0xF5	; 245
-    5394:	85 b9       	out	0x05, r24	; 5
+    45ae:	85 b1       	in	r24, 0x05	; 5
+    45b0:	8a 60       	ori	r24, 0x0A	; 10
+    45b2:	85 b9       	out	0x05, r24	; 5
+    45b4:	85 b1       	in	r24, 0x05	; 5
+    45b6:	85 7f       	andi	r24, 0xF5	; 245
+    45b8:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5396:	85 b1       	in	r24, 0x05	; 5
-    5398:	8a 60       	ori	r24, 0x0A	; 10
-    539a:	85 b9       	out	0x05, r24	; 5
-    539c:	85 b1       	in	r24, 0x05	; 5
-    539e:	85 7f       	andi	r24, 0xF5	; 245
-    53a0:	85 b9       	out	0x05, r24	; 5
+    45ba:	85 b1       	in	r24, 0x05	; 5
+    45bc:	8a 60       	ori	r24, 0x0A	; 10
+    45be:	85 b9       	out	0x05, r24	; 5
+    45c0:	85 b1       	in	r24, 0x05	; 5
+    45c2:	85 7f       	andi	r24, 0xF5	; 245
+    45c4:	85 b9       	out	0x05, r24	; 5
 
             PWCLK_GCLK;
-    53a2:	85 b1       	in	r24, 0x05	; 5
-    53a4:	8a 60       	ori	r24, 0x0A	; 10
-    53a6:	85 b9       	out	0x05, r24	; 5
-    53a8:	85 b1       	in	r24, 0x05	; 5
-    53aa:	85 7f       	andi	r24, 0xF5	; 245
-    53ac:	85 b9       	out	0x05, r24	; 5
+    45c6:	85 b1       	in	r24, 0x05	; 5
+    45c8:	8a 60       	ori	r24, 0x0A	; 10
+    45ca:	85 b9       	out	0x05, r24	; 5
+    45cc:	85 b1       	in	r24, 0x05	; 5
+    45ce:	85 7f       	andi	r24, 0xF5	; 245
+    45d0:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    53ae:	85 b1       	in	r24, 0x05	; 5
-    53b0:	8a 60       	ori	r24, 0x0A	; 10
-    53b2:	85 b9       	out	0x05, r24	; 5
-    53b4:	85 b1       	in	r24, 0x05	; 5
-    53b6:	85 7f       	andi	r24, 0xF5	; 245
-    53b8:	85 b9       	out	0x05, r24	; 5
+    45d2:	85 b1       	in	r24, 0x05	; 5
+    45d4:	8a 60       	ori	r24, 0x0A	; 10
+    45d6:	85 b9       	out	0x05, r24	; 5
+    45d8:	85 b1       	in	r24, 0x05	; 5
+    45da:	85 7f       	andi	r24, 0xF5	; 245
+    45dc:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    53ba:	85 b1       	in	r24, 0x05	; 5
-    53bc:	8a 60       	ori	r24, 0x0A	; 10
-    53be:	85 b9       	out	0x05, r24	; 5
-    53c0:	85 b1       	in	r24, 0x05	; 5
-    53c2:	85 7f       	andi	r24, 0xF5	; 245
-    53c4:	85 b9       	out	0x05, r24	; 5
+    45de:	85 b1       	in	r24, 0x05	; 5
+    45e0:	8a 60       	ori	r24, 0x0A	; 10
+    45e2:	85 b9       	out	0x05, r24	; 5
+    45e4:	85 b1       	in	r24, 0x05	; 5
+    45e6:	85 7f       	andi	r24, 0xF5	; 245
+    45e8:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    53c6:	85 b1       	in	r24, 0x05	; 5
-    53c8:	8a 60       	ori	r24, 0x0A	; 10
-    53ca:	85 b9       	out	0x05, r24	; 5
-    53cc:	85 b1       	in	r24, 0x05	; 5
-    53ce:	85 7f       	andi	r24, 0xF5	; 245
-    53d0:	85 b9       	out	0x05, r24	; 5
+    45ea:	85 b1       	in	r24, 0x05	; 5
+    45ec:	8a 60       	ori	r24, 0x0A	; 10
+    45ee:	85 b9       	out	0x05, r24	; 5
+    45f0:	85 b1       	in	r24, 0x05	; 5
+    45f2:	85 7f       	andi	r24, 0xF5	; 245
+    45f4:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    53d2:	85 b1       	in	r24, 0x05	; 5
-    53d4:	8a 60       	ori	r24, 0x0A	; 10
-    53d6:	85 b9       	out	0x05, r24	; 5
-    53d8:	85 b1       	in	r24, 0x05	; 5
-    53da:	85 7f       	andi	r24, 0xF5	; 245
-    53dc:	85 b9       	out	0x05, r24	; 5
+    45f6:	85 b1       	in	r24, 0x05	; 5
+    45f8:	8a 60       	ori	r24, 0x0A	; 10
+    45fa:	85 b9       	out	0x05, r24	; 5
+    45fc:	85 b1       	in	r24, 0x05	; 5
+    45fe:	85 7f       	andi	r24, 0xF5	; 245
+    4600:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    53de:	85 b1       	in	r24, 0x05	; 5
-    53e0:	8a 60       	ori	r24, 0x0A	; 10
-    53e2:	85 b9       	out	0x05, r24	; 5
-    53e4:	85 b1       	in	r24, 0x05	; 5
-    53e6:	85 7f       	andi	r24, 0xF5	; 245
-    53e8:	85 b9       	out	0x05, r24	; 5
+    4602:	85 b1       	in	r24, 0x05	; 5
+    4604:	8a 60       	ori	r24, 0x0A	; 10
+    4606:	85 b9       	out	0x05, r24	; 5
+    4608:	85 b1       	in	r24, 0x05	; 5
+    460a:	85 7f       	andi	r24, 0xF5	; 245
+    460c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    53ea:	85 b1       	in	r24, 0x05	; 5
-    53ec:	8a 60       	ori	r24, 0x0A	; 10
-    53ee:	85 b9       	out	0x05, r24	; 5
-    53f0:	85 b1       	in	r24, 0x05	; 5
-    53f2:	85 7f       	andi	r24, 0xF5	; 245
-    53f4:	85 b9       	out	0x05, r24	; 5
+    460e:	85 b1       	in	r24, 0x05	; 5
+    4610:	8a 60       	ori	r24, 0x0A	; 10
+    4612:	85 b9       	out	0x05, r24	; 5
+    4614:	85 b1       	in	r24, 0x05	; 5
+    4616:	85 7f       	andi	r24, 0xF5	; 245
+    4618:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    53f6:	85 b1       	in	r24, 0x05	; 5
-    53f8:	8a 60       	ori	r24, 0x0A	; 10
-    53fa:	85 b9       	out	0x05, r24	; 5
-    53fc:	85 b1       	in	r24, 0x05	; 5
-    53fe:	85 7f       	andi	r24, 0xF5	; 245
-    5400:	85 b9       	out	0x05, r24	; 5
+    461a:	85 b1       	in	r24, 0x05	; 5
+    461c:	8a 60       	ori	r24, 0x0A	; 10
+    461e:	85 b9       	out	0x05, r24	; 5
+    4620:	85 b1       	in	r24, 0x05	; 5
+    4622:	85 7f       	andi	r24, 0xF5	; 245
+    4624:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5402:	85 b1       	in	r24, 0x05	; 5
-    5404:	8a 60       	ori	r24, 0x0A	; 10
-    5406:	85 b9       	out	0x05, r24	; 5
-    5408:	85 b1       	in	r24, 0x05	; 5
-    540a:	85 7f       	andi	r24, 0xF5	; 245
-    540c:	85 b9       	out	0x05, r24	; 5
+    4626:	85 b1       	in	r24, 0x05	; 5
+    4628:	8a 60       	ori	r24, 0x0A	; 10
+    462a:	85 b9       	out	0x05, r24	; 5
+    462c:	85 b1       	in	r24, 0x05	; 5
+    462e:	85 7f       	andi	r24, 0xF5	; 245
+    4630:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    540e:	85 b1       	in	r24, 0x05	; 5
-    5410:	8a 60       	ori	r24, 0x0A	; 10
-    5412:	85 b9       	out	0x05, r24	; 5
-    5414:	85 b1       	in	r24, 0x05	; 5
-    5416:	85 7f       	andi	r24, 0xF5	; 245
-    5418:	85 b9       	out	0x05, r24	; 5
+    4632:	85 b1       	in	r24, 0x05	; 5
+    4634:	8a 60       	ori	r24, 0x0A	; 10
+    4636:	85 b9       	out	0x05, r24	; 5
+    4638:	85 b1       	in	r24, 0x05	; 5
+    463a:	85 7f       	andi	r24, 0xF5	; 245
+    463c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    541a:	85 b1       	in	r24, 0x05	; 5
-    541c:	8a 60       	ori	r24, 0x0A	; 10
-    541e:	85 b9       	out	0x05, r24	; 5
-    5420:	85 b1       	in	r24, 0x05	; 5
-    5422:	85 7f       	andi	r24, 0xF5	; 245
-    5424:	85 b9       	out	0x05, r24	; 5
+    463e:	85 b1       	in	r24, 0x05	; 5
+    4640:	8a 60       	ori	r24, 0x0A	; 10
+    4642:	85 b9       	out	0x05, r24	; 5
+    4644:	85 b1       	in	r24, 0x05	; 5
+    4646:	85 7f       	andi	r24, 0xF5	; 245
+    4648:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5426:	85 b1       	in	r24, 0x05	; 5
-    5428:	8a 60       	ori	r24, 0x0A	; 10
-    542a:	85 b9       	out	0x05, r24	; 5
-    542c:	85 b1       	in	r24, 0x05	; 5
-    542e:	85 7f       	andi	r24, 0xF5	; 245
-    5430:	85 b9       	out	0x05, r24	; 5
+    464a:	85 b1       	in	r24, 0x05	; 5
+    464c:	8a 60       	ori	r24, 0x0A	; 10
+    464e:	85 b9       	out	0x05, r24	; 5
+    4650:	85 b1       	in	r24, 0x05	; 5
+    4652:	85 7f       	andi	r24, 0xF5	; 245
+    4654:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    5432:	85 b1       	in	r24, 0x05	; 5
-    5434:	8a 60       	ori	r24, 0x0A	; 10
-    5436:	85 b9       	out	0x05, r24	; 5
-    5438:	85 b1       	in	r24, 0x05	; 5
-    543a:	85 7f       	andi	r24, 0xF5	; 245
-    543c:	85 b9       	out	0x05, r24	; 5
+    4656:	85 b1       	in	r24, 0x05	; 5
+    4658:	8a 60       	ori	r24, 0x0A	; 10
+    465a:	85 b9       	out	0x05, r24	; 5
+    465c:	85 b1       	in	r24, 0x05	; 5
+    465e:	85 7f       	andi	r24, 0xF5	; 245
+    4660:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    543e:	85 b1       	in	r24, 0x05	; 5
-    5440:	8a 60       	ori	r24, 0x0A	; 10
-    5442:	85 b9       	out	0x05, r24	; 5
-    5444:	85 b1       	in	r24, 0x05	; 5
-    5446:	85 7f       	andi	r24, 0xF5	; 245
-    5448:	85 b9       	out	0x05, r24	; 5
+    4662:	85 b1       	in	r24, 0x05	; 5
+    4664:	8a 60       	ori	r24, 0x0A	; 10
+    4666:	85 b9       	out	0x05, r24	; 5
+    4668:	85 b1       	in	r24, 0x05	; 5
+    466a:	85 7f       	andi	r24, 0xF5	; 245
+    466c:	85 b9       	out	0x05, r24	; 5
             PWCLK_GCLK;
-    544a:	85 b1       	in	r24, 0x05	; 5
-    544c:	8a 60       	ori	r24, 0x0A	; 10
-    544e:	85 b9       	out	0x05, r24	; 5
-    5450:	85 b1       	in	r24, 0x05	; 5
-    5452:	85 7f       	andi	r24, 0xF5	; 245
-    5454:	85 b9       	out	0x05, r24	; 5
+    466e:	85 b1       	in	r24, 0x05	; 5
+    4670:	8a 60       	ori	r24, 0x0A	; 10
+    4672:	85 b9       	out	0x05, r24	; 5
+    4674:	85 b1       	in	r24, 0x05	; 5
+    4676:	85 7f       	andi	r24, 0xF5	; 245
+    4678:	85 b9       	out	0x05, r24	; 5
 
             HIGH_LAT;
-    5456:	2a 9a       	sbi	0x05, 2	; 5
+    467a:	2a 9a       	sbi	0x05, 2	; 5
             PWCLK_GCLK;
-    5458:	85 b1       	in	r24, 0x05	; 5
-    545a:	8a 60       	ori	r24, 0x0A	; 10
-    545c:	85 b9       	out	0x05, r24	; 5
-    545e:	85 b1       	in	r24, 0x05	; 5
-    5460:	85 7f       	andi	r24, 0xF5	; 245
-    5462:	85 b9       	out	0x05, r24	; 5
+    467c:	85 b1       	in	r24, 0x05	; 5
+    467e:	8a 60       	ori	r24, 0x0A	; 10
+    4680:	85 b9       	out	0x05, r24	; 5
+    4682:	85 b1       	in	r24, 0x05	; 5
+    4684:	85 7f       	andi	r24, 0xF5	; 245
+    4686:	85 b9       	out	0x05, r24	; 5
             CLEAR_LAT;
-    5464:	2a 98       	cbi	0x05, 2	; 5
-    5466:	40 5e       	subi	r20, 0xE0	; 224
-    5468:	5f 4f       	sbci	r21, 0xFF	; 255
+    4688:	2a 98       	cbi	0x05, 2	; 5
+    468a:	40 5e       	subi	r20, 0xE0	; 224
+    468c:	5f 4f       	sbci	r21, 0xFF	; 255
 #endif
 
     void displayFlashBuffer()
     {
         uint16_t index = 0;
         for (uint8_t y = 0; y < 32; y++) // 32 rows
-    546a:	41 15       	cp	r20, r1
-    546c:	84 e0       	ldi	r24, 0x04	; 4
-    546e:	58 07       	cpc	r21, r24
-    5470:	11 f0       	breq	.+4      	; 0x5476 <main+0x42c0>
-    5472:	0c 94 22 09 	jmp	0x1244	; 0x1244 <main+0x8e>
+    468e:	41 15       	cp	r20, r1
+    4690:	e4 e0       	ldi	r30, 0x04	; 4
+    4692:	5e 07       	cpc	r21, r30
+    4694:	11 f0       	breq	.+4      	; 0x469a <main+0x34e4>
+    4696:	0c 94 22 09 	jmp	0x1244	; 0x1244 <main+0x8e>
             CLEAR_LAT;
 #pragma endregion // LSB_fake
         }
 
         //  display all leds once done, so move data from latch registers to pwm modules, now with two/four bits of information
         HIGH_LAT;
-    5476:	2a 9a       	sbi	0x05, 2	; 5
+    469a:	2a 9a       	sbi	0x05, 2	; 5
         PWCLK_GCLK;
-    5478:	85 b1       	in	r24, 0x05	; 5
-    547a:	8a 60       	ori	r24, 0x0A	; 10
-    547c:	85 b9       	out	0x05, r24	; 5
-    547e:	85 b1       	in	r24, 0x05	; 5
-    5480:	85 7f       	andi	r24, 0xF5	; 245
-    5482:	85 b9       	out	0x05, r24	; 5
+    469c:	85 b1       	in	r24, 0x05	; 5
+    469e:	8a 60       	ori	r24, 0x0A	; 10
+    46a0:	85 b9       	out	0x05, r24	; 5
+    46a2:	85 b1       	in	r24, 0x05	; 5
+    46a4:	85 7f       	andi	r24, 0xF5	; 245
+    46a6:	85 b9       	out	0x05, r24	; 5
         PWCLK_GCLK;
-    5484:	85 b1       	in	r24, 0x05	; 5
-    5486:	8a 60       	ori	r24, 0x0A	; 10
-    5488:	85 b9       	out	0x05, r24	; 5
-    548a:	85 b1       	in	r24, 0x05	; 5
-    548c:	85 7f       	andi	r24, 0xF5	; 245
-    548e:	85 b9       	out	0x05, r24	; 5
+    46a8:	85 b1       	in	r24, 0x05	; 5
+    46aa:	8a 60       	ori	r24, 0x0A	; 10
+    46ac:	85 b9       	out	0x05, r24	; 5
+    46ae:	85 b1       	in	r24, 0x05	; 5
+    46b0:	85 7f       	andi	r24, 0xF5	; 245
+    46b2:	85 b9       	out	0x05, r24	; 5
         CLEAR_LAT;
-    5490:	2a 98       	cbi	0x05, 2	; 5
+    46b4:	2a 98       	cbi	0x05, 2	; 5
 	
 	setup();
     
 	for (;;) {
 		loop();
 		if (serialEventRun) serialEventRun();
-    5492:	20 97       	sbiw	r28, 0x00	; 0
-    5494:	11 f4       	brne	.+4      	; 0x549a <main+0x42e4>
-    5496:	0c 94 20 09 	jmp	0x1240	; 0x1240 <main+0x8a>
-    549a:	0e 94 00 00 	call	0	; 0x0 <__vectors>
-    549e:	0c 94 20 09 	jmp	0x1240	; 0x1240 <main+0x8a>
+    46b6:	20 97       	sbiw	r28, 0x00	; 0
+    46b8:	11 f4       	brne	.+4      	; 0x46be <main+0x3508>
+    46ba:	0c 94 20 09 	jmp	0x1240	; 0x1240 <main+0x8a>
+    46be:	0e 94 00 00 	call	0	; 0x0 <__vectors>
+    46c2:	0c 94 20 09 	jmp	0x1240	; 0x1240 <main+0x8a>
             CLEAR_RA;
             CLEAR_RC;
         }
         else
         {
             HIGH_RA;
-    54a2:	40 9a       	sbi	0x08, 0	; 8
+    46c6:	40 9a       	sbi	0x08, 0	; 8
             CLEAR_RA;
-    54a4:	40 98       	cbi	0x08, 0	; 8
-    54a6:	0c 94 2b 09 	jmp	0x1256	; 0x1256 <main+0xa0>
+    46c8:	40 98       	cbi	0x08, 0	; 8
+    46ca:	0c 94 2b 09 	jmp	0x1256	; 0x1256 <main+0xa0>
 
-000054aa <_GLOBAL__sub_I_panel>:
+000046ce <_GLOBAL__sub_I_panel>:
 class Panel
 {
 public:
 #ifdef PANEL_FLASH
     Panel(PGM_VOID_P buffer_in)
     {
-    54aa:	e0 e0       	ldi	r30, 0x00	; 0
-    54ac:	f1 e0       	ldi	r31, 0x01	; 1
-    54ae:	14 82       	std	Z+4, r1	; 0x04
-    54b0:	15 82       	std	Z+5, r1	; 0x05
-    54b2:	16 82       	std	Z+6, r1	; 0x06
-    54b4:	17 82       	std	Z+7, r1	; 0x07
+    46ce:	e0 e0       	ldi	r30, 0x00	; 0
+    46d0:	f1 e0       	ldi	r31, 0x01	; 1
+    46d2:	14 82       	std	Z+4, r1	; 0x04
+    46d4:	15 82       	std	Z+5, r1	; 0x05
+    46d6:	16 82       	std	Z+6, r1	; 0x06
+    46d8:	17 82       	std	Z+7, r1	; 0x07
         buffer = buffer_in;
-    54b6:	88 e6       	ldi	r24, 0x68	; 104
-    54b8:	90 e0       	ldi	r25, 0x00	; 0
-    54ba:	91 83       	std	Z+1, r25	; 0x01
-    54bc:	80 83       	st	Z, r24
+    46da:	88 e6       	ldi	r24, 0x68	; 104
+    46dc:	90 e0       	ldi	r25, 0x00	; 0
+    46de:	91 83       	std	Z+1, r25	; 0x01
+    46e0:	80 83       	st	Z, r24
         coloumns = PANEL_X;
-    54be:	80 e4       	ldi	r24, 0x40	; 64
-    54c0:	83 83       	std	Z+3, r24	; 0x03
+    46e2:	80 e4       	ldi	r24, 0x40	; 64
+    46e4:	83 83       	std	Z+3, r24	; 0x03
         rows = PANEL_Y;
-    54c2:	80 e2       	ldi	r24, 0x20	; 32
-    54c4:	82 83       	std	Z+2, r24	; 0x02
+    46e6:	80 e2       	ldi	r24, 0x20	; 32
+    46e8:	82 83       	std	Z+2, r24	; 0x02
         pinMode(RA, OUTPUT);
-    54c6:	8e e0       	ldi	r24, 0x0E	; 14
-    54c8:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
+    46ea:	8e e0       	ldi	r24, 0x0E	; 14
+    46ec:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
         pinMode(RC, OUTPUT);
-    54cc:	80 e1       	ldi	r24, 0x10	; 16
-    54ce:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
+    46f0:	80 e1       	ldi	r24, 0x10	; 16
+    46f2:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
         pinMode(CLK, OUTPUT);
-    54d2:	89 e0       	ldi	r24, 0x09	; 9
-    54d4:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
+    46f6:	89 e0       	ldi	r24, 0x09	; 9
+    46f8:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
         pinMode(RF, OUTPUT);
-    54d8:	82 e0       	ldi	r24, 0x02	; 2
-    54da:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
+    46fc:	82 e0       	ldi	r24, 0x02	; 2
+    46fe:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
         pinMode(RS, OUTPUT);
-    54de:	85 e0       	ldi	r24, 0x05	; 5
-    54e0:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
+    4702:	85 e0       	ldi	r24, 0x05	; 5
+    4704:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
         pinMode(GF, OUTPUT);
-    54e4:	83 e0       	ldi	r24, 0x03	; 3
-    54e6:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
+    4708:	83 e0       	ldi	r24, 0x03	; 3
+    470a:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
         pinMode(GS, OUTPUT);
-    54ea:	86 e0       	ldi	r24, 0x06	; 6
-    54ec:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
+    470e:	86 e0       	ldi	r24, 0x06	; 6
+    4710:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
         pinMode(BF, OUTPUT);
-    54f0:	84 e0       	ldi	r24, 0x04	; 4
-    54f2:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
+    4714:	84 e0       	ldi	r24, 0x04	; 4
+    4716:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
         pinMode(BS, OUTPUT);
-    54f6:	87 e0       	ldi	r24, 0x07	; 7
-    54f8:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
+    471a:	87 e0       	ldi	r24, 0x07	; 7
+    471c:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
         pinMode(LAT, OUTPUT);
-    54fc:	8a e0       	ldi	r24, 0x0A	; 10
-    54fe:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
+    4720:	8a e0       	ldi	r24, 0x0A	; 10
+    4722:	0e 94 72 08 	call	0x10e4	; 0x10e4 <pinMode.constprop.2>
         pinMode(OE, OUTPUT);
-    5502:	8b e0       	ldi	r24, 0x0B	; 11
-    5504:	0c 94 72 08 	jmp	0x10e4	; 0x10e4 <pinMode.constprop.2>
+    4726:	8b e0       	ldi	r24, 0x0B	; 11
+    4728:	0c 94 72 08 	jmp	0x10e4	; 0x10e4 <pinMode.constprop.2>
 
-00005508 <__tablejump2__>:
-    5508:	ee 0f       	add	r30, r30
-    550a:	ff 1f       	adc	r31, r31
-    550c:	05 90       	lpm	r0, Z+
-    550e:	f4 91       	lpm	r31, Z
-    5510:	e0 2d       	mov	r30, r0
-    5512:	09 94       	ijmp
+0000472c <__tablejump2__>:
+    472c:	ee 0f       	add	r30, r30
+    472e:	ff 1f       	adc	r31, r31
+    4730:	05 90       	lpm	r0, Z+
+    4732:	f4 91       	lpm	r31, Z
+    4734:	e0 2d       	mov	r30, r0
+    4736:	09 94       	ijmp
 
-00005514 <_exit>:
-    5514:	f8 94       	cli
+00004738 <_exit>:
+    4738:	f8 94       	cli
 
-00005516 <__stop_program>:
-    5516:	ff cf       	rjmp	.-2      	; 0x5516 <__stop_program>
+0000473a <__stop_program>:
+    473a:	ff cf       	rjmp	.-2      	; 0x473a <__stop_program>
