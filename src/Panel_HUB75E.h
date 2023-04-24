@@ -73,6 +73,7 @@ GND GND
 #ifdef PANEL_NO_BUFFER
 #undef PANEL_FLASH
 #undef PANEL_BIG
+#undef PANEL_SMALL_BRIGHT
 #endif
 
 #ifdef PANEL_FLASH
@@ -93,7 +94,7 @@ GND GND
 #define MAX_COLORDEPTH 4
 #else
 #ifdef PANEL_NO_BUFFER
-#define MAX_COLORDEPTH 7
+#define MAX_COLORDEPTH 8
 #else
 #define MAX_COLORDEPTH 1
 #endif
