@@ -56,8 +56,10 @@ GND GND
 
 /////////////////////
 // #define PANEL_BIG // use 2 bit rgb image buffer
-// #define PANEL_FLASH
-// #define PANEL_NO_BUFFER
+// #define PANEL_FLASH // 4 bit flash buffer
+// #define PANEL_NO_BUFFER //no buffer, immediate mode only
+// #define PANEL_GPIO_NON_INTRUSIVE //dont overwrite the other pins in GPIOB
+// #define PANEL_SMALL_BRIGHT // much brighter but with ghosting
 /////////////////////
 
 #ifndef PANEL_X
@@ -83,7 +85,22 @@ GND GND
 #define PANEL_BUFFERSIZE (PANEL_X * PANEL_Y / 8)
 #endif
 
+#ifndef MAX_COLORDEPTH
+#ifdef PANEL_BIG
 #define MAX_COLORDEPTH 2
+#else
+#ifdef PANEL_FLASH
+#define MAX_COLORDEPTH 4
+#else
+#ifdef PANEL_NO_BUFFER
+#define MAX_COLORDEPTH 7
+#else
+#define MAX_COLORDEPTH 1
+#endif
+#endif
+#endif
+#endif
+
 #define MAX_COLOR (MAX_COLORDEPTH * MAX_COLORDEPTH - 1)
 #define COLOR_CLAMP (255.0 / (MAX_COLOR))
 
@@ -128,8 +145,8 @@ GND GND
 #define HIGH_OE high_pin(PORTB, 3)
 #define CLEAR_OE clear_pin(PORTB, 3)
 
-#define CLOCK \
-    HIGH_CLK; \
+#define PWCLK_GCLK \
+    HIGH_CLK;      \
     CLEAR_CLK
 #define PWCLK \
     HIGH_OE;  \
@@ -139,7 +156,7 @@ GND GND
     PORTB |= 5 << 1;                        \
     /*turn on clk and oe at the same time*/ \
     PORTB &= ~(5 << 1);                     \
-/*turn off clk and oe at the same time*/
+    /*turn off clk and oe at the same time*/
 #define LATCH_GCLK PWCLK_GCLK
 #else
 #define PWCLK_GCLK                                                           \
@@ -383,140 +400,143 @@ public:
         // todo continue work here building it up, but not top priority
         for (uint8_t y = 0; y < 32; y++) // 32 rows
         {
-            sendPWCLKReference();
             // bitness needs to be between 1 and 8, changes sent bitdepth. the lower, the faster
-            for (uint8_t bitness = 0; bitness < 4; bitness++)
+            for (uint8_t bitness = MAX_COLORDEPTH - 1; bitness < MAX_COLORDEPTH + 1; bitness--)
             {
                 SET_COLOR((((r >> bitness) & 1) << 5) | (((g >> bitness) & 1) << 4) | (((b >> bitness) & 1) << 3) | (((r >> bitness) & 1) << 2) | (((g >> bitness) & 1) << 1) | ((b >> bitness) & 1));
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
 
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
 
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
 
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
 
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
 
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
 
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
 
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-                CLOCK;
-
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                PWCLK_GCLK;
+                if (bitness != 0)
+                {
+                    PWCLK_GCLK;
+                    PWCLK_GCLK;
+                }
                 //  latch data from shift registers to latch register, "buffer" for global release to pwm
                 HIGH_LAT;
-                CLOCK;
+                LATCH_GCLK;
                 CLEAR_LAT;
             }
 
             //  display row once done, so move data from latch registers to pwm modules
             HIGH_LAT;
-            CLOCK;
-            CLOCK;
+            LATCH_GCLK;
+            LATCH_GCLK;
             CLEAR_LAT;
 
             // advance 1 in row once we are done with one
@@ -957,330 +977,418 @@ private:
         row = (row + 1) & 31;
     }
 
-    inline void sendPWCLKReference()
-    {
-        // 64 pwclk reference clocks are enough for 5 bit, so also more than enough for 4 bit. why send more than we need...
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-        PWCLK;
-    }
-
 #ifndef PANEL_FLASH
     void displaySmallBuffer()
     {
-        uint16_t basic_index = 0;
+        LED *index = (LED *)&buffer;
         for (uint8_t y = 0; y < 32; y++) // 32 rows
         {
-            sendPWCLKReference();
-            // bitness needs to be between 1 and 12, changes sent bitdepth. the lower, the faster
-
-            basic_index = ((y >> 1) * 16); // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2)
+#ifndef PANEL_SMALL_BRIGHT
+            // advance 1 in row once we are done with one
+            stepRow();
+#endif
+            index = (LED *)(&buffer) + ((y & ~1) << 3); // advance over last row
 
             // we integer divide the screen by 2 and then set 16 led to 8 values in pairs
 
             // chip 0
-
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 1
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 2
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 3
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 4
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 5
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 6
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
 
             // chip 7
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
-            CLOCK;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
-            CLOCK;
-            CLOCK;
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(&buffer[basic_index]));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(&buffer[basic_index])) >> 6)));
-            CLOCK;
-            CLOCK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(&buffer[basic_index]) + sizeof(uint8_t))))) >> 4));
-            CLOCK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> 4));
+            PWCLK_GCLK;
+
+#ifdef PANEL_SMALL_BRIGHT
+
+            HIGH_LAT;
+            LATCH_GCLK;
+            CLEAR_LAT;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+
+#else
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
+            PWCLK_GCLK;
 
             //  latch data from shift registers to latch register, "buffer" for global release to pwm
             HIGH_LAT;
-            CLOCK;
+            LATCH_GCLK;
             CLEAR_LAT;
-            SET_COLOR(((*(((uint8_t *)(&buffer[basic_index])) + (sizeof(uint8_t) * 2))) >> 2));
 
+            // fake new data so we fill the buffer
+#pragma region LSB_fake
+            SET_COLOR(0);
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            HIGH_LAT;
+            LATCH_GCLK;
+            CLEAR_LAT;
+#pragma endregion // LSB_fake
+#endif
             //  display row once done, so move data from latch registers to pwm modules
             HIGH_LAT;
-            CLOCK;
-            CLOCK;
+            LATCH_GCLK;
+            LATCH_GCLK;
             CLEAR_LAT;
 
-            // advance 1 in row once we are done with one
+#ifdef PANEL_SMALL_BRIGHT
             stepRow();
+#endif
         }
     }
 
     void displayBigBuffer()
     {
-        LED *basic_index = (LED *)&buffer;
-        LED *basic_index_keep;
+        LED *index = (LED *)&buffer;
+        LED *index_keep;
         for (uint8_t y = 0; y < 32; y++) // 32 rows
         {
             // advance 1 in row once we are done with one
@@ -1289,238 +1397,238 @@ private:
             // we integer divide the screen by 2 and then set 16 led to 8 values in pairs
             // bitness needs to be between 1 and 12, changes sent bitdepth. the lower, the faster
             // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2) so 8 times every second row
-            basic_index = (LED *)(&buffer) + ((y & ~1) << 3);
-            basic_index_keep = basic_index;
+            index = (LED *)(&buffer) + ((y & ~1) << 3);
+            index_keep = index;
 
 #pragma region MSB
             // chip 0
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 1
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 2
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 3
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 4
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 5
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 6
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 7
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
 
             // shift data into buffers
@@ -1530,237 +1638,237 @@ private:
 
 #pragma endregion // MSB
             // reset index for new bits
-            basic_index = basic_index_keep;
+            index = index_keep;
 
 #pragma region MSB
             // chip 0
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 1
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 2
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 3
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 4
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 5
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 6
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 7
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR((uint8_t)((*((uint16_t *)(basic_index)) >> 6)));
+            ++index;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> 6)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 2))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> 2));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)))) >> 6));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)))) >> 6));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(((*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 5))) >> 2));
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 5))) >> 2));
             PWCLK_GCLK;
 
             // shift data into buffers
@@ -1770,238 +1878,238 @@ private:
 
 #pragma endregion // MSB
             // reset index for new bits
-            basic_index = basic_index_keep;
+            index = index_keep;
 
 #pragma region LSB
 
             // chip 0
-            SET_COLOR(*(uint8_t *)(basic_index));
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 1
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 2
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 3
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 4
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 5
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 6
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 7
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
 
             //  latch data from shift registers to latch register, "buffer" for global release to pwm
@@ -2011,238 +2119,238 @@ private:
 
 #pragma endregion // LSB
             // reset index for new bits
-            basic_index = basic_index_keep;
+            index = index_keep;
 
 #pragma region LLSB
 
             // chip 0
-            SET_COLOR(*(uint8_t *)(basic_index));
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 1
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 2
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 3
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 4
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 5
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 6
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
             // chip 7
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
 
-            ++basic_index;
-            SET_COLOR(*(uint8_t *)(basic_index));
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + sizeof(uint8_t)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + sizeof(uint8_t)))) >> 4));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR(*(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 3)));
+            SET_COLOR(*(((uint8_t *)(index)) + (sizeof(uint8_t) * 3)));
             PWCLK_GCLK;
             PWCLK_GCLK;
-            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(basic_index)) + (sizeof(uint8_t) * 4)))) >> 4));
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index)) + (sizeof(uint8_t) * 4)))) >> 4));
             PWCLK_GCLK;
 
             //  latch data from shift registers to latch register, "buffer" for global release to pwm
@@ -2565,7 +2673,7 @@ private:
 #endif
     }
 
-#endif
+#else
 
     void displayFlashBuffer()
     {
@@ -3608,7 +3716,7 @@ private:
         //
         // or check out the memcpy_p instruction, one of those can copy from program land to flash i think
     }
-
+#endif
 #pragma endregion // buffer_specifics
 #endif
 };
