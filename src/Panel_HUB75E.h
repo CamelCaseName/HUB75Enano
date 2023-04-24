@@ -134,11 +134,25 @@ GND GND
 #define PWCLK \
     HIGH_OE;  \
     CLEAR_OE;
+#ifdef PANEL_PLAY_NICELY
 #define PWCLK_GCLK                          \
     PORTB |= 5 << 1;                        \
     /*turn on clk and oe at the same time*/ \
     PORTB &= ~(5 << 1);                     \
-    /*turn off clk and oe at the same time*/
+/*turn off clk and oe at the same time*/
+#define LATCH_GCLK
+#else
+#define PWCLK_GCLK                                                           \
+    PORTB = 5 << 1;                                                          \
+    /*turn on clk and oe at the same time, with no regards to other values*/ \
+    PORTB = 0;                                                               \
+    /*turn off clk and oe at the same time, with no regards to other values*/
+#define LATCH_GCLK                                                           \
+    PORTB = 7 << 1; /*pin 1, 2 and 3 of byte b*/                             \
+    /*turn on clk and oe at the same time, with no regards to other values*/ \
+    PORTB = 4; /*pin 2 of byte b*/                                           \
+    /*turn off clk and oe at the same time, with no regards to other values*/
+#endif
 
 #pragma region color_helpers
 inline void HIGH_TO_FULL_COLOR(uint16_t color, uint8_t *red, uint8_t *green, uint8_t *blue)
@@ -326,13 +340,13 @@ public:
         rows = PANEL_Y;
         pinMode(RA, OUTPUT);
         pinMode(RC, OUTPUT);
-        pinMode(CLK, OUTPUT);
         pinMode(RF, OUTPUT);
         pinMode(RS, OUTPUT);
         pinMode(GF, OUTPUT);
         pinMode(GS, OUTPUT);
         pinMode(BF, OUTPUT);
         pinMode(BS, OUTPUT);
+        pinMode(CLK, OUTPUT);
         pinMode(LAT, OUTPUT);
         pinMode(OE, OUTPUT);
     }
@@ -2776,7 +2790,7 @@ private:
 
             // shift data into buffers
             HIGH_LAT;
-            PWCLK_GCLK;
+            LATCH_GCLK;
             CLEAR_LAT;
 
 #pragma endregion // MMSB
@@ -2993,7 +3007,7 @@ private:
 
             // shift data into buffers
             HIGH_LAT;
-            PWCLK_GCLK;
+            LATCH_GCLK;
             CLEAR_LAT;
 
 #pragma endregion // MSB
@@ -3210,7 +3224,7 @@ private:
 
             // shift data into buffers
             HIGH_LAT;
-            PWCLK_GCLK;
+            LATCH_GCLK;
             CLEAR_LAT;
 
 #pragma endregion // LSB
@@ -3427,7 +3441,7 @@ private:
 
             // shift data into buffers
             HIGH_LAT;
-            PWCLK_GCLK;
+            LATCH_GCLK;
             CLEAR_LAT;
 
 #pragma endregion // LLSB
@@ -3571,15 +3585,15 @@ private:
             PWCLK_GCLK;
 
             HIGH_LAT;
-            PWCLK_GCLK;
+            LATCH_GCLK;
             CLEAR_LAT;
 #pragma endregion // LSB_fake
         }
 
         //  display all leds once done, so move data from latch registers to pwm modules, now with two/four bits of information
         HIGH_LAT;
-        PWCLK_GCLK;
-        PWCLK_GCLK;
+        LATCH_GCLK;
+        LATCH_GCLK;
         CLEAR_LAT;
     }
 
