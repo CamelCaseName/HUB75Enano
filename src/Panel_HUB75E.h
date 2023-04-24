@@ -611,9 +611,9 @@ public:
 #pragma endregion // led_struct_definition
 
 #ifdef PANEL_FLASH
-    void swapBuffer(PGM_VOID_P newBuffer, uint8_t bufferLength)
+    void swapBuffer(PGM_VOID_P newBuffer)
     {
-        memcpy_P(buffer, newBuffer, bufferLength);
+        buffer = newBuffer;
     }
 #else
     void swapBuffer(const LED *newBuffer, uint8_t bufferLength)
