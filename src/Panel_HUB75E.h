@@ -134,7 +134,7 @@ GND GND
 #define PWCLK \
     HIGH_OE;  \
     CLEAR_OE;
-#ifdef PANEL_PLAY_NICELY
+#ifdef PANEL_GPIO_NON_INTRUSIVE
 #define PWCLK_GCLK                          \
     PORTB |= 5 << 1;                        \
     /*turn on clk and oe at the same time*/ \
