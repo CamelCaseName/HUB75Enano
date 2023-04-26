@@ -1,8 +1,36 @@
 # Syntax coloring for HUB75Enano
 # Datatypes (KEYWORD1)
+Panel KEYWORD1
+Colors KEYWORD1
 
 # Methods and Functions (KEYWORD2)
+fillScreenColor KEYWORD2
+swapBuffer KEYWORD2
+fillBuffer KEYWORD2
+setBuffer KEYWORD2
+setSmallBuffer KEYWORD2
+setBigBuffer KEYWORD2
+setFlashBuffer KEYWORD2
+drawLine KEYWORD2
+drawBigChar KEYWORD2
+drawChar KEYWORD2
+drawCircle KEYWORD2
+drawEllipse KEYWORD2
+drawRect KEYWORD2
+drawSquare KEYWORD2
+displayBuffer KEYWORD2
+displaySmallBuffer KEYWORD2
+displayBigBuffer KEYWORD2
+displayFlashBuffer KEYWORD2
 
 # Structs (KEYWORD3)
+LED KEYWORD3
+buffer KEYWORD3
 
 # Constants (LITERAL1)
+MAX_COLOR LITERAL1
+MAX_COLORDEPTH LITERAL1
+PANEL_BUFFERSIZE LITERAL1
+PANEL_X LITERAL1
+PANEL_Y LITERAL1
+COLOR_CLAMP LITERAL1
