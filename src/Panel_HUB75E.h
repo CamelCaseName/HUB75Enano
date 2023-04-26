@@ -60,7 +60,13 @@ GND GND
 // #define PANEL_NO_BUFFER //no buffer, immediate mode only
 // #define PANEL_GPIO_NON_INTRUSIVE //dont overwrite the other pins in GPIOB
 // #define PANEL_SMALL_BRIGHT // much brighter but with ghosting
+// #define PANEL_ENABLE_FLASH_EDIT
 /////////////////////
+
+// check we are on uno or nano
+#ifndef ARDUINO_ARCH_AVR
+#error "This library only supports the Arduino nano and Uno, so the atm368p with 2kb sram, 1kb eeprom and 32kb flash. For other chips/boards, please see the internet or try and adapt this library here"
+#endif
 
 #ifndef PANEL_X
 #define PANEL_X 64
@@ -74,6 +80,7 @@ GND GND
 #undef PANEL_FLASH
 #undef PANEL_BIG
 #undef PANEL_SMALL_BRIGHT
+#undef PANEL_FLASH_EDIT
 #endif
 
 #ifdef PANEL_FLASH
@@ -367,6 +374,8 @@ public:
         pinMode(CLK, OUTPUT);
         pinMode(LAT, OUTPUT);
         pinMode(OE, OUTPUT);
+        /*using pwm on the OE doesnt work, as it also passes through the buffer registers and therefore needs to be in sync with the CLK.
+         All data also needs to be in sync with the CLK, so no PWM for the GCLK*/
     }
 
 #else

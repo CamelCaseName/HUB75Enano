@@ -1,0 +1,8 @@
+# Syntax coloring for HUB75Enano
+# Datatypes (KEYWORD1)
+
+# Methods and Functions (KEYWORD2)
+
+# Structs (KEYWORD3)
+
+# Constants (LITERAL1)
