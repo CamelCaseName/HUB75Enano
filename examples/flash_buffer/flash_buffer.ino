@@ -1,13 +1,11 @@
-// #define PANEL_FLASH
-// #define PANEL_BIG
-// #define PANEL_GPIO_NON_INTRUSIVE
-// #define PANEL_NO_BUFFER
-// #define PANEL_SMALL_BRIGHT
-#include "HUB75Enano.h"
+// set the buffer mode to flash, so 4 bit per color
+#define PANEL_FLASH
+// inlcude the arduino library for everything
 #include <Arduino.h>
+// Include library for using the display
+#include "HUB75Enano.h"
 
-// create an instance of the panel
-#ifdef PANEL_FLASH
+// buffer which contains the image we want to display, important to use the PROGMEM so it is saved to flash!
 const unsigned char buffer[4096] PROGMEM = {
 
     0, 0, 0, 0, 24, 27, 27, 3, 27, 24, 32, 0, 3, 6, 3, 4, 4, 36, 36, 6, 6, 6, 6, 54, 4, 4, 6, 6, 6, 6, 6, 6, 6, 30, 30, 6, 4, 6, 30, 30, 30, 6, 30, 30, 30, 30, 30, 6, 30, 28, 4, 4, 4, 4, 30, 27, 24, 3, 0, 0, 24, 24, 24, 24,
@@ -79,50 +77,18 @@ const unsigned char buffer[4096] PROGMEM = {
     24, 24, 24, 31, 28, 26, 6, 30, 62, 30, 49, 31, 51, 55, 49, 55, 51, 49, 52, 29, 53, 53, 55, 55, 24, 24, 55, 0, 31, 15, 10, 24, 28, 6, 30, 28, 26, 31, 30, 30, 30, 26, 28, 26, 30, 26, 26, 30, 30, 30, 24, 7, 0, 7, 6, 6, 28, 7, 24, 30, 4, 26, 30, 6
 
 };
-Panel panel(buffer);
-int8_t phase = 0;
-#else
-Panel panel = {};
-#endif
 
+// create the panel and link it to the buffer created above
+Panel panel(buffer);
+
+// runs once on start, nothing for us to do here :)
 void setup()
 {
-#ifndef PANEL_FLASH
-    panel.fillBuffer(panel.BLACK);
-#ifndef PANEL_BIG
-    panel.drawSquare(63, 1, 0, panel.CYAN, true);
-    panel.drawRect(0, 0, 5, 31, panel.YELLOW, true);    // yellow filled rectangle top left
-    panel.drawRect(25, 16, 29, 23, panel.GREEN, false); // green hollow rectangle somewhere in the middle
-    panel.drawLine(6, 0, 63, 31, panel.WHITE);          // white diagonal through nearly the whole frame
-    panel.drawCircle(50, 10, 5, panel.BLUE, false);     // hollow blue circle top right
-    panel.drawCircle(11, 25, 5, panel.RED, true);       // filled cyan circle bottom left
-    panel.drawEllipse(30, 6, 6, 3, panel.GREEN, false);
-    panel.drawEllipse(61, 19, 2, 7, panel.PURPLE, true);
-    panel.drawChar(7, 12, 'b', panel.PURPLE);
-    panel.drawSquare(0, 0, 2, panel.RED, true);
-    panel.drawSquare(0, 8, 2, panel.GREEN, true);
-    panel.drawSquare(0, 16, 2, panel.BLUE, true);
-#else
-
-    panel.drawRect(0, 0, 63, 1, FULL_TO_HIGH_COLOR(3, 0, 0), true);
-    panel.drawRect(0, 2, 63, 3, FULL_TO_HIGH_COLOR(2, 0, 0), true);
-    panel.drawRect(0, 4, 63, 5, FULL_TO_HIGH_COLOR(1, 0, 0), true);
-    panel.drawRect(0, 6, 63, 7, FULL_TO_HIGH_COLOR(0, 3, 0), true);
-    panel.drawRect(0, 8, 63, 9, FULL_TO_HIGH_COLOR(0, 2, 0), true);
-    panel.drawRect(0, 10, 63, 11, FULL_TO_HIGH_COLOR(0, 1, 0), true);
-    panel.drawRect(0, 12, 63, 13, FULL_TO_HIGH_COLOR(0, 0, 3), true);
-    panel.drawRect(0, 14, 63, 15, FULL_TO_HIGH_COLOR(0, 0, 2), true);
-    panel.drawRect(0, 16, 63, 17, FULL_TO_HIGH_COLOR(0, 0, 1), true);
-
-#endif
-#endif
 }
 
+// runs forever after startup
 void loop()
 {
-#ifdef PANEL_NO_BUFFER
-    panel.fillScreenColor(255, 1, 0);
-#else
+    // just output buffer contents to the display
     panel.displayBuffer();
-#endif
 }
