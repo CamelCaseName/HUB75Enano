@@ -1,11 +1,12 @@
-#define PANEL_FLASH
+// #define PANEL_FLASH
 // #define PANEL_BIG
 // #define PANEL_GPIO_NON_INTRUSIVE
 // #define PANEL_NO_BUFFER
 // #define PANEL_SMALL_BRIGHT
 // #define PANEL_NO_FONT
-// #define PANEL_ENABLE_FLASH_EDIT todo
-#define PANEL_HIGH_RES
+// #define PANEL_ENABLE_FLASH_EDIT // todo
+#define PANEL_HIGH_RES // 64x64 window in the cente rof the screen
+
 #include "HUB75Enano.h"
 #include <Arduino.h>
 
@@ -93,13 +94,24 @@ void setup()
 #ifndef PANEL_FLASH
     panel.fillBuffer(panel.BLACK);
 #ifndef PANEL_BIG
+#ifdef PANEL_HIGH_RES
+    panel.drawCircle(32, 32, 25, panel.CYAN, true);
+    panel.drawEllipse(61, 40, 2, 7, panel.WHITE, true);
+    panel.drawChar(35, 42, 'x', panel.YELLOW);
+    panel.drawSquare(0, 24, 2, panel.RED, true);
+    panel.drawSquare(0, 32, 2, panel.GREEN, true);
+    panel.drawSquare(0, 40, 2, panel.BLUE, true);
+    panel.drawSquare(0, 48, 2, panel.RED, true);
+    panel.drawSquare(0, 56, 2, panel.GREEN, true);
+    panel.drawLine(0, 0, 63, 63, panel.GREEN);
+#endif
     panel.drawSquare(63, 1, 0, panel.CYAN, true);
     panel.drawRect(0, 0, 5, 31, panel.YELLOW, true);    // yellow filled rectangle top left
     panel.drawRect(25, 16, 29, 23, panel.GREEN, false); // green hollow rectangle somewhere in the middle
     panel.drawLine(6, 0, 63, 31, panel.WHITE);          // white diagonal through nearly the whole frame
     panel.drawCircle(50, 10, 5, panel.BLUE, false);     // hollow blue circle top right
     panel.drawCircle(11, 25, 5, panel.RED, true);       // filled cyan circle bottom left
-    panel.drawEllipse(30, 6, 6, 3, panel.GREEN, false);
+    panel.drawEllipse(30, 3, 6, 3, panel.GREEN, false);
     panel.drawEllipse(61, 19, 2, 7, panel.PURPLE, true);
     panel.drawChar(7, 12, 'b', panel.PURPLE);
     panel.drawSquare(0, 0, 2, panel.RED, true);

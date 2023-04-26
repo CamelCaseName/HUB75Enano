@@ -64,6 +64,7 @@ GND GND
 // #define PANEL_ENABLE_FLASH_EDIT // enables editing the flash during runtime, // NOT YET IMPLEMENTED, MIGHT NEED A CUSTOM BOOTLOADER
 // #define PANEL_5_PIN_ROW // switches row adressing from shift registers to direct multiplexed adressing
 // #define PANEL_NO_FONT //disables everything font related, saves some flash
+// #define PANEL_HIGH_RES //enables high res (single pixel) output in a 64x64 window
 /////////////////////
 
 // check we are on uno or nano
@@ -92,19 +93,36 @@ GND GND
 #undef PANEL_BIG
 #undef PANEL_SMALL_BRIGHT
 #undef PANEL_ENABLE_FLASH_EDIT
+#undef PANEL_HIGH_RES
 #define PANEL_NO_FONT
+#endif
+
+#ifdef PANEL_HIGH_RES
+#ifdef PANEL_BIG
+#error "The high resolution mode is only available with the flash buffer or 1 bit buffer"
+#endif
 #endif
 
 #ifdef PANEL_ENABLE_FLASH_EDIT
 #ifndef PANEL_FLASH
 #undef PANEL_ENABLE_FLASH_EDIT
 #endif
+#undef PANEL_HIGH_RES // not supported, probably never will b
+#endif
+
+#ifdef PANEL_HIGH_RES
+#define PANEL_X 64
+#define PANEL_Y 64
 #endif
 
 #ifdef PANEL_FLASH
 #undef PANEL_BIG
-// have it bigger size as we have more available lol
+#ifdef PANEL_HIGH_RES
+// have it bigger a size as we have more available lol
 #define PANEL_BUFFERSIZE (PANEL_X * PANEL_Y * 2) // 4 byte per led, we have 6 bit per 2 led per color depth -> about 4k
+#else
+#define PANEL_BUFFERSIZE (PANEL_X * PANEL_Y * 2) // 4 byte per led, we have 6 bit per 2 led per color depth -> about 4k
+#endif
 #endif
 
 #ifndef PANEL_BUFFERSIZE
@@ -174,6 +192,8 @@ GND GND
 // set 6 color pins and keep the rx tx pins as are
 #define SET_COLOR(value) \
     PORTD = ((value & (uint8_t)63) << (uint8_t)2) | PORTD & (uint8_t)3
+#else
+#error "Please keep the same pin numbering on the color pins, its not fast enough with different pins"
 #endif
 
 // pin access defines, rest
@@ -390,6 +410,7 @@ inline unsigned char getFontLine(unsigned char data, int line_num)
 class Panel
 {
 public:
+#pragma region constructors
 #ifdef PANEL_FLASH
     Panel(PGM_VOID_P buffer_in)
     {
@@ -435,6 +456,8 @@ public:
 #endif
     }
 #endif
+
+#pragma endregion // constructors
 
     void fillScreenColor(uint16_t c)
     {
@@ -998,7 +1021,7 @@ public:
         displayBigBuffer(); // 1 bit buffer in ram
 #else
 #ifdef PANEL_FLASH
-        displayFlashBuffer(); // 4 bit buffer in flash
+        displayFlashBuffer();                                             // 4 bit buffer in flash
 #else
         displaySmallBuffer(); // 2 bit buffer in ram
 #endif
@@ -1040,11 +1063,396 @@ private:
         for (uint8_t y = 0; y < 32; y++) // 32 rows
         {
 #ifndef PANEL_SMALL_BRIGHT
-            // advance 1 in row once we are done with one
             stepRow();
 #endif
-            index = (LED *)(&buffer) + ((y & (uint8_t)~1) << (uint8_t)3); // advance over last row
 
+#ifdef PANEL_HIGH_RES
+            index = (LED *)(&buffer) + (y << (uint8_t)4); // advance over last row
+
+            // chip 0
+            SET_COLOR(0);
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 1
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 2
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+
+            // chip 3
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+
+            // chip 4
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+
+            // chip 5
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+            ++index;
+            SET_COLOR(*(uint8_t *)(index));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(index)) >> (uint8_t)6)));
+            PWCLK_GCLK;
+            SET_COLOR((uint8_t)((*((uint16_t *)(((uint8_t *)(index) + sizeof(uint8_t))))) >> (uint8_t)4));
+            PWCLK_GCLK;
+            SET_COLOR(((*(((uint8_t *)(index)) + (sizeof(uint8_t) * 2))) >> (uint8_t)2));
+            PWCLK_GCLK;
+
+            // chip 6
+            SET_COLOR(0);
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 7
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+#ifdef PANEL_SMALL_BRIGHT
+
+            HIGH_LAT;
+            LATCH_GCLK;
+            CLEAR_LAT;
+
+#else
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            //  latch data from shift registers to latch register, "buffer" for global release to pwm
+            HIGH_LAT;
+            LATCH_GCLK;
+            CLEAR_LAT;
+
+            // fake new data so we fill the buffer
+#pragma region LSB_fake
+            // no need to set color to 0 as it already is
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            HIGH_LAT;
+            LATCH_GCLK;
+            CLEAR_LAT;
+#pragma endregion // LSB_fake
+#endif
+#else
+            index = (LED *)(&buffer) + ((y & (uint8_t)~1) << (uint8_t)3); // advance over last row
             // we integer divide the screen by 2 and then set 16 led to 8 values in pairs
 
             // chip 0
@@ -1429,6 +1837,7 @@ private:
             CLEAR_LAT;
 #pragma endregion // LSB_fake
 #endif
+#endif
             //  display row once done, so move data from latch registers to pwm modules
             HIGH_LAT;
             LATCH_GCLK;
@@ -1436,6 +1845,7 @@ private:
             CLEAR_LAT;
 
 #ifdef PANEL_SMALL_BRIGHT
+            // advance 1 in row once we are done with one
             stepRow();
 #endif
         }
@@ -2573,7 +2983,7 @@ private:
         if (y < (PANEL_Y / 2))
         {
             // we are in upper half of pixels
-            uint8_t index = (y * coloumns + x) / 4;
+            uint8_t index = (y * PANEL_X + x) / 4;
             switch (x % 4)
             {
             case 0: /*first pixel*/
@@ -2617,7 +3027,7 @@ private:
         {
             y -= (PANEL_Y / 2);
             // we are in lower half of pixels
-            uint8_t index = (y * coloumns + x) / 4;
+            uint8_t index = (y * PANEL_X + x) / 4;
             switch (x % 4)
             {
             case 0:
@@ -2666,7 +3076,7 @@ private:
         if (y < (PANEL_Y / 2))
         {
             // we are in upper half of pixels
-            uint8_t index = (y * coloumns + x) / 4;
+            uint16_t index = ((y * PANEL_X) + x) / 4;
             switch (x % 4)
             {
             case 0: /*first pixel*/
@@ -2698,7 +3108,7 @@ private:
         {
             y -= (PANEL_Y / 2);
             // we are in lower half of pixels
-            uint8_t index = (y * coloumns + x) / 4;
+            uint16_t index = (y * PANEL_X + x) / 4;
             switch (x % 4)
             {
             case 0: /*first pixel*/
