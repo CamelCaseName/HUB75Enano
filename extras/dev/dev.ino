@@ -4,6 +4,8 @@
 // #define PANEL_NO_BUFFER
 // #define PANEL_SMALL_BRIGHT
 // #define PANEL_NO_FONT
+// #define PANEL_ENABLE_FLASH_EDIT todo
+#define PANEL_HIGH_RES
 #include "HUB75Enano.h"
 #include <Arduino.h>
 
