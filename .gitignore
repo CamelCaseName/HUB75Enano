@@ -58,3 +58,4 @@ dkms.conf
 *.wfm
 *.ult
 *.bmp
+\.output
