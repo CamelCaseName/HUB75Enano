@@ -64,7 +64,7 @@ GND GND
 /////////////////////
 
 // check we are on uno or nano
-#ifndef ARDUINO_ARCH_AVR
+#ifndef ARDUINO_AVR_UNO || ARDUINO_AVR_NANO
 #error "This library only supports the Arduino nano and Uno, so the atm368p with 2kb sram, 1kb eeprom and 32kb flash. For other chips/boards, please see the internet or try and adapt this library here"
 #endif
 
@@ -688,6 +688,8 @@ public:
 #else
 #ifndef PANEL_FLASH
         setSmallBuffer(x, y, red, green, blue); // 2 bit buffer in ram
+#else
+        setFlashBuffer(x, y, red, green, blue);
 #endif
 #endif
     }
@@ -912,28 +914,28 @@ public:
 #pragma region color_enum_definition
     enum Colors
     {
-        RED = FULL_TO_HIGH_COLOR_FULL(255, 0, 0),
-        GREEN = FULL_TO_HIGH_COLOR_FULL(0, 255, 0),
-        BLUE = FULL_TO_HIGH_COLOR_FULL(0, 0, 255),
-        WHITE = FULL_TO_HIGH_COLOR_FULL(255, 255, 255),
+        RED = FULL_TO_HIGH_COLOR_FULL(3, 0, 0),
+        GREEN = FULL_TO_HIGH_COLOR_FULL(0, 3, 0),
+        BLUE = FULL_TO_HIGH_COLOR_FULL(0, 0, 3),
+        WHITE = FULL_TO_HIGH_COLOR_FULL(3, 3, 3),
         BLACK = FULL_TO_HIGH_COLOR_FULL(0, 0, 0),
-        PURPLE = FULL_TO_HIGH_COLOR_FULL(255, 0, 255),
-        YELLOW = FULL_TO_HIGH_COLOR_FULL(255, 255, 0),
-        CYAN = FULL_TO_HIGH_COLOR_FULL(0, 255, 255),
-        DARKRED = FULL_TO_HIGH_COLOR_FULL(127, 0, 0),
-        DARKGREEN = FULL_TO_HIGH_COLOR_FULL(0, 127, 0),
-        DARKBLUE = FULL_TO_HIGH_COLOR_FULL(0, 0, 127),
-        DARKWHITE = FULL_TO_HIGH_COLOR_FULL(127, 127, 127),
-        DARKPURPLE = FULL_TO_HIGH_COLOR_FULL(127, 0, 127),
-        DARKYELLOW = FULL_TO_HIGH_COLOR_FULL(127, 127, 0),
-        DARKCYAN = FULL_TO_HIGH_COLOR_FULL(0, 127, 127),
-        DARKERRED = FULL_TO_HIGH_COLOR_FULL(63, 0, 0),
-        DARKERGREEN = FULL_TO_HIGH_COLOR_FULL(0, 63, 0),
-        DARKERBLUE = FULL_TO_HIGH_COLOR_FULL(0, 0, 63),
-        DARKERWHITE = FULL_TO_HIGH_COLOR_FULL(63, 63, 63),
-        DARKERPURPLE = FULL_TO_HIGH_COLOR_FULL(63, 0, 63),
-        DARKERYELLOW = FULL_TO_HIGH_COLOR_FULL(63, 63, 0),
-        DARKERCYAN = FULL_TO_HIGH_COLOR_FULL(0, 63, 63),
+        PURPLE = FULL_TO_HIGH_COLOR_FULL(3, 0, 3),
+        YELLOW = FULL_TO_HIGH_COLOR_FULL(3, 3, 0),
+        CYAN = FULL_TO_HIGH_COLOR_FULL(0, 3, 3),
+        DARKRED = FULL_TO_HIGH_COLOR_FULL(2, 0, 0),
+        DARKGREEN = FULL_TO_HIGH_COLOR_FULL(0, 2, 0),
+        DARKBLUE = FULL_TO_HIGH_COLOR_FULL(0, 0, 2),
+        DARKWHITE = FULL_TO_HIGH_COLOR_FULL(2, 2, 2),
+        DARKPURPLE = FULL_TO_HIGH_COLOR_FULL(2, 0, 2),
+        DARKYELLOW = FULL_TO_HIGH_COLOR_FULL(2, 2, 0),
+        DARKCYAN = FULL_TO_HIGH_COLOR_FULL(0, 2, 2),
+        DARKERRED = FULL_TO_HIGH_COLOR_FULL(1, 0, 0),
+        DARKERGREEN = FULL_TO_HIGH_COLOR_FULL(0, 1, 0),
+        DARKERBLUE = FULL_TO_HIGH_COLOR_FULL(0, 0, 1),
+        DARKERWHITE = FULL_TO_HIGH_COLOR_FULL(1, 1, 1),
+        DARKERPURPLE = FULL_TO_HIGH_COLOR_FULL(1, 0, 1),
+        DARKERYELLOW = FULL_TO_HIGH_COLOR_FULL(1, 1, 0),
+        DARKERCYAN = FULL_TO_HIGH_COLOR_FULL(0, 1, 1),
     };
 #pragma endregion // color_enum_definition
 
