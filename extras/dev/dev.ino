@@ -5,7 +5,7 @@
 // #define PANEL_SMALL_BRIGHT
 // #define PANEL_NO_FONT
 // #define PANEL_ENABLE_FLASH_EDIT // todo
-#define PANEL_HIGH_RES // 64x64 window in the cente rof the screen
+// #define PANEL_HIGH_RES // 64x64 window in the cente rof the screen
 
 #include "HUB75Enano.h"
 #include <Arduino.h>
