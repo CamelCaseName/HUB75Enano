@@ -60,7 +60,8 @@ GND GND
 // #define PANEL_NO_BUFFER //no buffer, immediate mode only
 // #define PANEL_GPIO_NON_INTRUSIVE //dont overwrite the other pins in GPIOB
 // #define PANEL_SMALL_BRIGHT // much brighter but with ghosting
-// #define PANEL_ENABLE_FLASH_EDIT
+// #define PANEL_ENABLE_FLASH_EDIT // enables editing the flash during runtime, but occupies about .5kb more flash doing so
+// #define PANEL_5_PIN_ROW // switches row adressing from shift registers to direct multiplexed adressing
 /////////////////////
 
 // check we are on uno or nano
@@ -131,14 +132,27 @@ GND GND
 #define CLK 9  // clock signal
 #define LAT 10 // data latch
 #define OE 11  // output enable
+#ifdef PANEL_5_PIN_ROWS
+#define RB 15
+#define RD 17
+#define RE 18
+#endif
 
 // pin access defines, rows
 #define HIGH_RA high_pin(PORTC, 0)
 #define CLEAR_RA clear_pin(PORTC, 0)
-#define SET_RA(value) set_pin(PORTC, 0, value)
 #define HIGH_RC high_pin(PORTC, 2)
 #define CLEAR_RC clear_pin(PORTC, 2)
-#define SET_RC(value) set_pin(PORTC, 2, value)
+#ifdef PANEL_5_PIN_ROWS
+#define HIGH_RB high_pin(PORTC, 1)
+#define CLEAR_RB clear_pin(PORTC, 1)
+#define HIGH_RD high_pin(PORTC, 3)
+#define CLEAR_RD clear_pin(PORTC, 3)
+#define HIGH_RE high_pin(PORTC, 4)
+#define CLEAR_RE clear_pin(PORTC, 4)
+#define SET_ROW(row) \
+    PORTC = row & 31 | PORTC & 224
+#endif
 
 // bulk pin access color, only good if pins are in right order
 #if RF == 2 and GF == 3 and BF == 4 and RS == 5 and GS == 6 and BS == 7
@@ -376,6 +390,11 @@ public:
         pinMode(CLK, OUTPUT);
         pinMode(LAT, OUTPUT);
         pinMode(OE, OUTPUT);
+#ifdef PANEL_5_PIN_ROWS
+        pinMode(RB, OUTPUT);
+        pinMode(RD, OUTPUT);
+        pinMode(RE, OUTPUT);
+#endif
         /*using pwm on the OE doesnt work, as it also passes through the buffer registers and therefore needs to be in sync with the CLK.
          All data also needs to be in sync with the CLK, so no PWM for the GCLK*/
     }
@@ -396,6 +415,11 @@ public:
         pinMode(BS, OUTPUT);
         pinMode(LAT, OUTPUT);
         pinMode(OE, OUTPUT);
+#ifdef PANEL_5_PIN_ROWS
+        pinMode(RB, OUTPUT);
+        pinMode(RD, OUTPUT);
+        pinMode(RE, OUTPUT);
+#endif
     }
 #endif
 
@@ -976,6 +1000,9 @@ private:
 
     inline void stepRow()
     {
+#ifdef PANEL_5_PIN_ROWS
+        SET_ROW(row);
+#else
         if (row == 0)
         {
             HIGH_RC;
@@ -988,6 +1015,7 @@ private:
             HIGH_RA;
             CLEAR_RA;
         }
+#endif
         row = (row + 1) & 31;
     }
 
