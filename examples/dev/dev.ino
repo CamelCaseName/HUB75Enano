@@ -1,8 +1,9 @@
-// #define PANEL_FLASH
+#define PANEL_FLASH
 // #define PANEL_BIG
 // #define PANEL_GPIO_NON_INTRUSIVE
 // #define PANEL_NO_BUFFER
 // #define PANEL_SMALL_BRIGHT
+// #define PANEL_NO_FONT
 #include "HUB75Enano.h"
 #include <Arduino.h>
 
@@ -114,6 +115,10 @@ void setup()
     panel.drawRect(0, 14, 63, 15, FULL_TO_HIGH_COLOR(0, 0, 2), true);
     panel.drawRect(0, 16, 63, 17, FULL_TO_HIGH_COLOR(0, 0, 1), true);
 
+#endif
+#else
+#ifdef PANEL_ENABLE_FLASH_EDIT
+    panel.drawRect(0, 0, 20, 4, panel.BLACK, true);
 #endif
 #endif
 }

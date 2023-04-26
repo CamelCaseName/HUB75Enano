@@ -61,7 +61,7 @@ GND GND
 // #define PANEL_NO_BUFFER //no buffer, immediate mode only
 // #define PANEL_GPIO_NON_INTRUSIVE //dont overwrite the other pins in GPIOB
 // #define PANEL_SMALL_BRIGHT // much brighter but with ghosting
-// #define PANEL_ENABLE_FLASH_EDIT // enables editing the flash during runtime, but occupies about .5kb more flash doing so
+// #define PANEL_ENABLE_FLASH_EDIT // enables editing the flash during runtime, // NOT YET IMPLEMENTED, MIGHT NEED A CUSTOM BOOTLOADER
 // #define PANEL_5_PIN_ROW // switches row adressing from shift registers to direct multiplexed adressing
 // #define PANEL_NO_FONT //disables everything font related, saves some flash
 /////////////////////
@@ -79,6 +79,12 @@ GND GND
 
 #ifndef PANEL_Y
 #define PANEL_Y 32
+#endif
+
+// safeguard while its not implemented, but most basic support from library side is there
+#ifdef PANEL_ENABLE_FLASH_EDIT
+#error "Editing the Flash is not yet implemented"
+#undef PANEL_ENABLE_FLASH_EDIT
 #endif
 
 #ifdef PANEL_NO_BUFFER
@@ -3758,13 +3764,19 @@ private:
     }
 
 #ifdef PANEL_ENABLE_FLASH_EDIT
+
     void setFlashBuffer(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
     {
-        // we copy the precopied bytes inside the flash to their new destination instead of setting directly, as that wont work:)
-        //*buffer + x + y * 64
+        // the SPM instruction (needed for setting flash) is only avaiulable form within the boot section of the atm328p.
+        // which is occupied by the bootloader. one way would be to burn a new bootloader that allows us to access this function,
+        // but that doesntseem like the most reasonable route.
+        // we could also try and reduce the bootloader section somehow using the boot fuses, then place a trampoline there for us?
+        // but that seems even worse haha
+        // or we just save changes done to the buffer in sram, we get less pixels then tho. but for small adjustements its fine i'd say
+
+        // i'll clock this under todo, adding a high resolution window is first
     }
 
-    const uint8_t flashSetValues[256] PROGMEM = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255};
 #endif
 #endif
 #pragma endregion // buffer_specifics
