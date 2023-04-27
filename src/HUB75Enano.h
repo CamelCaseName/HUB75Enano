@@ -148,11 +148,6 @@ GND GND
 #define MAX_COLOR (MAX_COLORDEPTH * MAX_COLORDEPTH - 1)
 #define COLOR_CLAMP (255.0 / (MAX_COLOR))
 
-// ref https://roboticsbackend.com/arduino-fast-digitalwrite/#Using_direct_port_manipulation_instead_of_digitalWrite
-// helper definitions
-#define high_pin(port, number) port |= 1 << number
-#define clear_pin(port, number) port &= ~(1 << number)
-
 // actual pin numbers
 #define RA 14  // register selector a
 #define RC 16  // register selector c
@@ -170,6 +165,11 @@ GND GND
 #define RD 17
 #define RE 18
 #endif
+
+// ref https://roboticsbackend.com/arduino-fast-digitalwrite/#Using_direct_port_manipulation_instead_of_digitalWrite
+// helper definitions
+#define high_pin(port, number) port |= 1 << number
+#define clear_pin(port, number) port &= ~(1 << number)
 
 // pin access defines, rows
 #define HIGH_RA high_pin(PORTC, 0)
@@ -5070,7 +5070,7 @@ private:
         // but that seems even worse haha
         // or we just save changes done to the buffer in sram, we get less pixels then tho. but for small adjustements its fine i'd say
 
-        // i'll clock this under todo, adding a high resolution window is first
+        // i'll clock this under todo
     }
 
 #endif
