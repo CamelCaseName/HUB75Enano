@@ -759,6 +759,8 @@ public:
     }
 #pragma endregion // buffer_setting_definitions
 
+#pragma region drawing
+
     void drawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint16_t color)
     { // draws a line with color between the coords given
       // get colors
@@ -973,6 +975,8 @@ public:
     // - triangle with arbitrary points
     // - triangle with right angle, rotation and side lengths
     // - line with given width
+
+#pragma endregion // drawing
 
 #pragma region color_enum_definition
     enum Colors
@@ -3153,6 +3157,887 @@ private:
             // bitness needs to be between 1 and 12, changes sent bitdepth. the lower, the faster
             // advance over 16 led to the next chip (4 led at 2x2 real life led per index in buffer -> 16/4/2=2) so 8 times every second row
 
+#ifdef PANEL_HIGH_RES
+            // we send first the MMSB, then MSB, LSB, LLSB
+            index = buffer + (y << (uint8_t)6);
+
+#pragma region MMSB
+            // chip 0
+            SET_COLOR(0);
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 1
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 6
+            SET_COLOR(0);
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 7
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // shift data into buffers
+            HIGH_LAT;
+            LATCH_GCLK;
+            CLEAR_LAT;
+
+#pragma endregion // MMSB
+
+            index = buffer + (y << (uint8_t)6) + (PANEL_BUFFERSIZE / 4);
+
+#pragma region MSB
+
+            // chip 0
+            SET_COLOR(0);
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 1
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 6
+            SET_COLOR(0);
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 7
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // shift data into buffers
+            HIGH_LAT;
+            LATCH_GCLK;
+            CLEAR_LAT;
+
+#pragma endregion // MSB
+
+            index = buffer + (y << (uint8_t)6) + (PANEL_BUFFERSIZE / 2); // advance index to next section
+
+#pragma region LSB
+            // chip 0
+            SET_COLOR(0);
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 1
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 6
+            SET_COLOR(0);
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 7
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // shift data into buffers
+            HIGH_LAT;
+            LATCH_GCLK;
+            CLEAR_LAT;
+
+#pragma endregion // LSB
+
+            index = buffer + (y << (uint8_t)6) + (PANEL_BUFFERSIZE * 3 / 4); // advance index to next section
+
+#pragma region LLSB
+
+            // chip 0
+            SET_COLOR(0);
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 1
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 2
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 3
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 4
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 5
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+            SET_COLOR(pgm_read_byte(index++));
+            PWCLK_GCLK;
+
+            // chip 6
+            SET_COLOR(0);
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // chip 7
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+            PWCLK_GCLK;
+
+            // shift data into buffers
+            HIGH_LAT;
+            LATCH_GCLK;
+            CLEAR_LAT;
+
+#pragma endregion // LLSB
+
+#else
             // we send first the MMSB, then MSB, LSB, LLSB
             index = buffer + ((y & (uint8_t)~1) << (uint8_t)5);
 
@@ -4021,6 +4906,7 @@ private:
             CLEAR_LAT;
 
 #pragma endregion // LLSB
+#endif
 
 #pragma region LSB_fake
             SET_COLOR(0);
