@@ -1,5 +1,5 @@
 /*
-  Panel_HUB75E.h can be used to display stuff on a hub75e (icnd2153 or clone) panel with row shift registers with 64x128px in either 8 colors, 64 or 4096 colors
+  Panel_HUB75E.h can be used to display stuff on a hub75e (icnd2153, stp1612pw05, FM6124C or similar) panel with row shift registers with 64x128px in either 8 colors, 64 or 4096 colors
   designed for ARDUINO nano.
 
   (c) Leonhard Seidel, 2023
@@ -26,7 +26,8 @@
 // the pwclk is also going through the buffer shift registers so we need to set clock it in with the other stuff.
 // it is however split 4 times for each coloumn of drivers. so we must also clock the pwclock with the serial clock, no hardware clock sadly
 
-// BIGGEST help overall was the stp1612pw05 datasheet, i found this chip and its datasheet after searching for comparable chips
+// BIGGEST help overall was the stp1612pw05 datasheet https://www.st.com/resource/en/datasheet/stp1612pw05.pdf,
+// i found this chip and its datasheet after searching for comparable chips
 // and it has a full description of everything we need to control those chips
 
 // PINs for the row shift registers: A-> CLK   B-> OE    C-> SIN

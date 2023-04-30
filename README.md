@@ -1,5 +1,5 @@
 # What is this HUB75Enano
-This library is a rewrite of the [HUB75nano](https://github.com/CamelCaseName/HUB75nano) for the Arduino Nano/Uno, done in a way where it can now work with ICND2153, STP1612PW05 and similar chipsets. This library only supports 128x64 pixel panels using one of the mentioned or similar chipsets. Biggest limitation is the tiny 2kB SRAM of the ATM368p, it just barely fits enough pixels in there :D.  
+This library is a rewrite of the [HUB75nano](https://github.com/CamelCaseName/HUB75nano) for the Arduino Nano/Uno, done in a way where it can now work with ICND2153, STP1612PW05, FM6124C and similar chipsets. This library only supports 128x64 pixel panels using one of the mentioned or similar chipsets. Biggest limitation is the tiny 2kB SRAM of the ATM368p, it just barely fits enough pixels in there :D.  
 
 # Usage
 To use this library, either aqcuire it using the Arduino Library Manager or download the repository as a zip file, then place it in your custom library folder. Some examples are provided, see the examples folder or the examples section in the Arduino IDE.
@@ -92,3 +92,10 @@ void loop()
 ![high res sram example](https://user-images.githubusercontent.com/48067449/235369009-d4580225-5d3b-4139-8398-f2a19a76e571.jpg)
 ## high res flash buffer
 ![high res flash example](https://user-images.githubusercontent.com/48067449/235369024-2492c2ca-2f68-4170-9105-ab18f2bbe495.jpg)
+
+# Further info
+The datasheet for the [STP1612PW05](https://www.st.com/resource/en/datasheet/stp1612pw05.pdf) is the most informative 
+and is also applicable to at least the [FM6124C](https://pdf1.alldatasheet.com/datasheet-pdf/view/1145496/FUMAN/FM6124.html) 
+and [ICND2153](https://olympianled.com/wp-content/uploads/2021/05/ICND2153_datasheet_EN_2020_V1.4.pdf).
+
+I also made a writeup on the control logic [here](https://gist.github.com/CamelCaseName/59bd58b002521df8daf4efca69d01e2e)
