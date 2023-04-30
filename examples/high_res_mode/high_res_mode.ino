@@ -1,7 +1,8 @@
-// uncomment the line below to increase the brightness of the image, will poroduce some minor ghosting then though.
-// #define PANEL_SMALL_BRIGHT
+// include arduino lib for all the standard definitions
 #include <Arduino.h>
-// inlcude the library
+// enable high res 64x64 output
+#define PANEL_HIGH_RES
+// include the library
 #include "HUB75Enano.h"
 
 // create an instance of the panel
