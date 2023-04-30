@@ -1,5 +1,5 @@
 # What is this HUB75Enano
-This library is a rewrite of the [HUB75nano](https://github.com/CamelCaseName/HUB75nano) for the Arduino Nano/Uno, done in a way where it can now work with ICND2153, STP1612PW05, and similar chipsets where row addressing is done with 4 8bit shift registers. This library only supports 128x64 pixel panels using one of the mentioned or similar chipsets. Biggest limitation is the tiny 2kB SRAM of the ATM368p, it just barely fits enough pixels in there :D.  
+This library is a rewrite of the [HUB75nano](https://github.com/CamelCaseName/HUB75nano) for the Arduino Nano/Uno, done in a way where it can now work with ICND2153, STP1612PW05 and similar chipsets. This library only supports 128x64 pixel panels using one of the mentioned or similar chipsets. Biggest limitation is the tiny 2kB SRAM of the ATM368p, it just barely fits enough pixels in there :D.  
 
 # Usage
 To use this library, either aqcuire it using the Arduino Library Manager or download the repository as a zip file, then place it in your custom library folder. Some examples are provided, see the examples folder or the examples section in the Arduino IDE.
