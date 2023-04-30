@@ -85,7 +85,7 @@ void loop()
 
 # More images
 ## big buffer, 2 bit SRAM buffer
-![big buffer example](https://user-images.githubusercontent.com/48067449/235368968-eaacee94-a748-419a-88ef-cea48900b115.jpg)
+![big buffer example](https://user-images.githubusercontent.com/48067449/235369114-53928ad2-afcc-4dd1-8d06-565d888cec38.jpg)
 ## 4 bit flash
 ![flash example](https://user-images.githubusercontent.com/48067449/235368985-babe2c89-629e-4612-9621-b70112d40377.jpg)
 ## high res SRAM buffer 
