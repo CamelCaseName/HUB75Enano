@@ -2,7 +2,7 @@
 This library is a rewrite of the [HUB75nano](https://github.com/CamelCaseName/HUB75nano) for the Arduino Nano/Uno, done in a way where it can now work with ICND2153, STP1612PW05, and similar chipsets where row addressing is done with 4 8bit shift registers. This library only supports 128x64 pixel panels using one of the mentioned or similar chipsets. Biggest limitation is the tiny 2kB SRAM of the ATM368p, it just barely fits enough pixels in there :D.  
 
 # Usage
-To use this library, either aqcuire it using the Arduino Library Manager or download the repository as a zip file, then place itin your custom library folder. Some examples are provided, see the examples folder or the examples section in the Arduino IDE.
+To use this library, either aqcuire it using the Arduino Library Manager or download the repository as a zip file, then place it in your custom library folder. Some examples are provided, see the examples folder or the examples section in the Arduino IDE.
 
 # How to connect your panel to the nano
 Here is a table describing the pin, and what it is used for. You should connect at least one ground wire.
@@ -44,7 +44,7 @@ The panel has some different modes of operation and ways of configuring it, see 
 | PANEL_HIGH_RES              | Reworks the panel to work in a 64x64 high resolution mode, window at center                                                                 | -       | the flash buffer is only available in the 1 bit version, and the images for the flash buffer have to be generated with the 64x64 size tag, see [BMP2HUB75](https://github.com/CamelCaseName/BMP2HUB75) |
 
 # Example
-This here is the small buffer example.
+This here is the small buffer example and it's output.
 ```cpp
 // uncomment the line below to increase the brightness of the image, will poroduce some minor ghosting then though.
 // #define PANEL_SMALL_BRIGHT
@@ -81,3 +81,14 @@ void loop()
     panel.displayBuffer();
 }
 ```
+![small buffer example](https://user-images.githubusercontent.com/48067449/235368910-245899b5-69db-459c-b372-290a830c4ea7.jpg)
+
+# More images
+## big buffer, 2 bit SRAM buffer
+![big buffer example](https://user-images.githubusercontent.com/48067449/235368968-eaacee94-a748-419a-88ef-cea48900b115.jpg)
+## 4 bit flash
+![flash example](https://user-images.githubusercontent.com/48067449/235368985-babe2c89-629e-4612-9621-b70112d40377.jpg)
+## high res SRAM buffer 
+![high res sram example](https://user-images.githubusercontent.com/48067449/235369009-d4580225-5d3b-4139-8398-f2a19a76e571.jpg)
+## high res flash buffer
+![high res flash example](https://user-images.githubusercontent.com/48067449/235369024-2492c2ca-2f68-4170-9105-ab18f2bbe495.jpg)
