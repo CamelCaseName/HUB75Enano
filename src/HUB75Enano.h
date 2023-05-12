@@ -208,9 +208,8 @@ GND GND
 #define PWCLK_GCLK \
     HIGH_CLK;      \
     CLEAR_CLK
-#define PWCLK \
-    HIGH_OE;  \
-    CLEAR_OE;
+
+// update this to use built in pwm for gclk
 #ifdef PANEL_GPIO_NON_INTRUSIVE
 #define PWCLK_GCLK                          \
     PORTB |= 5 << 1;                        \
@@ -450,6 +449,17 @@ public:
         pinMode(BS, OUTPUT);
         pinMode(LAT, OUTPUT);
         pinMode(OE, OUTPUT);
+        // we clock the gclk at about 1.6mhz non intrusive and 2.7Mhz in the 1 bit ram buffer already
+        /* this sadly only provides 32kHz so its not useful for us. all in all max speed could be 4Mhz, which we are really close to anyways.
+        // 2 would be the same, but somehow it cant be triggered on pin 11 and i dont want to change the pinout anymore
+        // trigger: noninverting(COM2A0), wave gen mode: fast pwm (WGM22|WGM21|WGM20)
+        TCCR2A = _BV(COM2A0) | _BV(WGM21) | _BV(WGM20);
+        // set prescaler to 1/no prescaler
+        TCCR2B = _BV(CS20) | _BV(WGM22);
+        // 50% duty cycle
+        OCR2A = 1;
+        */
+
 #ifdef PANEL_5_PIN_ROWS
         pinMode(RB, OUTPUT);
         pinMode(RD, OUTPUT);
