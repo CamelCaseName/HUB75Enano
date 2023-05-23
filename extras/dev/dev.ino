@@ -6,6 +6,7 @@
 // #define PANEL_NO_FONT
 // #define PANEL_ENABLE_FLASH_EDIT // todo
 // #define PANEL_HIGH_RES // 64x64 window in the center of the screen
+#define PANEL_OE_ASYNC_TEST
 
 #include <Arduino.h>
 #include "HUB75Enano.h"
