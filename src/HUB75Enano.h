@@ -63,7 +63,7 @@ GND GND
 // #define PANEL_GPIO_NON_INTRUSIVE //dont overwrite the other pins in GPIOB
 // #define PANEL_SMALL_BRIGHT // much brighter but with ghosting
 // #define PANEL_ENABLE_FLASH_EDIT // enables editing the flash during runtime, // NOT YET IMPLEMENTED, MIGHT NEED A CUSTOM BOOTLOADER
-// #define PANEL_5_PIN_ROW // switches row adressing from shift registers to direct multiplexed adressing
+// #define PANEL_5_PIN_ROWS // switches row adressing from shift registers to direct multiplexed adressing
 // #define PANEL_NO_FONT //disables everything font related, saves some flash
 // #define PANEL_HIGH_RES //enables high res (single pixel) output in a 64x64 window
 // #define PANEL_OE_ASYNC_TEST //currently disables the OE pin completely so you can replace it by a signal generator
@@ -234,7 +234,7 @@ GND GND
 #define DCLK_GCLK                           \
     PORTB |= 1 << (uint8_t)1;               \
     /*turn on clk and oe at the same time*/ \
-    PORTB &= (uint8_t) ~(1 << (uint8_t)1);  \
+    PORTB &= (uint8_t)~(1 << (uint8_t)1);   \
     /*turn off clk and oe at the same time*/
 #define LATCH_GCLK DCLK_GCLK
 #else
@@ -255,7 +255,7 @@ GND GND
 #define DCLK_GCLK                           \
     PORTB |= 5 << (uint8_t)1;               \
     /*turn on clk and oe at the same time*/ \
-    PORTB &= (uint8_t) ~(5 << (uint8_t)1);  \
+    PORTB &= (uint8_t)~(5 << (uint8_t)1);   \
     /*turn off clk and oe at the same time*/
 #define LATCH_GCLK DCLK_GCLK
 #else
@@ -1084,7 +1084,7 @@ public:
         displayBigBuffer(); // 1 bit buffer in ram
 #else
 #ifdef PANEL_FLASH
-        displayFlashBuffer();                                                 // 4 bit buffer in flash
+        displayFlashBuffer(); // 4 bit buffer in flash
 #else
         displaySmallBuffer(); // 2 bit buffer in ram
 #endif
